@@ -9,7 +9,10 @@ export default {
     extend: {
       backgroundImage: {
         'nenu-bg': "url('/src/assets/image/nenu-bg.png')",
-      }
+      },
+      backgroundColor: {
+        'sys-bg': '#f5f5f5',
+      },
     },
   },
   plugins: [],

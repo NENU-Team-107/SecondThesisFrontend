@@ -13,5 +13,11 @@ interface StudentRegisterReq {
     phone_number: string;
 }
 
-export type { StudentLoginReq, StudentRegisterReq };
+interface StudentResetPwdReq { 
+    email: string;
+    phone_number: string;
+    password: string;
+}
+
+export type { StudentLoginReq, StudentRegisterReq, StudentResetPwdReq };
 

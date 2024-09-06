@@ -1,5 +1,5 @@
 <template>
-  <div class="flex px-5 pt-5 flex-col bg-neutral-100 rounded-xl shadow-lg h-auto">
+  <div class="flex px-5 pt-5 flex-col bg-neutral-100 rounded-xl shadow-lg h-auto ease-in-out duration-500">
     <el-image :src="titleImage" :key="titleImage" class="w-96 mb-5" />
     <div class="w-full max-w-md px-2 py-4 sm:px-0">
       <TabGroup>
@@ -22,7 +22,7 @@
             'rounded-xl bg-white p-3',
             'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none',
           ]">
-            <LoginCard />
+            <LoginCardCover />
           </TabPanel>
           <TabPanel key="register" :class="[
             'rounded-xl bg-white p-3',
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
-import LoginCard from './cards/LoginCard.vue';
+import LoginCardCover from './cards/LoginCardCover.vue';
 import RegisterCard from './cards/RegisterCard.vue';
 import titleImage from '@/assets/image/nenu-title.png';
 const categories = ref({
