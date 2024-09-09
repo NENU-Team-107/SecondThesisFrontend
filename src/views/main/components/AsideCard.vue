@@ -5,25 +5,25 @@ const asideList = ref([
   {
     index: '1',
     title: '首页',
-    icon: 'home',
+    icon: 'house',
     path: '/',
   },
   {
     index: '2',
     title: '我的申请',
-    icon: 'document',
+    icon: 'hand',
     path: '/myapply',
     children: [
       {
         index: "2-1",
         title: "立即申请",
-        icon: 'post',
+        icon: 'clipboard',
         path: "/apply/apply",
       },
       {
         index: "2-2",
         title: "审核中",
-        icon: 'list',
+        icon: 'clock',
         path: "/apply/applied",
       },
       {
@@ -43,21 +43,21 @@ const asideList = ref([
       {
         index: "3-1",
         title: "个人信息",
-        icon: 'info',
-        path:'/profile/info',
+        icon: 'id-card',
+        path: '/profile/info',
       },
       {
         index: "3-2",
         title: "修改密码",
-        icon: 'lock',
-        path:'/profile/password',
+        icon: 'rotate',
+        path: '/profile/password',
       },
     ],
   },
   {
     index: '4',
     title: '退出登录',
-    icon: 'logout',
+    icon: 'shuffle',
     path: '/logout',
   }
 ]);
@@ -75,19 +75,21 @@ const toPath = (path: string) => {
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>
           <div class="flex items-center w-full p-2 text-xl font-body">
-            <font-awesome-icon icon="fa-solid fa-house" />
-            <div class="ml-3">{{ item.title }}</div>
+            <font-awesome-icon :icon="'fa-solid fa-'+item.icon" />
+            <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
           </div>
         </template>
         <el-menu-item :index="subitem.index" v-for="subitem in item.children">
           <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(subitem.path)">
-            <div class="ml-3">{{ subitem.title }}</div>
+            <font-awesome-icon :icon="'fa-solid fa-'+subitem.icon" />
+            <div class="ml-3 text-sm font-bold">{{ subitem.title }}</div>
           </div>
         </el-menu-item>
       </el-sub-menu>
       <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body">
         <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(item.path)">
-          <div class="ml-3">{{ item.title }}</div>
+          <font-awesome-icon :icon="'fa-solid fa-'+item.icon" />
+          <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
         </div>
       </el-menu-item>
     </div>

@@ -9,8 +9,7 @@
         <AsideCard />
       </div>
       <div class="flex-1">
-        内容
-        <!-- <router-view/> -->
+        <router-view/>
       </div>
     </div>
   </div>
