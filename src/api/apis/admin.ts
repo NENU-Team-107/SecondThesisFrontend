@@ -1,8 +1,8 @@
 import service from '@/api/server/service';
-export const adminLogin =(uname:String,upswd:String)=> service.post(
-    '/admin/login',
-    {
-        "username": uname,
-        "password": upswd
-    }
-);
+import type { Paginator } from '@/types/apis/common';
+import type { AdminLoginReq, CommitDetails, AdminAccountReq } from '@/types/apis/admin';
+
+export const adminLogin = (data: AdminLoginReq) => service.post('/admin/login', data);
+export const adminAccounts = (data: Paginator) => service.post('/admin/accounts', data);
+export const adminCheckCommit = (data: CommitDetails) => service.post('/admin/checkCommit', data);
+export const adminDeletAccounts = (data: AdminAccountReq) => service.post('/admin/deleteAccounts', data);

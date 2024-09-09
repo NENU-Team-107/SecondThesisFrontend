@@ -57,10 +57,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import type { StudentRegisterReq } from '@/types/apis/student';
-import { studentRegister, studentVerifyMail } from '@/api/apis/student';
+import { StudentRegisterReq, StudentLoginResp } from '@/types/apis/student';
+import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
+import { CommonResp } from '@/types/apis/common';
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
@@ -163,7 +164,7 @@ const sendVerifyCode = (event: Event) => {
       studentRegisterData.value.phone_number = ruleForm.value.phone;
       studentRegisterData.value.id_code = ruleForm.value.idCode;
       console.log(studentRegisterData.value);
-      studentRegister(studentRegisterData.value).then((res: { code: number; message: string; token: string }) => {
+      studentRegister(studentRegisterData.value).then((res: CommonResp) => {
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
@@ -196,7 +197,7 @@ const submit = () => {
     ElMessage.error('请输入验证码');
     return;
   }
-  studentVerifyMail({ code: verifyCode.value }).then((res: { code: number; message: string; token: string }) => {
+  studentVerifyRegMail({ code: verifyCode.value }).then((res: StudentLoginResp) => {
     console.log(res);
     if (res.code !== 0) {
       ElMessage.error(res.message);

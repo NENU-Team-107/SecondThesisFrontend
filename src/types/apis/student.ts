@@ -5,6 +5,11 @@ interface StudentLoginReq {
     password: string;
     phone_number: string;
 }
+interface StudentLoginResp { 
+    code: number;
+    message: string;
+    token: string;
+}
 
 interface StudentRegisterReq { 
     email: string;
@@ -12,12 +17,21 @@ interface StudentRegisterReq {
     password: string;
     phone_number: string;
 }
+interface StudentRegisterResp { 
+    code: number;
+    message: string;
+}
 
 interface StudentResetPwdReq { 
     email: string;
     phone_number: string;
     password: string;
 }
+interface StudentResetPwdResp { 
+    code: number;
+    message: string;
+    token: string;
+}
 
-export type { StudentLoginReq, StudentRegisterReq, StudentResetPwdReq };
+export type { StudentLoginReq, StudentLoginResp, StudentRegisterReq, StudentRegisterResp, StudentResetPwdReq, StudentResetPwdResp };
 

@@ -6,12 +6,6 @@
     <el-form-item label="密码" prop="password">
       <el-input v-model="ruleForm.password" placeholder="请输入密码" show-password clearable />
     </el-form-item>
-    <div class="flex w-full mb-6">
-      <button class="flex-1 text-right rounded-md text-blue-800 text-sm underline" type="button" link
-        @click="forgetPwd">
-        忘记密码?
-      </button>
-    </div>
     <div class="mt-6 flex items-center justify-end gap-x-6">
       <button
         class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-800/90 px-8 py-2 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
@@ -27,7 +21,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 // import { Session } from '@/utils/cache/index';
-import type { StudentLoginReq,StudentLoginResp } from '@/types/apis/student';
+import type { StudentLoginReq } from '@/types/apis/student';
 import { studentLogin } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
@@ -96,7 +90,7 @@ const submitForm = (event: Event) => {
 
       console.log(studentLoginData.value);
 
-      studentLogin(studentLoginData.value).then((res: StudentLoginResp) => {
+      studentLogin(studentLoginData.value).then((res: { code: number; message: string; token: string; }) => {
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
@@ -125,16 +119,6 @@ const resetForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.resetFields();
   ElMessage.success('重置成功');
-};
-
-const fipped = defineModel({
-    required: true,
-    type: Boolean,
-    default: false
-})
-
-const forgetPwd = () => {
-  fipped.value = true;
 };
 
 </script>

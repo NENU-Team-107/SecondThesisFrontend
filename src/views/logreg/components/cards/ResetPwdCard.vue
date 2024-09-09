@@ -27,7 +27,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 // import { Session } from '@/utils/cache/index';
-import type { StudentResetPwdReq } from '@/types/apis/student';
+import type { StudentResetPwdReq,StudentResetPwdResp } from '@/types/apis/student';
 import { studentResetPwd } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
@@ -78,7 +78,7 @@ const submitForm = (event: Event) => {
       console.log(resetPwdForm.value);
       studentResetPwdData.value = resetPwdForm.value;
 
-      studentResetPwd(studentResetPwdData).then((res: { code: number; message: string; token: string; }) => {
+      studentResetPwd(studentResetPwdData).then((res: StudentResetPwdResp) => {
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
