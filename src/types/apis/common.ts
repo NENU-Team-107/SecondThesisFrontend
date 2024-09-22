@@ -19,4 +19,19 @@ interface CommonResp{
     message: string;
 }
 
-export type { Paginator, PaginatorResp, CommonResp };
+interface CommonFileParams { 
+    class: string;
+    id: string;
+}
+
+interface CommitResp{
+    code: number;
+    file_id: string;
+    id: number;
+    message: string;
+}
+
+
+
+
+export type { Paginator, PaginatorResp, CommonResp, CommonFileParams, CommitResp};

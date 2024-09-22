@@ -22,5 +22,8 @@ interface AdminAccountReq {
     id_code: string[];
 }
 
+interface CommitIDs { 
+    ids: number[];
+}
 
-export type { AdminLoginReq, AdminLoginResq, CommitDetails, AdminAccountReq };
+export type { AdminLoginReq, CommitDetails, AdminAccountReq, CommitIDs, AdminLoginResq };

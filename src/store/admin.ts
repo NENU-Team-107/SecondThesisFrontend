@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 
-export const useStudentStore = defineStore('student', {
+export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       token: '' as string,
     };
   },
   getters: {
-    getStudentToken: (state) => () => {
+    getAdminToken: (state) => () => {
       return state.token;
     },
   },
@@ -21,3 +21,4 @@ export const useStudentStore = defineStore('student', {
   },
   persist: true,
 });
+

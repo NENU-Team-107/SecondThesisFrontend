@@ -4,53 +4,53 @@ import { useRouter } from 'vue-router';
 const asideList = ref([
   {
     index: '1',
-    title: '首页',
-    icon: 'house',
-    path: '/',
+    title: '管理员',
+    icon: 'user-tie',
+    path: '/admin/manager',
   },
   {
     index: '2',
-    title: '我的申请',
+    title: '学生管理',
+    icon: 'user-graduate',
+    path: '/admin/manager/student',
+  },
+  {
+    index: '3',
+    title: '全部申请',
     icon: 'hand',
-    path: '/myapply',
+    path: '/admin/manager/apply',
     children: [
       {
-        index: "2-1",
-        title: "立即申请",
-        icon: 'clipboard',
-        path: "/apply/apply",
-      },
-      {
-        index: "2-2",
-        title: "审核中",
+        index: "3-1",
+        title: "待处理",
         icon: 'clock',
-        path: "/apply/applied",
+        path: "/admin/manager/apply/todo",
       },
       {
-        index: "2-3",
-        title: "已结束",
+        index: "3-2",
+        title: "历史申请",
         icon: 'check',
-        path: "/apply/finished",
+        path: "/admin/manager/apply/history",
       },
     ],
   },
   {
-    index: '3',
+    index: '4',
     title: '我的信息',
     icon: 'user',
-    path: '/profile',
+    path: '/admin/manager/profile',
     children: [
       {
-        index: "3-1",
+        index: "4-1",
         title: "个人信息",
         icon: 'id-card',
-        path: '/profile/info',
+        path: '/admin/manager/profile/info',
       },
       {
-        index: "3-2",
-        title: "修改密码",
+        index: "4-2",
+        title: "账号信息",
         icon: 'rotate',
-        path: '/profile/password',
+        path: '/admin/manager/profile/update',
       },
     ],
   },
@@ -58,7 +58,7 @@ const asideList = ref([
     index: '4',
     title: '退出登录',
     icon: 'shuffle',
-    path: '/login',
+    path: '/admin/login',
   }
 ]);
 

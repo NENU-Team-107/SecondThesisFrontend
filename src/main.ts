@@ -20,9 +20,25 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 /* import specific icons */
-import { faLocation, faPeopleGroup, faCheck,faHand,faUser, faRightFromBracket,faHouse, faClipboard,faClock,faIdCard,faShuffle,faRotate } from '@fortawesome/free-solid-svg-icons';
+import {
+  faLocation,
+  faPeopleGroup,
+  faCheck,
+  faHand,
+  faUser,
+  faRightFromBracket,
+  faHouse,
+  faClipboard,
+  faClock,
+  faIdCard,
+  faShuffle,
+  faRotate,
+  faUserTie,
+  faUserGraduate,
+  faList,
+} from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
-library.add(faLocation, faPeopleGroup, faCheck,faHand,faUser, faRightFromBracket, faHouse, faClipboard,faClock,faIdCard,faShuffle,faRotate);
+library.add(faLocation, faPeopleGroup, faCheck, faHand, faUser, faRightFromBracket, faHouse, faClipboard, faClock, faIdCard, faShuffle, faRotate,faUserTie,faUserGraduate,faList);
 
 createApp(App).use(router).use(ElementPlus).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');

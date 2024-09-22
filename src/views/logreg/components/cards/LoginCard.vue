@@ -27,7 +27,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 // import { Session } from '@/utils/cache/index';
-import type { StudentLoginReq,StudentLoginResp } from '@/types/apis/student';
+import { StudentLoginReq,StudentLoginResp } from '@/types/apis/student';
 import { studentLogin } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
@@ -96,7 +96,7 @@ const submitForm = (event: Event) => {
 
       console.log(studentLoginData.value);
 
-      studentLogin(studentLoginData.value).then((res: StudentLoginResp) => {
+      studentLogin(studentLoginData.value).then((res:StudentLoginResp) => {
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
@@ -105,8 +105,6 @@ const submitForm = (event: Event) => {
         else {
           ElMessage.success('登录成功');
           useStudentStore().setToken(res.token);
-          localStorage.setItem('token', res.token);
-          // Session.set('token', res.token);
         }
         router.push('/');
       }

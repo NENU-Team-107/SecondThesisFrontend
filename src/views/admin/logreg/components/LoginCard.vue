@@ -1,7 +1,10 @@
 <template>
-  <el-form ref="loginRef" :model="ruleForm" :rules="rules" label-width="auto" label-position="top" class="px-2 py-5">
+  <div>
+    <h2 class="w-full text-center font-bold text-xl">管理员登录</h2>
+  </div>
+  <el-form ref="loginRef" :model="ruleForm" :rules="rules" label-width="auto" label-position="top" class="px-2 py-5 bg-white">
     <el-form-item label="账号" prop="username">
-      <el-input v-model="ruleForm.username" placeholder="请输入身份证号/邮箱/手机号" clearable />
+      <el-input v-model="ruleForm.name" placeholder="请输入管理员账号" clearable />
     </el-form-item>
     <el-form-item label="密码" prop="password">
       <el-input v-model="ruleForm.password" placeholder="请输入密码" show-password clearable />
@@ -9,7 +12,7 @@
     <div class="mt-6 flex items-center justify-end gap-x-6">
       <button
         class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-800/90 px-8 py-2 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
-        @click="submitForm" :disabled="ruleForm.username === '' || ruleForm.password === ''">立即登录</button>
+        @click="submitForm" :disabled="ruleForm.name === '' || ruleForm.password === ''">登录</button>
       <button
         class="flex w-full items-center justify-center rounded-md border border-transparent bg-gray-600 px-8 py-2 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:focus:bg-gray-700 disabled:bg-gray-800/50 disabled:cursor-not-allowed"
         @click="resetForm">重置</button>
@@ -20,51 +23,24 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-// import { Session } from '@/utils/cache/index';
-import type { StudentLoginReq } from '@/types/apis/student';
-import { studentLogin } from '@/api/apis/student';
+
+import { adminLogin } from '@/api/apis/admin';
+import { AdminLoginReq,AdminLoginResq } from '@/types/apis/admin';
 import router from '@/router';
-import { useStudentStore } from '@/store/student';
-
-const studentLoginData = ref<StudentLoginReq>({
-  email: '',
-  id_code: '',
-  password: '',
-  phone_number: ''
-});
-
-interface LoginData {
-  username: string;
-  password: string;
-}
+import { useAdminStore } from '@/store/admin';
 
 const loginRef = ref();
 
-const ruleForm = ref<LoginData>({
-  username: '',
+const ruleForm = ref<AdminLoginReq>({
+  name: '',
   password: ''
 });
 
 // 根据表单验证状态判断是否可以提交
 
-const phone = /0?(13|14|15|18|17)[0-9]{9}/;
-const email = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-const idCard = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-
 const rules = ref({
-  username: [
+  name: [
     { required: true, message: '请输入账号', trigger: 'blur' },
-    {
-      validator: (_: any, value: string, callback: (arg0: Error | undefined) => void) => {
-        if (!phone.test(value) && !email.test(value) && !idCard.test(value)) {
-          callback(new Error('请输入正确的身份证号码/邮箱/手机号'));
-        }
-        else {
-          callback(undefined);
-        }
-      },
-      trigger: 'blur'
-    }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' }
@@ -77,20 +53,8 @@ const submitForm = (event: Event) => {
     if (valid) {
       console.log('submit!');
       console.log(ruleForm.value);
-      if (phone.test(ruleForm.value.username)) {
-        studentLoginData.value.phone_number = ruleForm.value.username;
-      }
-      else if (email.test(ruleForm.value.username)) {
-        studentLoginData.value.email = ruleForm.value.username;
-      }
-      else if (idCard.test(ruleForm.value.username)) {
-        studentLoginData.value.id_code = ruleForm.value.username;
-      }
-      studentLoginData.value.password = ruleForm.value.password;
 
-      console.log(studentLoginData.value);
-
-      studentLogin(studentLoginData.value).then((res: { code: number; message: string; token: string; }) => {
+      adminLogin(ruleForm.value).then((res: AdminLoginResq) => {
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
@@ -98,9 +62,7 @@ const submitForm = (event: Event) => {
         }
         else {
           ElMessage.success('登录成功');
-          useStudentStore().setToken(res.token);
-          localStorage.setItem('token', res.token);
-          // Session.set('token', res.token);
+          useAdminStore().setToken(res.token);
         }
         router.push('/');
       }

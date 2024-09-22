@@ -62,6 +62,7 @@ import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
 import { CommonResp } from '@/types/apis/common';
+import { AxiosResponse } from 'axios';
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
@@ -181,7 +182,7 @@ const sendVerifyCode = (event: Event) => {
           }, 1000);
         }
       }).catch((err: any) => {
-        ElMessage.error('请检查输入');
+        ElMessage.error('请检查网络');
         console.log(err);
       });
     } else {
