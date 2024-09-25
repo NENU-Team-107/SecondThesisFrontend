@@ -5,7 +5,7 @@
         </div>
         <div class="h-full flex-1 flex">
             <!-- 侧边 -->
-            <div class="h-full w-fit bg-white">
+            <div class="h-full bg-white">
                 <AsideCard />
             </div>
             <div class="flex-1">

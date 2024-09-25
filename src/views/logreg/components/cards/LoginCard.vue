@@ -96,7 +96,8 @@ const submitForm = (event: Event) => {
 
       console.log(studentLoginData.value);
 
-      studentLogin(studentLoginData.value).then((res:StudentLoginResp) => {
+      studentLogin(studentLoginData.value).then((response) => {
+        const res = response.data as StudentLoginResp;
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);

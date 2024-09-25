@@ -26,8 +26,12 @@ import { ElMessage } from 'element-plus';
 
 import { adminLogin } from '@/api/apis/admin';
 import { AdminLoginReq,AdminLoginResq } from '@/types/apis/admin';
-import router from '@/router';
 import { useAdminStore } from '@/store/admin';
+import { useAccessTokenStore } from '@/store/accessToken';
+
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const loginRef = ref();
 
@@ -54,17 +58,17 @@ const submitForm = (event: Event) => {
       console.log('submit!');
       console.log(ruleForm.value);
 
-      adminLogin(ruleForm.value).then((res: AdminLoginResq) => {
+      adminLogin(ruleForm.value).then((response) => {
+        const res = response.data as AdminLoginResq;
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
           return;
         }
-        else {
-          ElMessage.success('登录成功');
-          useAdminStore().setToken(res.token);
-        }
-        router.push('/');
+        ElMessage.success('登录成功');
+        useAdminStore().setToken(res.token);
+        useAccessTokenStore().setToken(res.token);
+        router.push('/admin/manager');
       }
       ).catch((err: any) => {
         ElMessage.error('登录失败，请检查网络设置');

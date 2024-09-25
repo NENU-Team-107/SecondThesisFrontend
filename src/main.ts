@@ -7,6 +7,11 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+zhCn.el.pagination.total = '共 {total} 条';
+zhCn.el.pagination.pagesize = '条/页';
+zhCn.el.pagination.goto = '前往';
+zhCn.el.pagination.pageClassifier = '页';
 
 import router from './router';
 
@@ -41,4 +46,4 @@ import {
 /* add icons to the library */
 library.add(faLocation, faPeopleGroup, faCheck, faHand, faUser, faRightFromBracket, faHouse, faClipboard, faClock, faIdCard, faShuffle, faRotate,faUserTie,faUserGraduate,faList);
 
-createApp(App).use(router).use(ElementPlus).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');
+createApp(App).use(router).use(ElementPlus,{locale:zhCn}).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');

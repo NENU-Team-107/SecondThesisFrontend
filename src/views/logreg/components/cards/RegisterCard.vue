@@ -62,7 +62,6 @@ import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
 import { CommonResp } from '@/types/apis/common';
-import { AxiosResponse } from 'axios';
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
@@ -165,7 +164,8 @@ const sendVerifyCode = (event: Event) => {
       studentRegisterData.value.phone_number = ruleForm.value.phone;
       studentRegisterData.value.id_code = ruleForm.value.idCode;
       console.log(studentRegisterData.value);
-      studentRegister(studentRegisterData.value).then((res: CommonResp) => {
+      studentRegister(studentRegisterData.value).then((response) => {
+        const res = response.data as CommonResp;
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
@@ -198,7 +198,8 @@ const submit = () => {
     ElMessage.error('请输入验证码');
     return;
   }
-  studentVerifyRegMail({ code: verifyCode.value }).then((res: StudentLoginResp) => {
+  studentVerifyRegMail({ code: verifyCode.value }).then((response) => {
+    const res = response.data as StudentLoginResp;
     console.log(res);
     if (res.code !== 0) {
       ElMessage.error(res.message);
@@ -207,9 +208,7 @@ const submit = () => {
       ElMessage.success(res.message);
       activeStep.value++;
       // 存储token
-      localStorage.setItem('token', res.token);
       useStudentStore().setToken(res.token);
-      // Session.set('token', res.token);
       const timer = setInterval(() => {
         regCounter.value--;
         successMsg.value = regCounter.value + msg.value;

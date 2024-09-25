@@ -55,6 +55,7 @@ interface ProfileDetail {
   standby_phone_number: string;
   thesis_no: string;
 }
+
 interface StudentProfileResp {
   code: number;
   message: string;

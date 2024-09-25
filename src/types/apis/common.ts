@@ -4,9 +4,9 @@ interface Paginator{
     page: number;
     total: number;
 };
-interface PaginatorResp { 
+interface PaginatorResp<T> { 
     code: number;
-    data: string[];
+    data: T[];
     message: string;
     offset: number;
     limit: number;

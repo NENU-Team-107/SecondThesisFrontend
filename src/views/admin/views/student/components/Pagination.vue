@@ -1,17 +1,26 @@
 <template>
-  <div class="demo-pagination-block">
+  <div class="w-full flex">
+    <div class="flex-1">
+      <h1 class="text-2xl font-semibold text-slate-900">学生信息管理</h1>
+    </div>
+    <div class="px-3">
+      <el-button @click="fetchData" type="primary" round>重新获取</el-button>
+    </div>
     <el-pagination v-model:current-page="paginatorData.page" v-model:page-size="paginatorData.limit"
       :page-sizes="pageSizes" size="default" :disabled="false" :background="true"
-      layout="total, sizes, prev, pager, next, jumper" :total="paginatorData.total" @size-change="handleSizeChange"
-      @current-change="handleCurrentChange" />
+      layout="total, sizes, prev, pager, next, jumper" prev-text="上一页" next-text="下一页" :total="paginatorData.total"
+      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { Paginator, PaginatorResp } from '@/types/apis/common';
+
 import { adminAccounts } from '@/api/apis/admin';
 import { ElMessage } from 'element-plus';
+import { ProfileDetail } from '@/types/apis/student';
 
 const paginatorData = ref<Paginator>({
   limit: 10,
@@ -24,7 +33,7 @@ const pageSizes = [10, 20, 30, 40];
 
 const AccountsList = defineModel({
   required: true,
-  type: Array as () => PaginatorResp['data'],
+  type: Array as () => ProfileDetail[],
   default: () => [],
 })
 
@@ -36,8 +45,35 @@ const handleCurrentChange = (val: number) => {
   console.log(`当前页: ${val}`);
 };
 
+const defaultData = [{
+  bachelor_class: '原本科专业',
+  bachelor_course: '原本科专业所属的国家“双一流”建设学科',
+  bachelor_school: '原本科学校',
+  birthday: '出生日期',
+  domicile: '户籍所在地',
+  email: '电子邮箱',
+  email_verify: true,
+  graduation_no: '毕业证编号',
+  graduation_year: '毕业年份',
+  home_address: '通讯地址',
+  id_code: '身份证号',
+  major: '专业',
+  major_phone_number: '手机号码1',
+  name: '姓名',
+  nation: '民族',
+  phone_number_verify: true,
+  photo: '照片',
+  politics: '政治面貌',
+  sex: '性别',
+  standby_phone_number: '手机号码2',
+  thesis_no: '学位证编号',
+}]
+
 const fetchData = () => {
-  adminAccounts(paginatorData.value).then((res: PaginatorResp) => {
+  // console.log(paginatorData.value);
+  adminAccounts(paginatorData.value).then((response) => {
+    const res = response.data as PaginatorResp<ProfileDetail>;
+    console.log(res);
     if (res.code !== 0) {
       ElMessage.error(res.message);
     }
@@ -47,15 +83,18 @@ const fetchData = () => {
       paginatorData.value.total = res.total;
       paginatorData.value.page = res.page;
 
-      AccountsList.value = res.data;
-      
+      if (res.data)
+        AccountsList.value = res.data;
+      else {
+        AccountsList.value = defaultData;
+      }
     }
+    ElMessage.success('获取成功');
   }).catch((err) => {
     ElMessage.error(err);
   });
 };
 
 fetchData();
-
 
 </script>

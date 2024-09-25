@@ -78,7 +78,8 @@ const submitForm = (event: Event) => {
       console.log(resetPwdForm.value);
       studentResetPwdData.value = resetPwdForm.value;
 
-      studentResetPwd(studentResetPwdData).then((res: StudentResetPwdResp) => {
+      studentResetPwd(studentResetPwdData.value).then((response) => {
+        const res = response.data as StudentResetPwdResp;
         console.log(res);
         if (res.code !== 0) {
           ElMessage.error(res.message);
