@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Session } from '@/utils/cache/index';
 const baseUrl = 'http://localhost:8080/api/v1';
 const servicefile = axios.create({
   baseURL: baseUrl, // api的base_url
@@ -11,8 +10,10 @@ servicefile.interceptors.request.use(
     // Do something before request is sent
     config.headers['Content-Type'] = 'multipart/form-data';
     // 请求头携带token
-    if (Session.get('token')) {
-      config.headers['Authorization'] = 'Bearer ' + Session.get('token');
+    if (localStorage.getItem('accessToken')) {
+      const token = JSON.parse(localStorage.getItem('accessToken') as string);
+      config.headers['Authorization'] = token.token;
+      return config;
     }
     return config;
   },

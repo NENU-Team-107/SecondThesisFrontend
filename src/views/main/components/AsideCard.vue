@@ -50,7 +50,7 @@ const asideList = ref([
         index: "3-2",
         title: "修改密码",
         icon: 'rotate',
-        path: '/profile/password',
+        path: '/profile/update',
       },
     ],
   },
@@ -58,15 +58,27 @@ const asideList = ref([
     index: '4',
     title: '退出登录',
     icon: 'shuffle',
-    path: '/login',
+    path: 'logout',
   }
 ]);
 
+const dialogVisible = ref(false);
 
 const router = useRouter();
 const toPath = (path: string) => {
+  if (path === 'logout') {
+    dialogVisible.value = true;
+    return;
+  }
   router.push(path);
 };
+
+const logout = () => {
+  dialogVisible.value = false;
+  localStorage.clear();
+  router.push('/login');
+};
+
 
 </script>
 <template>
@@ -75,23 +87,30 @@ const toPath = (path: string) => {
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>
           <div class="flex items-center w-full p-2 text-xl font-body">
-            <font-awesome-icon :icon="'fa-solid fa-'+item.icon" />
+            <font-awesome-icon :icon="'fa-solid fa-' + item.icon" />
             <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
           </div>
         </template>
         <el-menu-item :index="subitem.index" v-for="subitem in item.children">
           <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(subitem.path)">
-            <font-awesome-icon :icon="'fa-solid fa-'+subitem.icon" />
+            <font-awesome-icon :icon="'fa-solid fa-' + subitem.icon" />
             <div class="ml-3 text-sm font-bold">{{ subitem.title }}</div>
           </div>
         </el-menu-item>
       </el-sub-menu>
       <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body">
         <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(item.path)">
-          <font-awesome-icon :icon="'fa-solid fa-'+item.icon" />
+          <font-awesome-icon :icon="'fa-solid fa-' + item.icon" />
           <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
         </div>
       </el-menu-item>
     </div>
   </el-menu>
+  <el-dialog title="退出登录" v-model="dialogVisible" width="20%">
+    <span>确定要退出登录吗？</span>
+    <div class="mt-4 flex items-center justify-end">
+      <el-button type="primary" @click="logout">确定</el-button>
+      <el-button @click="dialogVisible = false">取消</el-button>
+    </div>
+  </el-dialog>
 </template>

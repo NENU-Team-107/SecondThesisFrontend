@@ -1,4 +1,5 @@
 // 封装axios
+import { useAccessTokenStore } from '@/store/accessToken';
 import axios from 'axios';
 const baseUrl = 'http://localhost:8080/api/v1';
 // 创建axios实例
@@ -13,9 +14,9 @@ service.interceptors.request.use(
         // Do something before request is sent
         config.headers['Content-Type'] = 'application/json;charset=UTF-8';
         // 请求头携带token
-        if (localStorage.getItem('accessToken')) {
-            const token = JSON.parse(localStorage.getItem('accessToken') as string);
-            config.headers['Authorization'] = 'Bearer ' + token.token;
+        const token = useAccessTokenStore().getAccessToken();
+        if (token !== '') {
+            config.headers['Authorization'] = token;
             return config;
         }
         return config;

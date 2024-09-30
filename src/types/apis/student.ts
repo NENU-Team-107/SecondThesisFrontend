@@ -21,6 +21,11 @@ interface StudentRegisterResp {
   message: string;
 }
 
+interface StudentVerifyMailCodeReq { 
+  code: string;
+  mail: string;
+}
+
 interface StudentResetPwdReq {
   email: string;
   phone_number: string;
@@ -67,6 +72,7 @@ export type {
   StudentLoginResp,
   StudentRegisterReq,
   StudentRegisterResp,
+  StudentVerifyMailCodeReq,
   StudentResetPwdReq,
   StudentResetPwdResp,
   ProfileDetail,

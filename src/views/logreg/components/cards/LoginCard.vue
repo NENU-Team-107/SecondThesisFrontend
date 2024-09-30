@@ -31,6 +31,7 @@ import { StudentLoginReq,StudentLoginResp } from '@/types/apis/student';
 import { studentLogin } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
+import { useAccessTokenStore } from '@/store/accessToken';
 
 const studentLoginData = ref<StudentLoginReq>({
   email: '',
@@ -106,6 +107,7 @@ const submitForm = (event: Event) => {
         else {
           ElMessage.success('登录成功');
           useStudentStore().setToken(res.token);
+          useAccessTokenStore().setToken(res.token);
         }
         router.push('/');
       }

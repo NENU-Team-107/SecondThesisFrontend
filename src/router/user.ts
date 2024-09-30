@@ -31,9 +31,6 @@ export default [
       {
         path: '/profile',
         name: 'profile',
-        meta: {
-          roles: ['student'],
-        },
         component: () => import('@/views/profile/index.vue'),
         children: [
           {

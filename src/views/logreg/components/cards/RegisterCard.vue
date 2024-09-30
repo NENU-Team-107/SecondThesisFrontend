@@ -25,7 +25,7 @@
       <el-form-item label="邮箱" prop="email" label-position="right">
         <el-input v-model="ruleForm.email" placeholder="请输入邮箱地址" clearable />
       </el-form-item>
-      <el-form-item label="验证码" label-position="right" prop="verifyCode">
+      <el-form-item label="验证码" label-position="right">
         <div class="flex w-full">
           <el-input v-model="verifyCode" placeholder="请检查邮件并填写验证码" />
           <button
@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { StudentRegisterReq, StudentLoginResp } from '@/types/apis/student';
+import { StudentRegisterReq, StudentLoginResp, StudentVerifyMailCodeReq } from '@/types/apis/student';
 import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
@@ -198,7 +198,11 @@ const submit = () => {
     ElMessage.error('请输入验证码');
     return;
   }
-  studentVerifyRegMail({ code: verifyCode.value }).then((response) => {
+  const data= ref<StudentVerifyMailCodeReq>({
+    code: verifyCode.value,
+    mail: ruleForm.value.email,
+  });
+  studentVerifyRegMail(data.value).then((response) => {
     const res = response.data as StudentLoginResp;
     console.log(res);
     if (res.code !== 0) {

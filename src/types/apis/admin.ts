@@ -1,3 +1,4 @@
+import { adminCreateAccounts } from './../../api/apis/admin';
 interface AdminLoginReq { 
     name: string;
     password: string;
@@ -18,7 +19,7 @@ interface CommitDetails{
     resson: string;
 }
 
-interface AdminAccountReq { 
+interface AdminAccountsReq { 
     id_code: string[];
 }
 
@@ -26,4 +27,4 @@ interface CommitIDs {
     ids: number[];
 }
 
-export type { AdminLoginReq, CommitDetails, AdminAccountReq, CommitIDs, AdminLoginResq };
+export type { AdminLoginReq, CommitDetails, AdminAccountsReq, CommitIDs, AdminLoginResq };

@@ -20,6 +20,18 @@ export default [
             path: 'student',
             name: 'adminManagerStudent',
             component: () => import('@/views/admin/views/student/index.vue'),
+            children: [
+              {
+                path: 'query',
+                name: 'adminManagerStudentQuery',
+                component: () => import('@/views/admin/views/student/views/QueryPage.vue'),
+              },
+              {
+                path: 'create',
+                name: 'adminManagerStudentCreate',
+                component: () => import('@/views/admin/views/student/views/CreatePage.vue'),
+              }
+            ],
           },
           {
             path: 'apply',
