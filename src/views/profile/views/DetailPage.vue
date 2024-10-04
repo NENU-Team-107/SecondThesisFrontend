@@ -1,5 +1,5 @@
 <template>
-  <div class="justify-center items-center h-full m-auto w-full bg-slate-50 p-12">
+  <div class="justify-center items-center h-full w-full bg-slate-50 p-12">
     <div class="bg-white p-8 rounded-lg shadow-lg">
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold">个人信息</h1>
@@ -7,7 +7,7 @@
           <el-button :type="editStatus ? 'danger' : 'primary'" :icon="Edit" link @click="edit">{{ editStatus ? "退出编辑" :
             "编辑" }}</el-button>
           <el-button v-show="editStatus" type="success" text bg @click="updateInfo">
-          立即更新
+            立即更新
             <el-icon class="el-icon--right">
               <Check />
             </el-icon>
@@ -65,20 +65,20 @@
                 studentData.graduation_year === '' ? '暂无' : studentData.graduation_year }}</p>
             </div>
           </div>
+
           <div class="flex items-center flex-col h-52 w-4/12 justify-around">
-            <el-upload
-             class="avatar-uploader" :action="updatephoto.url" :headers="updatephoto.headers" method="post"
-              accept="image/png, image/jpeg, image/jpg" :show-file-list="false" 
-              name="photo"
-              :on-success="handleAvatarSuccess" 
-              :before-upload="beforeAvatarUpload"
-              >
-              <img v-if="studentData.photo" :src="studentData.photo" class="avatar" />
-              <el-icon v-else class="avatar-uploader-icon">
-                <Plus />
-              </el-icon>
-            </el-upload>
+            <!-- <label for="avatar-input" class="custom-file-upload fas">
+              <div class="img-wrap img-upload">
+                <img v-if="photoStatus" :src="studentData.photo" />
+              </div>
+              <input id="avatar-input" type="file" @click="uploadAvatar" />
+            </label> -->
+            <div class="ml-4 flex gap-4 w-full flex-col">
+              <img v-if="photoStatus" :src="studentData.photo" class="avatar" />
+              <input type="file" @change="uploadAvatar" />
+            </div>
           </div>
+
         </div>
         <div class="flex h-fit flex-row justify-around items-center">
           <div class="flex items-center flex-col w-4/12 justify-around">
@@ -215,14 +215,12 @@ import { ref } from 'vue'
 // import defaultAvatar from '@/assets/image/default_avatar.png';
 import { ProfileDetail, StudentProfileResp } from '@/types/apis/student';
 import { Edit } from '@element-plus/icons-vue';
-import { studentProfile, studentUpdatePhoto, studentUpdateProfile } from '@/api/apis/student';
+import { studentGetPhoto, studentProfile, studentUpdatePhoto, studentUpdateProfile } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import { Plus, Check } from '@element-plus/icons-vue';
-import { useAccessTokenStore } from '@/store/accessToken';
-import type { UploadProps } from 'element-plus';
 
 // const defaultAvatar = 'https://empty';
-
+const photoStatus = ref(false);
 const studentData = ref<ProfileDetail>({
   bachelor_class: '原本科专业',
   bachelor_course: '原本科专业所属的国家“双一流”建设学科',
@@ -255,6 +253,16 @@ const fetchStudentData = () => {
       return;
     }
     studentData.value = res.profile;
+    studentGetPhoto(studentData.value.photo).then(response => {
+      const res = response.data;
+      if (res.code === -1) {
+        ElMessage.error(res.message);
+        photoStatus.value = false;
+        return;
+      }
+      studentData.value.photo = res.profile.photo;
+      photoStatus.value = true;
+    });
   });
 }
 
@@ -266,35 +274,23 @@ const edit = () => {
   editStatus.value = !editStatus.value;
 }
 
-const updatephoto = {
-  url: 'http://localhost:8080/api/v1/student/updatePhoto',
-  headers: {
-    'Content-type': 'multipart/form-data',
-    'Authorization': useAccessTokenStore().getAccessToken(),
-  },
-}
-
-const handleAvatarSuccess: UploadProps['onSuccess'] = (
-  response,
-  uploadFile
-) => {
-  console.log(response);
-  studentData.value.photo = URL.createObjectURL(uploadFile.raw!);
-  console.log('upload success');
-}
-
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  console.log(rawFile);
-  if (rawFile.size / 1024 / 1024 > 200) {
-    ElMessage.error('图片大小不应超过2MB!')
-    return false
+const uploadAvatar = (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) {
+    return;
   }
-  return true
+  const formData = new FormData();
+  formData.append('photo', file);
+  studentUpdatePhoto(formData).then(response => {
+    const res = response.data as StudentProfileResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    studentData.value.photo = URL.createObjectURL(file);
+    ElMessage.success('上传成功');
+  });
 }
-
-// const uploadAvatar = () => {
-//   console.log('upload');
-// }
 
 const updateInfo = () => {
   studentUpdateProfile(studentData.value).then(response => {

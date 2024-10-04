@@ -62,6 +62,7 @@ import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
 import { CommonResp } from '@/types/apis/common';
+import { useAccessTokenStore } from '@/store/accessToken';
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
@@ -213,6 +214,7 @@ const submit = () => {
       activeStep.value++;
       // 存储token
       useStudentStore().setToken(res.token);
+      useAccessTokenStore().setToken(res.token);
       const timer = setInterval(() => {
         regCounter.value--;
         successMsg.value = regCounter.value + msg.value;

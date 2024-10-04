@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { useAccessTokenStore } from '@/store/accessToken';
+
 const baseUrl = 'http://localhost:8080/api/v1';
 const servicefile = axios.create({
   baseURL: baseUrl, // api的base_url
@@ -8,11 +10,11 @@ const servicefile = axios.create({
 servicefile.interceptors.request.use(
   (config) => {
     // Do something before request is sent
-    config.headers['Content-Type'] = 'multipart/form-data';
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     // 请求头携带token
-    if (localStorage.getItem('accessToken')) {
-      const token = JSON.parse(localStorage.getItem('accessToken') as string);
-      config.headers['Authorization'] = token.token;
+    const token = useAccessTokenStore().getAccessToken();
+    if (token !== '') {
+      config.headers['Authorization'] = token;
       return config;
     }
     return config;
@@ -26,7 +28,7 @@ servicefile.interceptors.request.use(
 // respone拦截器
 servicefile.interceptors.response.use(
   (response) => {
-    return response.data;
+    return response;
   },
   (error) => {
     return Promise.reject(error);
