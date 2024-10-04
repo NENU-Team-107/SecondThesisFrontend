@@ -1,0 +1,289 @@
+<template>
+  <el-form :model="studentData" label-width="120px" ref="studentDataRef" :rules="rules"
+    class="bg-white w-full h-fit py-8 px-16">
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="studentData.name" placeholder="请输入姓名" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="studentData.sex">
+            <el-radio value="男">男</el-radio>
+            <el-radio value="女">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="出生日期" prop="birthday">
+          <el-date-picker v-model="studentData.birthday" type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD"
+            placeholder="请选择日期" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="民族" prop="nation">
+          <el-select v-model="studentData.nation" placeholder="请选择民族">
+            <el-option v-for="item in nations" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="政治面貌" prop="politics">
+          <el-input v-model="studentData.politics" placeholder="请输入政治面貌" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="身份证号" prop="id_code">
+          <el-input v-model="studentData.id_code" placeholder="请输入身份证号" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="手机号码1" prop="major_phone_number">
+          <el-input v-model="studentData.major_phone_number" placeholder="请输入手机号码1" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="手机号码2" prop="standby_phone_number">
+          <el-input v-model="studentData.standby_phone_number" placeholder="请输入手机号码2" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="电子邮箱" prop="email">
+          <el-input v-model="studentData.email" placeholder="请输入电子邮箱" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="毕业年份" prop="graduation_year">
+          <el-input v-model="studentData.graduation_year" placeholder="请输入毕业年份" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-form-item label="户籍所在地" prop="domicile">
+          <el-input v-model="studentData.domicile" placeholder="请输入户籍所在地" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-form-item label="通讯地址" prop="home_address">
+          <el-input v-model="studentData.home_address" placeholder="请输入通讯地址" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="原本科学校" prop="bachelor_school">
+          <el-input v-model="studentData.bachelor_school" placeholder="请输入原本科学校" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="原本科专业" prop="bachelor_class">
+          <el-input v-model="studentData.bachelor_class" placeholder="请输入原本科专业" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-form-item label="毕业证编号" prop="graduation_no">
+      <el-input v-model="studentData.graduation_no" placeholder="请输入毕业证编号" />
+    </el-form-item>
+    <el-form-item label="学位证编号" prop="thesis_no">
+      <el-input v-model="studentData.thesis_no" placeholder="请输入学位证编号" />
+    </el-form-item>
+    <el-form-item label="原本科专业所属的国家“双一流”建设学科" prop="bachelor_course" label-width="300px">
+      <el-input v-model="studentData.bachelor_course" placeholder="请输入原本科专业所属的国家“双一流”建设学科" />
+    </el-form-item>
+  </el-form>
+  <div class="w-full flex justify-end items-center px-16 pb-6">
+    <el-button type="primary" @click="handleSubmit(studentDataRef)">提交申请</el-button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { ProfileDetail } from '@/types/apis/student';
+import { studentUpdateProfile } from '@/api/apis/student';
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus';
+
+const studentDataRef = ref();
+const studentData = defineModel('StudentData', {
+  required: true,
+  type: Object as () => ProfileDetail,
+});
+const message = defineModel('Message', {
+  required: true,
+  type: String,
+});
+
+const checkDate = (_rule: any, value: string, callback: (message?: string) => void) => {
+  if (value === '') {
+    callback('请选择出生日期');
+  } else if (new Date(value).getTime() > new Date().getTime()) {
+    callback('出生日期不能大于当前日期');
+  } else {
+    callback();
+  }
+};
+
+const rules = {
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+  ],
+  nation: [
+    { required: true, message: '请输入民族', trigger: 'blur' },
+  ],
+  politics: [
+    { required: true, message: '请输入政治面貌', trigger: 'blur' },
+  ],
+  sex: [
+    { required: true, message: '请选择性别', trigger: 'blur' },
+  ],
+  birthday: [
+    { required: true, message: '请选择出生日期', trigger: 'blur' },
+    { validator: checkDate, trigger: 'blur' },
+  ],
+  id_code: [
+    { required: true, message: '请输入身份证号', trigger: 'blur' },
+    { pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '请输入正确的身份证号', trigger: 'blur' },
+  ],
+  major_phone_number: [
+    { required: true, message: '请输入手机号码1', trigger: 'blur' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码1', trigger: 'blur' },
+  ],
+  standby_phone_number: [
+    { required: true, message: '请输入手机号码2', trigger: 'blur' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码2', trigger: 'blur' },
+  ],
+  email: [
+    { required: true, message: '请输入电子邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入正确的电子邮箱', trigger: 'blur' },
+  ],
+  graduation_year: [
+    { required: true, message: '请输入毕业年份', trigger: 'blur' },
+    { pattern: /^\d{4}$/, message: '请输入正确的毕业年份', trigger: 'blur' },
+  ],
+  domicile: [
+    { required: true, message: '请输入户籍所在地', trigger: 'blur' },
+  ],
+  home_address: [
+    { required: true, message: '请输入通讯地址', trigger: 'blur' },
+  ],
+  bachelor_school: [
+    { required: true, message: '请输入原本科学校', trigger: 'blur' },
+  ],
+  bachelor_class: [
+    { required: true, message: '请输入原本科专业', trigger: 'blur' },
+  ],
+  graduation_no: [
+    { required: true, message: '请输入毕业证编号', trigger: 'blur' },
+  ],
+  thesis_no: [
+    { required: true, message: '请输入学位证编号', trigger: 'blur' },
+  ],
+  bachelor_course: [
+    { required: true, message: '请输入原本科专业所属的国家“双一流”建设学科', trigger: 'blur' },
+  ],
+};
+
+const nations = [
+  { value: '汉族', label: '汉族' },
+  { value: '蒙古族', label: '蒙古族' },
+  { value: '回族', label: '回族' },
+  { value: '藏族', label: '藏族' },
+  { value: '维吾尔族', label: '维吾尔族' },
+  { value: '苗族', label: '苗族' },
+  { value: '彝族', label: '彝族' },
+  { value: '壮族', label: '壮族' },
+  { value: '布依族', label: '布依族' },
+  { value: '朝鲜族', label: '朝鲜族' },
+  { value: '满族', label: '满族' },
+  { value: '侗族', label: '侗族' },
+  { value: '瑶族', label: '瑶族' },
+  { value: '白族', label: '白族' },
+  { value: '土家族', label: '土家族' },
+  { value: '哈尼族', label: '哈尼族' },
+  { value: '哈萨克族', label: '哈萨克族' },
+  { value: '傣族', label: '傣族' },
+  { value: '黎族', label: '黎族' },
+  { value: '傈僳族', label: '傈僳族' },
+  { value: '佤族', label: '佤族' },
+  { value: '畲族', label: '畲族' },
+  { value: '高山族', label: '高山族' },
+  { value: '拉祜族', label: '拉祜族' },
+  { value: '水族', label: '水族' },
+  { value: '东乡族', label: '东乡族' },
+  { value: '纳西族', label: '纳西族' },
+  { value: '景颇族', label: '景颇族' },
+  { value: '柯尔克孜族', label: '柯尔克孜族' },
+  { value: '土族', label: '土族' },
+  { value: '达斡尔族', label: '达斡尔族' },
+  { value: '仫佬族', label: '仫佬族' },
+  { value: '羌族', label: '羌族' },
+  { value: '布朗族', label: '布朗族' },
+  { value: '撒拉族', label: '撒拉族' },
+  { value: '毛南族', label: '毛南族' },
+  { value: '仡佬族', label: '仡佬族' },
+  { value: '锡伯族', label: '锡伯族' },
+  { value: '阿昌族', label: '阿昌族' },
+  { value: '普米族', label: '普米族' },
+  { value: '塔吉克族', label: '塔吉克族' },
+  { value: '怒族', label: '怒族' },
+  { value: '乌孜别克族', label: '乌孜别克族' },
+  { value: '俄罗斯族', label: '俄罗斯族' },
+  { value: '鄂温克族', label: '鄂温克族' },
+  { value: '德昂族', label: '德昂族' },
+  { value: '保安族', label: '保安族' },
+  { value: '裕固族', label: '裕固族' },
+  { value: '京族', label: '京族' },
+  { value: '塔塔尔族', label: '塔塔尔族' },
+  { value: '独龙族', label: '独龙族' },
+  { value: '鄂伦春族', label: '鄂伦春族' },
+  { value: '赫哲族', label: '赫哲族' },
+  { value: '门巴族', label: '门巴族' },
+  { value: '珞巴族', label: '珞巴族' },
+  { value: '基诺族', label: '基诺族' },
+  { value: '其他', label: '其他' },
+];
+
+const handleSubmit = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.validate((valid, fields) => {
+    console.log(valid, fields);
+    if (valid) {
+      submitApplyForm();
+    } else {
+      ElMessage.error('请检查表单填写是否正确');
+    }
+  });
+}
+
+const submitApplyForm = () => {
+  ElMessageBox.confirm(message.value, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    studentUpdateProfile(studentData.value).then(response => {
+      const res = response.data;
+      if (res.code === 0) {
+        ElMessage.success('提交成功');
+        // 刷新页面
+        location.reload();
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
+  }).catch(() => {
+    ElMessage.info('已取消提交');
+  });
+}
+</script>
