@@ -16,19 +16,19 @@ export default [
         component: () => import('@/views/apply/index.vue'),
         children: [
           {
-            path: 'apply',
-            name: 'apply',
+            path: 'newapply',
+            name: 'applyApply',
             component: () => import('@/views/apply/views/Application.vue'),
           },
           {
-            path: 'applied',
-            name: 'applied',
-            component: () => import('@/views/apply/views/AppliedPage.vue'),
+            path: 'submit',
+            name: 'applySubmit',
+            component: () => import('@/views/apply/views/SubmitPage.vue'),
           },
           {
-            path: 'finished',
-            name: 'finished',
-            component: () => import('@/views/apply/views/FinishedPage.vue'),
+            path: 'history',
+            name: 'applyHistory',
+            component: () => import('@/views/apply/views/HistoryPage.vue'),
           },
         ],
       },

@@ -1,5 +1,8 @@
 <template>
   <div class="w-full p-5">
+    <div class="flex-1">
+      <h1 class="text-2xl font-semibold text-slate-900">学生信息管理</h1>
+    </div>
     <Pagination v-model="List" />
     <StudentList v-model="List" />
   </div>

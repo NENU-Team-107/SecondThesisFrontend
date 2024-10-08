@@ -121,7 +121,6 @@ import { ref } from 'vue';
 import type { ProfileDetail } from '@/types/apis/student';
 import { studentUpdateProfile } from '@/api/apis/student';
 import { ElMessage, FormInstance } from 'element-plus';
-import { defineModel, defineProps, defineEmits } from 'vue';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -303,7 +302,6 @@ const submitApplyForm = () => {
   studentUpdateProfile(studentData.value).then(response => {
     const res = response.data;
     if (res.code === 0) {
-      ElMessage.success('提交成功');
       updateStatus();
       visible.value = false;
     } else {

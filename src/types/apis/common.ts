@@ -24,11 +24,21 @@ interface CommonFileParams {
     id: string;
 }
 
-interface CommitResp{
+interface CommitDetail{
     code: number;
     file_id: string;
     id: number;
     message: string;
+}
+
+interface CommitResp{
+    code: number;
+    data: CommitDetail[];
+    message: string;
+    offset: number;
+    limit: number;
+    page: number;
+    total: number;
 }
 
 

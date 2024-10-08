@@ -16,21 +16,21 @@ const asideList = ref([
     children: [
       {
         index: "2-1",
-        title: "立即申请",
+        title: "新建申请",
         icon: 'clipboard',
-        path: "/apply/apply",
+        path: "/apply/newapply",
       },
       {
         index: "2-2",
-        title: "审核中",
+        title: "提交报名",
         icon: 'clock',
-        path: "/apply/applied",
+        path: "/apply/submit",
       },
       {
         index: "2-3",
-        title: "已结束",
+        title: "申请记录",
         icon: 'check',
-        path: "/apply/finished",
+        path: "/apply/history",
       },
     ],
   },
