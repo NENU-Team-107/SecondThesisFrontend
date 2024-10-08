@@ -1,6 +1,6 @@
 <template>
   <el-form :model="studentData" label-width="120px" ref="studentDataRef" :rules="rules"
-    class="bg-white w-full h-fit py-8 px-16">
+    class="bg-white w-full h-fit py-8 px-16" :onchange="contentChange">
     <el-row>
       <el-col :span="12">
         <el-form-item label="姓名" prop="name">
@@ -106,13 +106,22 @@
   <div class="w-full flex justify-end items-center px-16 pb-6">
     <el-button type="primary" @click="handleSubmit(studentDataRef)">提交申请</el-button>
   </div>
+
+  <el-dialog v-model="visible" title="提示" width="30%" :before-close="handleClose">
+    <p>{{ message }}</p>
+    <div class="flex justify-end mt-4">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="submitApplyForm">确定</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { ProfileDetail } from '@/types/apis/student';
 import { studentUpdateProfile } from '@/api/apis/student';
-import { ElMessage, ElMessageBox, FormInstance } from 'element-plus';
+import { ElMessage, FormInstance } from 'element-plus';
+import { defineModel, defineProps, defineEmits } from 'vue';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -123,6 +132,25 @@ const message = defineModel('Message', {
   required: true,
   type: String,
 });
+
+const props = defineProps({
+  Confirm: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const emit = defineEmits(['update:Confirm']);
+
+const updateStatus = () => {
+  emit('update:Confirm', true);
+}
+
+const contentChange = () => {
+  if (!props.Confirm)
+    return;
+  emit('update:Confirm', false);
+}
 
 const checkDate = (_rule: any, value: string, callback: (message?: string) => void) => {
   if (value === '') {
@@ -254,12 +282,17 @@ const nations = [
   { value: '其他', label: '其他' },
 ];
 
+const visible = ref<boolean>(false);
+const handleClose = () => {
+  visible.value = false;
+}
+
 const handleSubmit = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  formEl.validate((valid, fields) => {
-    console.log(valid, fields);
+  formEl.validate((valid, _fields) => {
+    // console.log(valid, fields);
     if (valid) {
-      submitApplyForm();
+      visible.value = true;
     } else {
       ElMessage.error('请检查表单填写是否正确');
     }
@@ -267,23 +300,18 @@ const handleSubmit = (formEl: FormInstance | undefined) => {
 }
 
 const submitApplyForm = () => {
-  ElMessageBox.confirm(message.value, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    studentUpdateProfile(studentData.value).then(response => {
-      const res = response.data;
-      if (res.code === 0) {
-        ElMessage.success('提交成功');
-        // 刷新页面
-        location.reload();
-      } else {
-        ElMessage.error(res.message);
-      }
-    });
-  }).catch(() => {
-    ElMessage.info('已取消提交');
+  studentUpdateProfile(studentData.value).then(response => {
+    const res = response.data;
+    if (res.code === 0) {
+      ElMessage.success('提交成功');
+      updateStatus();
+      visible.value = false;
+    } else {
+      ElMessage.error(res.message);
+    }
+  }).catch(error => {
+    console.log(error);
+    ElMessage.error('提交失败');
   });
 }
 </script>

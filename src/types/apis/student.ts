@@ -67,6 +67,13 @@ interface StudentProfileResp {
   profile: ProfileDetail;
 }
 
+interface studentNewCommitResp{
+  code: number;
+  file_id: string;
+  id: number;
+  message: string;
+}
+
 export type {
   StudentLoginReq,
   StudentLoginResp,
@@ -77,4 +84,5 @@ export type {
   StudentResetPwdResp,
   ProfileDetail,
   StudentProfileResp,
+  studentNewCommitResp,
 };

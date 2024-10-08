@@ -4,13 +4,11 @@ export default [
   {
     path: '/admin',
     name: 'admin',
+    meta: {
+      requireAuth: true,
+    },
     component: () => import('@/views/admin/index.vue'),
     children: [
-      {
-        path: 'login',
-        name: 'adminLogin',
-        component: () => import('@/views/admin/logreg/index.vue'),
-      },
       {
         path: 'manager',
         name: 'adminManager',
@@ -70,5 +68,11 @@ export default [
         ],
       },
     ],
+  },
+
+  {
+    path: '/admin/login',
+    name: 'adminLogin',
+    component: () => import('@/views/admin/logreg/index.vue'),
   },
 ] as RouteRecordRaw[];

@@ -13,7 +13,7 @@
         <StuProfileCard :StudentData="studentData" />
       </div>
       <div v-else>
-        <StuFormUpdate :StudentData="studentData" :Message="msg" />
+        <StuFormUpdate :StudentData="studentData" :Message="msg" :Confirm="confirm" />
       </div>
     </div>
   </div>
@@ -30,6 +30,7 @@ import StuProfileCard from '@/components/StuProfileCard.vue';
 import StuFormUpdate from '@/components/StuFormUpdate.vue';
 
 const msg = ref<string>('确认更新个人信息吗？');
+const confirm = ref<boolean>(false);
 const studentData = ref<ProfileDetail>({
   bachelor_class: '原本科专业',
   bachelor_course: '原本科专业所属的国家“双一流”建设学科',
