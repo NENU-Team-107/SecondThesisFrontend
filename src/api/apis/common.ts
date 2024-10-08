@@ -8,4 +8,4 @@ export const commonCommits = (data: Paginator) => service.post('/common/commits'
 export const commonFile = (data: CommonFileParams) => servicefile.get(
     '/common/file', { params: data }
 );
-export const commonOnline = () => service.get('/common/online');
+export const commonOnline = () => service.get('/common/isOnline');
