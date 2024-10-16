@@ -70,4 +70,4 @@ library.add(
   faCircleXmark,
 );
 
-createApp(App).use(router).use(ElementPlus, { locale: zhCn }).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');
+createApp(App).use(pinia).use(router).use(ElementPlus, { locale: zhCn }).component('font-awesome-icon', FontAwesomeIcon).mount('#app');

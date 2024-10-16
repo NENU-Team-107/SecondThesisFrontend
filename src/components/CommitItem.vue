@@ -50,7 +50,9 @@
       <el-upload v-model:file-list="fileList" :action="uploadFile.url" :headers="uploadFile.headers" multiple
         :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="5"
         :on-exceed="handleExceed">
-        <el-button type="primary">点击上传附件</el-button>
+        <div class="w-full justify-start items-start">
+          <el-button type="primary">点击上传附件</el-button>
+        </div>
         <template #tip>
           <div>
             jpg/png files with a size less than 500KB.
@@ -103,7 +105,7 @@ const exportForm = () => {
 const classType = 'apply';
 const uploadFile = {
   url: `${useSiteInfoStore().getBaseUrl()}/student/uploadFile/${classType}/${commitInfo.value.file_id}`,
-  headers:{
+  headers: {
     Authorization: useAccessTokenStore().getAccessToken(),
   }
 }

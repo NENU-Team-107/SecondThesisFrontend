@@ -1,33 +1,34 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 const asideList = ref([
   {
-    index: '1',
+    index: '/',
     title: '首页',
     icon: 'house',
     path: '/',
   },
   {
-    index: '2',
+    index: '/myapply',
     title: '我的申请',
     icon: 'hand',
     path: '/myapply',
     children: [
       {
-        index: "2-1",
+        index: "/apply/newapply",
         title: "新建申请",
         icon: 'clipboard',
         path: "/apply/newapply",
       },
       {
-        index: "2-2",
+        index: "/apply/submit",
         title: "提交报名",
         icon: 'clock',
         path: "/apply/submit",
       },
       {
-        index: "2-3",
+        index: "/apply/history",
         title: "申请记录",
         icon: 'check',
         path: "/apply/history",
@@ -35,19 +36,19 @@ const asideList = ref([
     ],
   },
   {
-    index: '3',
+    index: '/profile',
     title: '我的信息',
     icon: 'user',
     path: '/profile',
     children: [
       {
-        index: "3-1",
+        index: "/profile/info",
         title: "个人信息",
         icon: 'id-card',
         path: '/profile/info',
       },
       {
-        index: "3-2",
+        index: "/profile/update",
         title: "修改密码",
         icon: 'rotate',
         path: '/profile/update',
@@ -55,7 +56,7 @@ const asideList = ref([
     ],
   },
   {
-    index: '4',
+    index: '/logout',
     title: '退出登录',
     icon: 'shuffle',
     path: 'logout',
@@ -82,7 +83,7 @@ const logout = () => {
 
 </script>
 <template>
-  <el-menu default-active="1" class="w-full h-full text-xl">
+  <el-menu default-active="1" :unique-opened="true" :router="true" class="w-full h-full text-xl">
     <div v-for="item in asideList">
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>
@@ -92,14 +93,14 @@ const logout = () => {
           </div>
         </template>
         <el-menu-item :index="subitem.index" v-for="subitem in item.children">
-          <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(subitem.path)">
+          <div class="flex items-center m-3 w-16 h-full text-lg">
             <font-awesome-icon :icon="'fa-solid fa-' + subitem.icon" />
             <div class="ml-3 text-sm font-bold">{{ subitem.title }}</div>
           </div>
         </el-menu-item>
       </el-sub-menu>
       <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body">
-        <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(item.path)">
+        <div class="flex items-center m-3 w-16 h-full text-lg">
           <font-awesome-icon :icon="'fa-solid fa-' + item.icon" />
           <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
         </div>
