@@ -164,6 +164,7 @@ import { studentUpdateProfile } from '@/api/apis/student';
 import { ElMessage, FormInstance } from 'element-plus';
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
+import { useStudentStore } from '@/store/student';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -268,7 +269,7 @@ const rules = {
   bachelor_course: [
     { required: true, message: '请输入原本科专业所属的国家“双一流”建设学科', trigger: 'blur' },
   ],
-  major:[
+  major: [
     { required: true, message: '请输入原本科专业', trigger: 'blur' },
   ]
 };
@@ -341,7 +342,6 @@ const handleClose = () => {
 const handleSubmit = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate((valid, _fields) => {
-    // console.log(valid, fields);
     if (valid) {
       visible.value = true;
     } else {
@@ -374,10 +374,11 @@ const photoUpload = {
 }
 
 const handleAvatarSuccess = (res: { message: string; code: number }, file: any) => {
-  console.log(res, file);
   if (res.code == 0) {
     ElMessage.success(res.message);
-    studentData.value.photo = URL.createObjectURL(file.raw);
+    const photourl = URL.createObjectURL(file.raw);
+    studentData.value.photo = photourl;
+    useStudentStore().setPhoto(photourl);
   }
   else {
     ElMessage.error(res.message);

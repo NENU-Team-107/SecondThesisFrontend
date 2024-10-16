@@ -8,7 +8,8 @@
       <div v-else>
         <el-result icon="success" title="成功保存提交信息">
           <template #sub-title>
-            <div class="text-gray-600">请在<span class="text-blue-500 px-1">我的申请 -> 提交报名</span>中查看本次申请的文件材料,并上传所需附件材料，确认无误后提交报名。</div>
+            <div class="text-gray-600">请在<span class="text-blue-500 px-1">我的申请 ->
+                提交报名</span>中查看本次申请的文件材料,并上传所需附件材料，确认无误后提交报名。</div>
           </template>
           <template #extra>
             <el-button type="primary" @click="getApply">点击查看</el-button>
@@ -22,72 +23,23 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { studentNewCommit, studentProfile } from '@/api/apis/student';
-import { ProfileDetail, studentNewCommitResp, StudentProfileResp } from '@/types/apis/student';
+import { studentNewCommit } from '@/api/apis/student';
+import { ProfileDetail, studentNewCommitResp } from '@/types/apis/student';
 import StuFormUpdate from '@/components/StuFormUpdate.vue';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import axios from 'axios';
-import { useAccessTokenStore } from '@/store/accessToken';
+import { useStudentStore } from '@/store/student';
 
 const msg = ref<string>('确认更新个人信息并保存本次提交信息吗？');
-const applyForm = ref<ProfileDetail>({
-  bachelor_class: '',
-  bachelor_course: '',
-  bachelor_school: '',
-  birthday: '',
-  domicile: '',
-  email: '',
-  email_verify: true,
-  graduation_no: '',
-  graduation_year: '',
-  home_address: '',
-  id_code: '',
-  major: '',
-  major_phone_number: '',
-  name: '',
-  nation: '',
-  phone_number_verify: true,
-  photo: '',
-  politics: '',
-  sex: '',
-  standby_phone_number: '',
-  thesis_no: '',
-});
+
+const applyForm = ref<ProfileDetail>(useStudentStore().getStudentProfile());
 
 const confirm = ref<boolean>(false);
 
 watch(() => confirm.value, (value) => {
   if (value) {
-    fetchStudentData();
+    applyForm.value = useStudentStore().getStudentProfile();
     submitApplication();
   }
 });
-
-const fetchStudentData = () => {
-  studentProfile().then(response => {
-    const res = response.data as StudentProfileResp;
-    if (res.code === -1) {
-      ElMessage.error(res.message);
-      return;
-    }
-    let profileData = res.profile;
-    applyForm.value = profileData;
-
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${applyForm.value.photo}`, { responseType: 'arraybuffer', 
-    headers: {
-      'Authorization': useAccessTokenStore().getAccessToken(),
-    },
-    }
-    ).then(response => {
-      let blob = new Blob([response.data], { type: 'image/png' });
-      let url = window.URL.createObjectURL(blob);
-      applyForm.value.photo = url;
-    })
-    applyForm.value = res.profile;
-  });
-}
-
-fetchStudentData();
 
 const submitApplication = () => {
   // 提交申请表

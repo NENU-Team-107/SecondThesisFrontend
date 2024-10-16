@@ -87,7 +87,6 @@ const fetchProfile = () => {
       return;
     }
     let profile = res.profile as ProfileDetail;
-    useStudentStore().setProfile(profile);
     axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profile.photo}`, {
       responseType: 'arraybuffer',
       headers: {
@@ -98,7 +97,7 @@ const fetchProfile = () => {
       let blob = new Blob([response.data], { type: 'image/png' });
       let url = window.URL.createObjectURL(blob);
       profile.photo = url;
-      useStudentStore().setPhoto(url);
+      useStudentStore().setProfile(profile);
       router.push('/');
     })
   });
