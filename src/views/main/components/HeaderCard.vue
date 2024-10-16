@@ -20,7 +20,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import titleImage from '@/assets/image/nenu-title.png';
-// import avatarImage from '@/assets/image/avatar.png';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
 

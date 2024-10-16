@@ -1,5 +1,6 @@
 <template>
-  <el-form ref="resetPwdRef" :model="resetPwdForm" :rules="Pwdrules" label-width="auto" label-position="top" class="px-2 py-5">
+  <el-form ref="resetPwdRef" :model="resetPwdForm" :rules="Pwdrules" label-width="auto" label-position="top"
+    class="px-2 py-5">
     <el-form-item label="邮箱" prop="email">
       <el-input v-model="resetPwdForm.email" placeholder="请输入邮箱" clearable />
     </el-form-item>
@@ -18,7 +19,8 @@
     <div class="mt-6 flex items-center justify-end gap-x-6">
       <button
         class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-800/90 px-8 py-2 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
-        @click="submitForm" :disabled="resetPwdForm.email === '' || resetPwdForm.password === ''||resetPwdForm.phone_number===''">修改密码并登录</button>
+        @click="submitForm"
+        :disabled="resetPwdForm.email === '' || resetPwdForm.password === '' || resetPwdForm.phone_number === ''">修改密码并登录</button>
     </div>
   </el-form>
 </template>
@@ -26,11 +28,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-// import { Session } from '@/utils/cache/index';
-import type { StudentResetPwdReq,StudentResetPwdResp } from '@/types/apis/student';
-import { studentResetPwd } from '@/api/apis/student';
+import type { ProfileDetail, StudentProfileResp, StudentResetPwdReq, StudentResetPwdResp } from '@/types/apis/student';
+import { studentProfile, studentResetPwd } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
+import { useSiteInfoStore } from '@/store/siteInfo';
+import axios from 'axios';
+import { useAccessTokenStore } from '@/store/accessToken';
 
 const studentResetPwdData = ref<StudentResetPwdReq>({
   email: '',
@@ -70,6 +74,30 @@ const Pwdrules = ref({
   ]
 });
 
+const fetchProfile = () => {
+  studentProfile().then((response) => {
+    const res = response.data as StudentProfileResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    let profile = res.profile as ProfileDetail;
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profile.photo}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        'Authorization': useAccessTokenStore().getAccessToken(),
+      },
+    }
+    ).then(response => {
+      let blob = new Blob([response.data], { type: 'image/png' });
+      let url = window.URL.createObjectURL(blob);
+      profile.photo = url;
+      useStudentStore().setProfile(profile);
+      router.push('/');
+    })
+  });
+};
+
 const submitForm = (event: Event) => {
   event.preventDefault();
   resetPwdRef.value.validate((valid: any) => {
@@ -87,18 +115,15 @@ const submitForm = (event: Event) => {
         }
         else {
           ElMessage.success('修改密码成功');
+          useAccessTokenStore().setToken(res.token);
           useStudentStore().setToken(res.token);
-          localStorage.setItem('token', res.token);
-          // Session.set('token', res.token);
+          fetchProfile();
         }
-        router.push('/');
       }
-      ).catch((err: any) => {
+      ).catch((_err: any) => {
         ElMessage.error('登录失败，请检查网络设置');
-        console.log(err);
       });
     } else {
-      console.log('error submit!!');
       ElMessage.error('请检查输入');
     }
   });
@@ -106,9 +131,9 @@ const submitForm = (event: Event) => {
 
 
 const fipped = defineModel({
-    required: true,
-    type: Boolean,
-    default: false
+  required: true,
+  type: Boolean,
+  default: false
 })
 
 const backLogin = () => {
