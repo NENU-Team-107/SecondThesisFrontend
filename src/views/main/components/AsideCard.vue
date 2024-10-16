@@ -66,13 +66,6 @@ const asideList = ref([
 const dialogVisible = ref(false);
 
 const router = useRouter();
-const toPath = (path: string) => {
-  if (path === 'logout') {
-    dialogVisible.value = true;
-    return;
-  }
-  router.push(path);
-};
 
 const logout = () => {
   dialogVisible.value = false;
