@@ -41,9 +41,33 @@ import {
   faUserTie,
   faUserGraduate,
   faList,
+  faPlus,
+  faMagnifyingGlassPlus,
+  faCircleCheck,
+  faCircleXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
-library.add(faLocation, faPeopleGroup, faCheck, faHand, faUser, faRightFromBracket, faHouse, faClipboard, faClock, faIdCard, faShuffle, faRotate,faUserTie,faUserGraduate,faList);
+library.add(
+  faLocation,
+  faPeopleGroup,
+  faCheck,
+  faHand,
+  faUser,
+  faRightFromBracket,
+  faHouse,
+  faClipboard,
+  faClock,
+  faIdCard,
+  faShuffle,
+  faRotate,
+  faUserTie,
+  faUserGraduate,
+  faList,
+  faPlus,
+  faMagnifyingGlassPlus,
+  faCircleCheck,
+  faCircleXmark,
+);
 
-createApp(App).use(router).use(ElementPlus,{locale:zhCn}).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');
+createApp(App).use(router).use(ElementPlus, { locale: zhCn }).component('font-awesome-icon', FontAwesomeIcon).use(pinia).mount('#app');

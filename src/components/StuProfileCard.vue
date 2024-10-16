@@ -45,8 +45,13 @@
     <div class="flex items-center flex-col h-52 w-4/12 justify-around">
 
       <div class="ml-4 flex gap-4 w-full flex-col">
-        <img v-if="photoStatus" :src="studentData.photo" class="avatar" />
-        <input type="file" @change="uploadAvatar" />
+        <el-avatar v-if="photoStatus" :src="studentData.photo" :size="160" fit="fill"
+          class="w-48 h-48 rounded-full mx-auto" />
+        <el-avatar v-else :size="160" fit="fill" class="w-48 h-48 rounded-full mx-auto">
+          <span class="text-3xl">
+            {{ studentData.name ? studentData.name : '暂无' }}
+          </span>
+        </el-avatar>
       </div>
     </div>
 
@@ -96,6 +101,12 @@
         <p class="text-gray-500 text-lg">{{ studentData.major === '' ? '暂无' : studentData.major }}</p>
       </div>
     </div>
+    <div class="flex items-center flex-col w-6/12 justify-around">
+      <div class="ml-4 flex gap-4 w-full">
+        <p class="text-lg font-bold min-w-28">原本科专业所属专业类：</p>
+        <p class="text-gray-500 text-lg">{{ studentData.bachelor_class === '' ? '暂无' : studentData.bachelor_class }}</p>
+      </div>
+    </div>
   </div>
   <div class="flex h-fit flex-row justify-around items-center">
     <div class="flex items-center flex-col w-6/12 justify-around">
@@ -135,9 +146,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ProfileDetail, StudentProfileResp } from '@/types/apis/student';
-import { studentUpdatePhoto } from '@/api/apis/student';
-import { ElMessage } from 'element-plus';
+import { ProfileDetail } from '@/types/apis/student';
 
 const studentData = defineModel('StudentData', {
   required: true,
@@ -148,35 +157,7 @@ const photoStatus = ref<Boolean>(false);
 
 const fetchPhoto = () => {
   photoStatus.value = true;
-  // studentGetPhoto(studentData.value.photo).then(response => {
-  //   const res = response.data as StudentProfileResp;
-  //   if (res.code === -1) {
-  //     ElMessage.error(res.message);
-  //     return;
-  //   }
-  //   studentData.photo = res.profile.photo;
-  // });
 }
 
 fetchPhoto();
-
-
-const uploadAvatar = (event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (!file) {
-    return;
-  }
-  const formData = new FormData();
-  formData.append('photo', file);
-  studentUpdatePhoto(formData).then(response => {
-    const res = response.data as StudentProfileResp;
-    if (res.code === -1) {
-      ElMessage.error(res.message);
-      return;
-    }
-    studentData.value.photo = URL.createObjectURL(file);
-    ElMessage.success('上传成功');
-  });
-}
-
 </script>

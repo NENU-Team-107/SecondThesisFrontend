@@ -13,7 +13,7 @@
         <StuProfileCard :StudentData="studentData" />
       </div>
       <div v-else>
-        <StuFormUpdate :StudentData="studentData" :Message="msg" v-model:Confirm="confirm" />
+        <StuFormUpdate :StudentData="studentData" SubmitText="立即更新" :Message="msg" v-model:Confirm="confirm" />
       </div>
     </div>
   </div>
@@ -28,6 +28,9 @@ import { studentProfile } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import StuProfileCard from '@/components/StuProfileCard.vue';
 import StuFormUpdate from '@/components/StuFormUpdate.vue';
+import axios from 'axios';
+import { useSiteInfoStore } from '@/store/siteInfo';
+import { useAccessTokenStore } from '@/store/accessToken';
 
 const msg = ref<string>('确认更新个人信息吗？');
 const confirm = ref<boolean>(false);
@@ -63,8 +66,7 @@ const studentData = ref<ProfileDetail>({
   thesis_no: '',
 });
 
-const completed = ref(false);
-
+const completed = ref(true);
 
 const checkCompleted = () => {
   for (const key in studentData.value) {
@@ -79,6 +81,7 @@ const checkCompleted = () => {
   completed.value = true;
 }
 
+
 const fetchStudentData = () => {
   studentProfile().then(response => {
     const res = response.data as StudentProfileResp;
@@ -86,7 +89,21 @@ const fetchStudentData = () => {
       ElMessage.error(res.message);
       return;
     }
-    studentData.value = res.profile;
+    let profileData = res.profile;
+    studentData.value = profileData;
+
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${studentData.value.photo}`, { responseType: 'arraybuffer', 
+    headers: {
+      'Authorization': useAccessTokenStore().getAccessToken(),
+    },
+    }
+    ).then(response => {
+      let blob = new Blob([response.data], { type: 'image/png' });
+      let url = window.URL.createObjectURL(blob);
+      studentData.value.photo = url;
+      checkCompleted();
+    })
+
     checkCompleted();
   });
 }

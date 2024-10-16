@@ -26,12 +26,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-// import { Session } from '@/utils/cache/index';
-import { StudentLoginReq,StudentLoginResp } from '@/types/apis/student';
-import { studentLogin } from '@/api/apis/student';
+import { ProfileDetail, StudentLoginReq, StudentLoginResp, StudentProfileResp } from '@/types/apis/student';
+import { studentLogin, studentProfile } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { useSiteInfoStore } from '@/store/siteInfo';
+import axios from 'axios';
 
 const studentLoginData = ref<StudentLoginReq>({
   email: '',
@@ -78,6 +79,31 @@ const rules = ref({
   ]
 });
 
+const fetchProfile = () => {
+  studentProfile().then((response) => {
+    const res = response.data as StudentProfileResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    let profile = res.profile as ProfileDetail;
+    useStudentStore().setProfile(profile);
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profile.photo}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        'Authorization': useAccessTokenStore().getAccessToken(),
+      },
+    }
+    ).then(response => {
+      let blob = new Blob([response.data], { type: 'image/png' });
+      let url = window.URL.createObjectURL(blob);
+      profile.photo = url;
+      useStudentStore().setPhoto(url);
+      router.push('/');
+    })
+  });
+};
+
 const submitForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.validate((valid: any) => {
@@ -104,12 +130,10 @@ const submitForm = (event: Event) => {
           ElMessage.error(res.message);
           return;
         }
-        else {
-          ElMessage.success('登录成功');
-          useStudentStore().setToken(res.token);
-          useAccessTokenStore().setToken(res.token);
-        }
-        router.push('/');
+        ElMessage.success('登录成功');
+        useStudentStore().setToken(res.token);
+        useAccessTokenStore().setToken(res.token);
+        fetchProfile();
       }
       ).catch((err: any) => {
         ElMessage.error('登录失败，请检查网络设置');
@@ -129,9 +153,9 @@ const resetForm = (event: Event) => {
 };
 
 const fipped = defineModel({
-    required: true,
-    type: Boolean,
-    default: false
+  required: true,
+  type: Boolean,
+  default: false
 })
 
 const forgetPwd = () => {

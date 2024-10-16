@@ -1,5 +1,5 @@
 import service from '@/api/server/service';
-import servicefile from '../server/servicefile';
+import servicefile from '../server/serviceFile';
 import { Paginator, CommonFileParams } from '@/types/apis/common';
 
 

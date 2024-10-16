@@ -1,7 +1,8 @@
 // 封装axios
 import { useAccessTokenStore } from '@/store/accessToken';
+import { useSiteInfoStore } from '@/store/siteInfo';
 import axios from 'axios';
-const baseUrl = 'http://localhost:8080/api/v1';
+const baseUrl = useSiteInfoStore().getBaseUrl();
 // 创建axios实例
 const service = axios.create({
     baseURL: baseUrl, // api的base_url

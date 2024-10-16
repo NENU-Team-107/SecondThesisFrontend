@@ -8,8 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Paginator, PaginatorResp } from '@/types/apis/common';
+import { Paginator } from '@/types/apis/common';
 
 const paginatorData = defineModel({
   required: true,
@@ -24,7 +23,6 @@ const handleCurrentChange = (val: number) => {
   console.log(`当前页: ${val}`);
 };
 
-const defaultData = [];
 const pageSizes = [10, 20, 30, 40];
 
 </script>

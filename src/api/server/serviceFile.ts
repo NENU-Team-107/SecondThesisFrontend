@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { useSiteInfoStore } from '@/store/siteInfo';
 
-const baseUrl = 'http://localhost:8080/api/v1';
+const baseUrl = useSiteInfoStore().getBaseUrl();
 const servicefile = axios.create({
   baseURL: baseUrl, // api的base_url
   timeout: 5000, // 请求超时时间

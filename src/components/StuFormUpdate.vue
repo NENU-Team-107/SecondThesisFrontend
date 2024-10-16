@@ -2,6 +2,25 @@
   <el-form :model="studentData" label-width="120px" ref="studentDataRef" :rules="rules"
     class="bg-white w-full h-fit py-8 px-16" :onchange="contentChange">
     <el-row>
+      <el-col :span="24">
+        <el-form-item label="个人照片">
+          <el-upload class="h-32 w-32 justify-center items-center border-dotted border-2 border-gray-200"
+            :name="photoUpload.name" :action="photoUpload.url" :headers="photoUpload.headers" :show-file-list="false"
+            :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <font-awesome-icon icon="fa-solid fa-plus" />
+          </el-upload>
+          <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
+            <img :src="studentData.photo" class="h-full w-full object-cover ">
+            <div
+              class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">
+              <font-awesome-icon icon="fa-solid fa-magnifying-glass-plus" style="color: #ffffff;" />
+              <span class="text-white">查看图片</span>
+            </div>
+          </div>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
       <el-col :span="12">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="studentData.name" placeholder="请输入姓名" />
@@ -88,8 +107,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="原本科专业" prop="bachelor_class">
-          <el-input v-model="studentData.bachelor_class" placeholder="请输入原本科专业" />
+        <el-form-item label="原本科专业" prop="major">
+          <el-input v-model="studentData.major" placeholder="请输入原本科专业" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -99,12 +118,15 @@
     <el-form-item label="学位证编号" prop="thesis_no">
       <el-input v-model="studentData.thesis_no" placeholder="请输入学位证编号" />
     </el-form-item>
+    <el-form-item label="原本科专业所属专业类" prop="bachelor_class" label-width="190px">
+      <el-input v-model="studentData.bachelor_class" placeholder="请输入原本科专业所属专业类" />
+    </el-form-item>
     <el-form-item label="原本科专业所属的国家“双一流”建设学科" prop="bachelor_course" label-width="300px">
       <el-input v-model="studentData.bachelor_course" placeholder="请输入原本科专业所属的国家“双一流”建设学科" />
     </el-form-item>
   </el-form>
   <div class="w-full flex justify-end items-center px-16 pb-6">
-    <el-button type="primary" @click="handleSubmit(studentDataRef)">提交申请</el-button>
+    <el-button type="primary" @click="handleSubmit(studentDataRef)">{{ submitText }}</el-button>
   </div>
 
   <el-dialog v-model="visible" title="提示" width="30%" :before-close="handleClose">
@@ -114,13 +136,34 @@
       <el-button type="primary" @click="submitApplyForm">确定</el-button>
     </div>
   </el-dialog>
+
+  <el-dialog v-model="dialogVisible">
+    <template #header>
+      <div class="text-center text-lg">我的头像</div>
+    </template>
+    <img w-full :src="dialogImageUrl" alt="头像" />
+  </el-dialog>
+
 </template>
+
+<style>
+.el-upload {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+</style>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { ProfileDetail } from '@/types/apis/student';
 import { studentUpdateProfile } from '@/api/apis/student';
 import { ElMessage, FormInstance } from 'element-plus';
+import { useAccessTokenStore } from '@/store/accessToken';
+import { useSiteInfoStore } from '@/store/siteInfo';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -130,6 +173,12 @@ const studentData = defineModel('StudentData', {
 const message = defineModel('Message', {
   required: true,
   type: String,
+});
+
+const submitText = defineModel('SubmitText', {
+  required: false,
+  type: String,
+  default: '提交更新',
 });
 
 const props = defineProps({
@@ -208,7 +257,7 @@ const rules = {
     { required: true, message: '请输入原本科学校', trigger: 'blur' },
   ],
   bachelor_class: [
-    { required: true, message: '请输入原本科专业', trigger: 'blur' },
+    { required: true, message: '请输入原本科所属专业类', trigger: 'blur' },
   ],
   graduation_no: [
     { required: true, message: '请输入毕业证编号', trigger: 'blur' },
@@ -219,6 +268,9 @@ const rules = {
   bachelor_course: [
     { required: true, message: '请输入原本科专业所属的国家“双一流”建设学科', trigger: 'blur' },
   ],
+  major:[
+    { required: true, message: '请输入原本科专业', trigger: 'blur' },
+  ]
 };
 
 const nations = [
@@ -311,5 +363,46 @@ const submitApplyForm = () => {
     console.log(error);
     ElMessage.error('提交失败');
   });
+}
+
+const photoUpload = {
+  name: 'photo',
+  url: `${useSiteInfoStore().getBaseUrl()}/student/updatePhoto`,
+  headers: {
+    Authorization: useAccessTokenStore().getAccessToken(),
+  },
+}
+
+const handleAvatarSuccess = (res: { message: string; code: number }, file: any) => {
+  console.log(res, file);
+  if (res.code == 0) {
+    ElMessage.success(res.message);
+    studentData.value.photo = URL.createObjectURL(file.raw);
+  }
+  else {
+    ElMessage.error(res.message);
+  }
+}
+
+const beforeAvatarUpload = (file: any) => {
+  const isJPG = file.type === 'image/jpeg';
+  const isPNG = file.type === 'image/png';
+  const isLt2M = file.size / 1024 / 1024 < 2;
+
+  if (!isJPG && !isPNG) {
+    ElMessage.error('上传头像图片只能是 JPG/PNG 格式!');
+  }
+  if (!isLt2M) {
+    ElMessage.error('上传头像图片大小不能超过 2MB!');
+  }
+  return (isJPG || isPNG) && isLt2M;
+}
+
+const dialogVisible = ref(false)
+const dialogImageUrl = ref('')
+
+const previewPhoto = () => {
+  dialogImageUrl.value = studentData.value.photo
+  dialogVisible.value = true
 }
 </script>
