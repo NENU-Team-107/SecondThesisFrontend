@@ -29,18 +29,6 @@ const paginator = ref<Paginator>({
 });
 
 const commitsList = ref<CommitDetail[]>([]);
-// const commitsList = ref<CommitDetail[]>([
-//   {
-//     commit: false,
-//     commiter_name: 'Dodola',
-//     enroll_major: '计算机科学与技术',
-//     file_id: '1',
-//     id: 1,
-//     passed: true,
-//     reason: '该生符合报读要求，予以通过。',
-//   },
-// ]);
-
 
 const fetchCommits = () => {
   console.log('fetchCommits');

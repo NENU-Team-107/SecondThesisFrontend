@@ -11,20 +11,25 @@
         <h1 class="text-lg font-thin my-2 w-full ">
           {{ item.name }}
         </h1>
-        <el-upload drag multiple :acrion="geturl(item.index)" :headers="headers" :on-success="handleSuccess"
-          :limit="item.limit" :on-exceed="exceedFiles" :file-list="fileMap[item.index]" :auto-upload="false"
-          :show-file-list="false" class="w-full">
+        <el-upload drag 
+          :acrion="item.url" 
+          :headers="headers" 
+          :on-success="handleSuccess" 
+          method="post"
+          :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true" :on-preview="handlePreview"
+          :before-remove="beforeRemove" :on-exceed="handleExceed" :before-upload="beforeUpload" :show-file-list="true"
+          class="w-full">
           <el-icon class="el-icon--upload">
             <upload-filled />
           </el-icon>
           <div class="el-upload__text">
             拖拽文件到此处，或<em>点击此处上传文件</em>
           </div>
-          <template #tip>
+          <!-- <template #tip>
             <div class="el-upload__tip">
               jpg/png files with a size less than 500kb
             </div>
-          </template>
+          </template> -->
         </el-upload>
       </div>
     </div>
@@ -36,49 +41,58 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
-import { ElMessage, UploadFile } from 'element-plus';
+import { ElMessage, ElMessageBox, UploadFile, UploadProps } from 'element-plus';
 import { commonFile } from '@/api/apis/common';
 import { CommonFileParams } from '@/types/apis/common';
 const route = useRoute();
 const file_id = route.params.file_id;
-
+const baseurl = useSiteInfoStore().getBaseUrl();
+console.log(file_id);
 const classTypeList = [
   {
     index: 2,
     name: '本人身份证复印件（正反面）',
+    url: baseurl + '/student/uploadFile/2/' + file_id,
     limit: 2,
   },
   {
     index: 3,
     name: '本科毕业证书、学位证书复印件',
+    url: baseurl + '/student/uploadFile/3/' + file_id,
     limit: 2,
   },
   {
     index: 4,
     name: '《中国高等教育学位在线验证报告》学信网打印件（日期要求）',
+    url: baseurl + '/student/uploadFile/4/' + file_id,
     limit: 1,
   },
   {
     index: 5,
     name: '《教育部学历证书电子注册备案表》学信网打印件（日期要求）',
+    url: baseurl + '/student/uploadFile/5/' + file_id,
     limit: 1,
   },
   {
     index: 6,
     name: '《教育部学籍在线验证报告》学信网打印件（仅应届生）',
+    url: baseurl + '/student/uploadFile/6/' + file_id,
     limit: 1,
   },
   {
     index: 7,
     name: '本科学习成绩单复印件（须加盖本科教务公章）',
+    url: baseurl + '/student/uploadFile/7/' + file_id,
     limit: 1,
   },
   {
     index: 8,
     name: '与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料复印件（近三年）',
+    url: baseurl + '/student/uploadFile/8/' + file_id,
     limit: 99,
   }
 ];
+console.log(classTypeList);
 
 const fileMap: Record<number, UploadFile[]> = {
   2: [],
@@ -103,25 +117,44 @@ const fetchFileList = () => {
       } else {
         fileMap[key] = res.data;
       }
-    })
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 }
-// fetchFileList();
-
-const exceedFiles = (files: any, fileList: any) => {
-  console.log(files);
-  console.log(fileList);
-}
+fetchFileList();
 
 const headers = {
   'Authorization': useAccessTokenStore().getAccessToken()
 };
-const geturl = (classType: number) => {
-  return useSiteInfoStore().getBaseUrl() + '/student/uploadFile' + classType + '/' + file_id;
+
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
 }
 
-const handleSuccess = (response: any, file: any) => {
-  console.log(response);
-  console.log(file);
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  ElMessage.warning(
+    `The limit is 3, you selected ${files.length} files this time, add up to ${files.length + uploadFiles.length
+    } totally`
+  )
 }
+
+const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+  return ElMessageBox.confirm(
+    `Cancel the transfer of ${uploadFile.name} ?`
+  ).then(
+    () => true,
+    () => false
+  )
+}
+
+const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
+  console.log(response, file, fileList)
+}
+
+const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+  console.log(file);
+  return true;
+}
+
 </script>
