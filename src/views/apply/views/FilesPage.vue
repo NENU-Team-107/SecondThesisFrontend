@@ -11,25 +11,19 @@
         <h1 class="text-lg font-thin my-2 w-full ">
           {{ item.name }}
         </h1>
-        <el-upload drag 
-          :acrion="item.url" 
-          :headers="headers" 
-          :on-success="handleSuccess" 
-          method="post"
-          :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true" :on-preview="handlePreview"
-          :before-remove="beforeRemove" :on-exceed="handleExceed" :before-upload="beforeUpload" :show-file-list="true"
-          class="w-full">
+        <el-upload drag :action="item.url" :headers="headers" :on-success="handleSuccess"
+          method="post" :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true"
+          :on-preview="handlePreview" :before-remove="handleBeforeRemove" :on-exceed="handleExceed"
+          :before-upload="handleBeforeUpload" :show-file-list="true" class="w-full">
           <el-icon class="el-icon--upload">
             <upload-filled />
           </el-icon>
           <div class="el-upload__text">
             拖拽文件到此处，或<em>点击此处上传文件</em>
           </div>
-          <!-- <template #tip>
-            <div class="el-upload__tip">
-              jpg/png files with a size less than 500kb
-            </div>
-          </template> -->
+          <template #tip>
+            已上传：{{ fileMap[item.index].length }} / {{ item.limit }}
+          </template>
         </el-upload>
       </div>
     </div>
@@ -37,29 +31,31 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
-import { ElMessage, ElMessageBox, UploadFile, UploadProps } from 'element-plus';
-import { commonFile } from '@/api/apis/common';
+import { ElMessage, UploadProps, UploadUserFile } from 'element-plus';
 import { CommonFileParams } from '@/types/apis/common';
+import axios from 'axios';
+import { studentUploadFile } from '@/api/apis/student';
 const route = useRoute();
 const file_id = route.params.file_id;
 const baseurl = useSiteInfoStore().getBaseUrl();
-console.log(file_id);
-const classTypeList = [
+
+const classTypeList = ref([
   {
     index: 2,
     name: '本人身份证复印件（正反面）',
     url: baseurl + '/student/uploadFile/2/' + file_id,
-    limit: 2,
+    limit: 1,
   },
   {
     index: 3,
     name: '本科毕业证书、学位证书复印件',
     url: baseurl + '/student/uploadFile/3/' + file_id,
-    limit: 2,
+    limit: 1,
   },
   {
     index: 4,
@@ -89,12 +85,24 @@ const classTypeList = [
     index: 8,
     name: '与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料复印件（近三年）',
     url: baseurl + '/student/uploadFile/8/' + file_id,
-    limit: 99,
+    limit: 1,
   }
-];
-console.log(classTypeList);
+]);
 
-const fileMap: Record<number, UploadFile[]> = {
+const getFileName = (key: number) => {
+  return classTypeList.value[key - 2].name;
+}
+
+const getIndex = (name: string) => {
+  for (let i = 0; i < classTypeList.value.length; i++) {
+    if (classTypeList.value[i].name === name) {
+      return classTypeList.value[i].index;
+    }
+  }
+  return -1;
+}
+
+const fileMap = ref<Record<number, UploadUserFile[]>>({
   2: [],
   3: [],
   4: [],
@@ -102,23 +110,32 @@ const fileMap: Record<number, UploadFile[]> = {
   6: [],
   7: [],
   8: [],
-};
+});
 
 const fetchFileList = () => {
-  for (const key in fileMap) {
+  for (let key = 2; key <= 8; key++) {
     const data = {
-      "class": key,
-      "id": file_id,
+      class: key.toString(),
+      id: file_id
     } as CommonFileParams;
-    commonFile(data).then((response) => {
-      const res = response.data;
-      if (res.code === -1) {
-        ElMessage.error(res.message);
-      } else {
-        fileMap[key] = res.data;
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/common/file`,
+      {
+        responseType: 'arraybuffer',
+        params: data,
+        headers: {
+          'Authorization': useAccessTokenStore().getAccessToken(),
+        },
       }
-    }).catch((error) => {
-      console.log(error);
+    ).then((response) => {
+      let blob = new Blob([response.data], { type: response.headers['content-type'] });
+      let url = window.URL.createObjectURL(blob);
+      const fileData = {
+        name: getFileName(key),
+        url: url,
+      } as UploadUserFile;
+      fileMap.value[Number(key)] = [fileData];
+    }).catch(err => {
+      console.log(err);
     });
   }
 }
@@ -128,33 +145,64 @@ const headers = {
   'Authorization': useAccessTokenStore().getAccessToken()
 };
 
-const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-  console.log(uploadFile)
-}
-
-const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-  ElMessage.warning(
-    `The limit is 3, you selected ${files.length} files this time, add up to ${files.length + uploadFiles.length
-    } totally`
-  )
-}
-
-const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
-  return ElMessageBox.confirm(
-    `Cancel the transfer of ${uploadFile.name} ?`
-  ).then(
-    () => true,
-    () => false
-  )
-}
-
 const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
   console.log(response, file, fileList)
+  const res = response;
+  if (res.code === -1) {
+    ElMessage.error(res.message);
+  } else {
+    ElMessage.success('上传成功');
+    fetchFileList();
+  }
 }
 
-const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+const handleBeforeUpload: UploadProps['beforeUpload'] = (file) => {
   console.log(file);
   return true;
+}
+
+const handleExceed: UploadProps['onExceed'] = (files, fileList) => {
+  // 覆盖前一个文件并上传
+  let key = getIndex(fileList[0].name);
+  fileMap.value[key] = files.map(file => ({
+    name: file.name,
+    url: URL.createObjectURL(file),
+  }));
+  // 上传文件
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('file', file);
+  });
+  const urldata = {
+    class: key.toString(),
+    id: file_id
+  } as CommonFileParams;
+  studentUploadFile(formData, urldata).then(response => {
+    const res = response.data;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+    } else {
+      ElMessage.warning('已覆盖前一个文件。');
+      fetchFileList();
+    }
+  }).catch(err => {
+    console.log(err);
+  });
+  return true;
+}
+
+
+const handlePreview: UploadProps['onPreview'] = (file) => {
+  window.open(file.url, '_blank');
+}
+
+const handleBeforeRemove: UploadProps['beforeRemove'] = (file, fileList) => {
+  console.log(file, fileList);
+  return true;
+}
+
+const handleRemove: UploadProps['onRemove'] = (file, fileList) => {
+  console.log(file, fileList);
 }
 
 </script>

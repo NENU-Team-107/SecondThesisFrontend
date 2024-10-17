@@ -25,7 +25,7 @@ interface CommonFileParams {
 }
 
 interface CommitDetail {
-  commit: boolean;
+  Commit: boolean;
   committer_name: string;
   enroll_major: string;
   file_id: string;

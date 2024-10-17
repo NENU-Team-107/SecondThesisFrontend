@@ -74,6 +74,11 @@ interface studentNewCommitResp{
   message: string;
 }
 
+interface studentSaveCommitRes {
+  id: number;
+  enroll_major: string;
+}
+
 export type {
   StudentLoginReq,
   StudentLoginResp,
@@ -85,4 +90,5 @@ export type {
   ProfileDetail,
   StudentProfileResp,
   studentNewCommitResp,
+  studentSaveCommitRes
 };

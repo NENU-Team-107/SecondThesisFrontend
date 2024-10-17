@@ -24,7 +24,7 @@ import { ElMessage } from 'element-plus';
 const paginator = ref<Paginator>({
   limit: 10,
   offset: 10,
-  total: 0,
+  total: 10,
   page: 1,
 });
 
