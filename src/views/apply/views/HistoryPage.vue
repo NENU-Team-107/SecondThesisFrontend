@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="mt-3 w-4/5 bg-white rounded-lg shadow-md p-2">
-    <CommitItem v-for="commit in commitsList" :CommitInfo="commit" />
+    <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsHistory="true"/>
   </div>
   </div>
 </template>
@@ -39,8 +39,11 @@ const fetchCommits = () => {
       ElMessage.error(res.msg);
       return;
     } else {
-      commitsList.value = res.data;
-
+      for (let i = 0; i < res.data.length; i++){
+        if (res.data[i].Commit) {
+          commitsList.value.push(res.data[i]);
+        }
+      }
       paginator.value.total = res.total;
       paginator.value.page = res.page;
       paginator.value.limit = res.limit;

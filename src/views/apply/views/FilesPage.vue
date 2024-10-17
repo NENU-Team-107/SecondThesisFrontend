@@ -152,6 +152,7 @@ const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
     ElMessage.error(res.message);
   } else {
     ElMessage.success('上传成功');
+    // 上传成功后刷新文件列表
     fetchFileList();
   }
 }

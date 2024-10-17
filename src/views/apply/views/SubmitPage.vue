@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="mt-3 w-4/5 bg-white rounded-lg shadow-md p-2">
-    <CommitItem v-for="commit in commitsList" :CommitInfo="commit" />
-  </div>
+      <CommitItem v-for="commit in commitsList" :CommitInfo="commit" />
+    </div>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ const fetchCommits = () => {
       paginator.value.page = res.page;
       paginator.value.limit = res.limit;
       paginator.value.offset = res.offset;
-      
+
     }
   });
 };
