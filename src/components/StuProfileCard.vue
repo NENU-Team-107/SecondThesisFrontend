@@ -1,5 +1,4 @@
 <template>
-
   <div class="flex h-fit flex-row justify-around items-center">
     <div class="flex items-center flex-col h-52 w-4/12 justify-around">
       <div class="ml-4 flex gap-4 w-full">

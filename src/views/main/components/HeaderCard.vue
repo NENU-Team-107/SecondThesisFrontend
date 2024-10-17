@@ -37,9 +37,14 @@ const fetchProfile = () => {
     const res = response.data as StudentProfileResp;
     if (res.code === -1) {
       ElMessage.error(res.message);
+      if (!res.profile) {
+        localStorage.clear();
+        router.push('/login');
+      }
       return;
     }
     let profile = res.profile as ProfileDetail;
+    console.log(profile);
     axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profile.photo}`, {
       responseType: 'arraybuffer',
       headers: {
@@ -51,7 +56,6 @@ const fetchProfile = () => {
       let url = window.URL.createObjectURL(blob);
       profile.photo = url;
       useStudentStore().setProfile(profile);
-      router.push('/');
     })
   });
 };
@@ -59,13 +63,6 @@ const fetchProfile = () => {
 const dialogVisible = ref(false);
 
 const router = useRouter();
-
-const toPath = (path: string) => {
-  if (path === 'logout') {
-    return;
-  }
-  router.push(path);
-};
 
 const logout = () => {
   dialogVisible.value = false;

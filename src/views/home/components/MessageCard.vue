@@ -3,8 +3,6 @@
     <div class="flex justify-between items-center">
       <div class="text-lg font-bold">消息</div>
       <div class="flex items-center">
-        <el-button type="text" icon="el-icon-edit" circle></el-button>
-        <el-button type="text" icon="el-icon-refresh" circle></el-button>
       </div>
     </div>
     <div class="mt-3">

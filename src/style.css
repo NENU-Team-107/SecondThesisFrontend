@@ -27,3 +27,7 @@ html,body {
 ::-webkit-scrollbar {
   display: none;
 }
+
+.el-menu--horizontal {
+  --el-menu-horizontal-height: 100px;
+}

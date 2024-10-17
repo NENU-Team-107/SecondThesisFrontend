@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-center h-full w-full">
-    <div class="bg-white w-11/12 p-8 rounded-lg shadow-lg">
+    <div class="bg-white w-11/12 p-8 rounded-lg shadow-lg mt-24">
       <div class="flex justify-between items-center my-2">
         <h1 class="text-2xl font-bold w-fit">个人信息</h1>
         <div>
@@ -31,6 +31,7 @@ import StuFormUpdate from '@/components/StuFormUpdate.vue';
 import axios from 'axios';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { useStudentStore } from '@/store/student';
 
 const msg = ref<string>('确认更新个人信息吗？');
 const confirm = ref<boolean>(false);
@@ -90,17 +91,19 @@ const fetchStudentData = () => {
       return;
     }
     let profileData = res.profile;
-    studentData.value = profileData;
 
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${studentData.value.photo}`, { responseType: 'arraybuffer', 
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`, { responseType: 'arraybuffer', 
     headers: {
       'Authorization': useAccessTokenStore().getAccessToken(),
     },
     }
     ).then(response => {
-      let blob = new Blob([response.data], { type: 'image/png' });
+      let blob = new Blob([response.data], { type: response.headers['content-type'] });
       let url = window.URL.createObjectURL(blob);
-      studentData.value.photo = url;
+      profileData.photo = url;
+      console.log(profileData);
+      studentData.value = profileData;
+      useStudentStore().setProfile(profileData);
       checkCompleted();
     })
 

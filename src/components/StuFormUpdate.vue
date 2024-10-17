@@ -139,9 +139,9 @@
 
   <el-dialog v-model="dialogVisible">
     <template #header>
-      <div class="text-center text-lg">我的头像</div>
+      <div class="text-center text-lg">我的证件照</div>
     </template>
-    <img w-full :src="dialogImageUrl" alt="头像" />
+    <img w-full :src="dialogImageUrl" alt="证件照" />
   </el-dialog>
 
 </template>
@@ -260,12 +260,12 @@ const rules = {
   bachelor_class: [
     { required: true, message: '请输入原本科所属专业类', trigger: 'blur' },
   ],
-  graduation_no: [
-    { required: true, message: '请输入毕业证编号', trigger: 'blur' },
-  ],
-  thesis_no: [
-    { required: true, message: '请输入学位证编号', trigger: 'blur' },
-  ],
+  // graduation_no: [
+  //   { required: true, message: '请输入毕业证编号', trigger: 'blur' },
+  // ],
+  // thesis_no: [
+  //   { required: true, message: '请输入学位证编号', trigger: 'blur' },
+  // ],
   bachelor_course: [
     { required: true, message: '请输入原本科专业所属的国家“双一流”建设学科', trigger: 'blur' },
   ],

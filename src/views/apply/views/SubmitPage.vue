@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center p-2">
+  <div class="flex flex-col items-center justify-center p-2 w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">提交材料预览</h1>
       <Pagination v-model="paginator" />
@@ -19,6 +19,7 @@ import CommitItem from '@/components/CommitItem.vue';
 import { commonCommits } from '@/api/apis/common';
 import { Paginator } from '@/types/apis/common';
 import { CommitDetail } from '@/types/apis/common';
+import { ElMessage } from 'element-plus';
 
 const paginator = ref<Paginator>({
   limit: 10,
@@ -27,24 +28,37 @@ const paginator = ref<Paginator>({
   page: 1,
 });
 
-// const commitsList = ref<CommitDetails[]>([]);
-const commitsList = ref<CommitDetail[]>([
-  {
-    commit: false,
-    commiter_name: 'Dodola',
-    enroll_major: '计算机科学与技术',
-    file_id: '1',
-    id: 1,
-    passed: true,
-    reason: '该生符合报读要求，予以通过。',
-  },
-]);
+const commitsList = ref<CommitDetail[]>([]);
+// const commitsList = ref<CommitDetail[]>([
+//   {
+//     commit: false,
+//     commiter_name: 'Dodola',
+//     enroll_major: '计算机科学与技术',
+//     file_id: '1',
+//     id: 1,
+//     passed: true,
+//     reason: '该生符合报读要求，予以通过。',
+//   },
+// ]);
 
 
 const fetchCommits = () => {
   console.log('fetchCommits');
-  commonCommits(paginator.value).then((res) => {
+  commonCommits(paginator.value).then((response) => {
+    const res = response.data;
     console.log(res);
+    if (res.code === -1) {
+      ElMessage.error(res.msg);
+      return;
+    } else {
+      commitsList.value = res.data;
+
+      paginator.value.total = res.total;
+      paginator.value.page = res.page;
+      paginator.value.limit = res.limit;
+      paginator.value.offset = res.offset;
+      
+    }
   });
 };
 

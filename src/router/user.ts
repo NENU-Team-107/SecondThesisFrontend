@@ -36,6 +36,11 @@ export default [
             name: 'applyHistory',
             component: () => import('@/views/apply/views/HistoryPage.vue'),
           },
+          {
+            path: 'files/:file_id',
+            name: 'applyFiles',
+            component: () => import('@/views/apply/views/FilesPage.vue'),
+          }
         ],
       },
       {

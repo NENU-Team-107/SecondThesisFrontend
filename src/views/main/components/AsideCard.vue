@@ -63,6 +63,12 @@ const asideList = ref([
   }
 ]);
 
+const handleClick= (index: string) => {
+  if (index === '/logout') {
+    dialogVisible.value = true;
+  }
+};
+
 const dialogVisible = ref(false);
 
 const router = useRouter();
@@ -76,7 +82,7 @@ const logout = () => {
 
 </script>
 <template>
-  <el-menu default-active="1" :unique-opened="true" :router="true" class="w-full h-full text-xl">
+  <el-menu default-active="/" :unique-opened="true" :router="true" class="w-full h-full text-xl">
     <div v-for="item in asideList">
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>
@@ -92,7 +98,7 @@ const logout = () => {
           </div>
         </el-menu-item>
       </el-sub-menu>
-      <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body">
+      <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body" @click="handleClick(item.path)">
         <div class="flex items-center m-3 w-16 h-full text-lg">
           <font-awesome-icon :icon="'fa-solid fa-' + item.icon" />
           <div class="ml-3 text-sm font-bold">{{ item.title }}</div>

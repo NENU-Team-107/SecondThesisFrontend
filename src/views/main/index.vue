@@ -1,16 +1,13 @@
 <template>
-  <div class="flex h-full w-full flex-col">
+  <div class="h-full w-full">
     <div class="w-full h-20 bg-white z-10 fixed">
       <HeaderCard />
     </div>
-    <div class="flex-1 flex w-full pt-20">
-      <!-- 侧边 -->
-      <div class="h-full w-48 bg-white">
-        <AsideCard />
-      </div>
-      <div class="flex-1 h-full w-full bg-zinc-100">
-        <router-view/>
-      </div>
+    <div class="h-full w-48 bg-white pt-20 fixed z-9">
+      <AsideCard />
+    </div>
+    <div class="h-fit bg-zinc-100 flex pl-48 pt-20 w-full">
+      <router-view />
     </div>
   </div>
 </template>
