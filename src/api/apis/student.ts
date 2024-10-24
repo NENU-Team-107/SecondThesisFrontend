@@ -15,6 +15,8 @@ export const studentLogin = (data: StudentLoginReq) => service.post('/student/lo
 export const studentRegister = (data: StudentRegisterReq) => service.post('/student/register', data);
 export const studentVerifyRegMail = (data: StudentVerifyMailCodeReq) => service.get('/student/verifyRegMail', { params: data });
 export const studentVerifyMailCode = (data: StudentVerifyMailCodeReq) => service.get('/student/verifyMailCode', { params: data });
+// 重置密码
+export const studentSendResetPwdMailCode = (mail: String) => service.get(`/student/sendResetPwdMailCode?mail=${mail}`); 
 export const studentResetPwd = (data: StudentResetPwdReq) => service.post('/student/resetPwd', data);
 // 导出报名表
 export const studentExport = (commitID: string) => service.get(`/student/export/${commitID}`);

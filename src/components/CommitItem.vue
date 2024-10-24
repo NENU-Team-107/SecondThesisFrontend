@@ -30,7 +30,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item >
+          <el-form-item>
             <template #label>
               <span class="font-semibold text-slate-900 truncate text-lg">是否提交：</span>
             </template>
@@ -72,6 +72,9 @@ import { studentExport, studentSaveCommit } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { studentSaveCommitRes } from '@/types/apis/student';
+import { useSiteInfoStore } from '@/store/siteInfo';
+import { useAccessTokenStore } from '@/store/accessToken';
+import axios from 'axios';
 const router = useRouter();
 const commitInfo = defineModel('CommitInfo', {
   required: true,
@@ -119,15 +122,24 @@ const checkFiles = () => {
 };
 
 const exportForm = () => {
-  studentExport(commitInfo.value.id.toString()).then((response) => {
-    console.log(response);
-    // 接受数据response，并转为下载文件
-    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+  const apiurl = `${useSiteInfoStore().getBaseUrl()}/student/export/${commitInfo.value.id}`;
+  console.log(apiurl);
+  axios.get(apiurl, {
+    headers: {
+      'Authorization': useAccessTokenStore().getAccessToken(),
+    },
+    responseType: 'blob',
+  }).then((response) => {
+    const blob = response.data;
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = '报名表.docx';
     a.click();
+    window.URL.revokeObjectURL(url); // 释放内存
+  }).catch((error) => {
+    console.error('下载失败', error);
+    ElMessage.error('下载失败');
   });
 }
 </script>

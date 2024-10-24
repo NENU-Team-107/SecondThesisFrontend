@@ -4,6 +4,16 @@
     <el-form-item label="邮箱" prop="email">
       <el-input v-model="resetPwdForm.email" placeholder="请输入邮箱" clearable />
     </el-form-item>
+    <el-form-item label="验证码" prop="code">
+      <div class="flex w-full">
+        <el-input v-model="resetPwdForm.code" placeholder="请检查邮箱并填写验证码" clearable />
+        <button
+          class="border-transparent border rounded-md w-28 bg-blue-800/90 text-sm font-medium text-white hover:bg-blue-900  focus:outline-none focus: focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
+          @click="sendVerifyCode" :disabled="resetPwdForm.email === ''">
+          {{ sended ? (counter <= 0 ? '重新发送' : counter + 's' ) : '发送验证码' }} 
+        </button>
+      </div>
+    </el-form-item>
     <el-form-item label="手机号" prop="phone_number">
       <el-input v-model="resetPwdForm.phone_number" placeholder="请输入手机号" clearable />
     </el-form-item>
@@ -39,13 +49,15 @@ import { useAccessTokenStore } from '@/store/accessToken';
 const studentResetPwdData = ref<StudentResetPwdReq>({
   email: '',
   password: '',
-  phone_number: ''
+  phone_number: '',
+  code: ''
 });
 
 interface ResetPwdData {
   email: string;
   phone_number: string;
   password: string;
+  code: string;
 }
 
 const resetPwdRef = ref();
@@ -53,7 +65,8 @@ const resetPwdRef = ref();
 const resetPwdForm = ref<ResetPwdData>({
   email: '',
   phone_number: '',
-  password: ''
+  password: '',
+  code: ''
 });
 
 // 根据表单验证状态判断是否可以提交
@@ -64,6 +77,9 @@ const Pwdrules = ref({
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur'] }
+  ],
+  code:[
+    { required: true, message: '请输入验证码', trigger: 'blur' }
   ],
   phone_number: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
@@ -138,6 +154,45 @@ const fipped = defineModel({
 
 const backLogin = () => {
   fipped.value = false;
+};
+
+const sendVerifyCode = () => {
+  console.log('sendVerifyCode');
+  if (resetPwdForm.value.email === '') {
+    ElMessage.error('请输入邮箱');
+    return;
+  }
+  const data = {
+    email: resetPwdForm.value.email,
+    phone_number: resetPwdForm.value.phone_number
+  };
+  console.log(data);
+  // 发送验证码
+};
+
+const counter = ref(0);
+
+const sended = ref(false);
+
+const sendCode = () => {
+  if (resetPwdForm.value.email === '') {
+    ElMessage.error('请输入邮箱');
+    return;
+  }
+  const data = {
+    email: resetPwdForm.value.email,
+    phone_number: resetPwdForm.value.phone_number
+  };
+  console.log(data);
+  // 发送验证码
+  sended.value = true;
+  counter.value = 60;
+  const timer = setInterval(() => {
+    counter.value--;
+    if (counter.value <= 0) {
+      clearInterval(timer);
+    }
+  }, 1000);
 };
 
 </script>

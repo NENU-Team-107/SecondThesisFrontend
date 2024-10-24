@@ -1,5 +1,5 @@
 <template>
-    <div :class="fipped?'bg-white relative w-full py-auto duration-500 h-96':'bg-white relative w-full py-auto duration-500 h-80'">
+    <div :class="fipped?'bg-white relative w-full py-auto duration-500 h-108':'bg-white relative w-full py-auto duration-500 h-80'">
         <div :class="fipped ? 'front-fipped' : 'front'">
             <LoginCard v-model="fipped" />
         </div>
@@ -10,6 +10,9 @@
 </template>
 
 <style scoped>
+.h-108{
+    height: 27rem;
+}
 .front {
     box-sizing: border-box;
     perspective: 1000px;

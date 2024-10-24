@@ -28,6 +28,7 @@ interface StudentVerifyMailCodeReq {
 
 interface StudentResetPwdReq {
   email: string;
+  code: string;
   phone_number: string;
   password: string;
 }
