@@ -88,7 +88,8 @@ const fetchData = () => {
     }
     ElMessage.success('获取成功');
   }).catch((err) => {
-    ElMessage.error(err);
+    console.log(err);
+    ElMessage.error('获取失败');
   });
 };
 

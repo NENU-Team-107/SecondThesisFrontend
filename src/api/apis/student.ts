@@ -27,3 +27,4 @@ export const studentSaveCommit = (data: studentSaveCommitRes) => service.post('/
 export const studentUpdatePhoto = (data: FormData) => servicefile.post('/student/updatePhoto', data);
 export const studentUpdateProfile = (data: ProfileDetail) => service.post('/student/updateProfile', data);
 export const studentUploadFile = (data: FormData, url: CommonFileParams) => servicefile.post('/student/uploadFile/' + url.class + '/' + url.id, data);
+export const studentDeleteFile = (url: CommonFileParams) => servicefile.post('/student/deleteFile/' + url.class + '/' + url.id);

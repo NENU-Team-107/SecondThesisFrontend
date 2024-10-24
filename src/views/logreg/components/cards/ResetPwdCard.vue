@@ -10,8 +10,7 @@
         <button
           class="border-transparent border rounded-md w-28 bg-blue-800/90 text-sm font-medium text-white hover:bg-blue-900  focus:outline-none focus: focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
           @click="sendVerifyCode" :disabled="resetPwdForm.email === ''">
-          {{ sended ? (counter <= 0 ? '重新发送' : counter + 's' ) : '发送验证码' }} 
-        </button>
+          {{ sended ? (counter <= 0 ? '重新发送' : counter + 's') : '发送验证码' }} </button>
       </div>
     </el-form-item>
     <el-form-item label="手机号" prop="phone_number">
@@ -19,6 +18,9 @@
     </el-form-item>
     <el-form-item label="新密码" prop="password">
       <el-input v-model="resetPwdForm.password" placeholder="请输入密码" show-password clearable />
+    </el-form-item>
+    <el-form-item label="确认密码" prop="check_password">
+      <el-input v-model="resetPwdForm.check_password" placeholder="请再次输入密码" show-password clearable />
     </el-form-item>
     <div class="flex w-full mb-6">
       <button class="flex-1 text-right rounded-md text-blue-800 text-sm underline" type="button" link
@@ -39,7 +41,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import type { ProfileDetail, StudentProfileResp, StudentResetPwdReq, StudentResetPwdResp } from '@/types/apis/student';
-import { studentProfile, studentResetPwd } from '@/api/apis/student';
+import { studentProfile, studentResetPwd, studentSendResetPwdMailCode } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
 import { useSiteInfoStore } from '@/store/siteInfo';
@@ -58,6 +60,7 @@ interface ResetPwdData {
   phone_number: string;
   password: string;
   code: string;
+  check_password: string;
 }
 
 const resetPwdRef = ref();
@@ -66,7 +69,8 @@ const resetPwdForm = ref<ResetPwdData>({
   email: '',
   phone_number: '',
   password: '',
-  code: ''
+  code: '',
+  check_password: ''
 });
 
 // 根据表单验证状态判断是否可以提交
@@ -78,7 +82,7 @@ const Pwdrules = ref({
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur'] }
   ],
-  code:[
+  code: [
     { required: true, message: '请输入验证码', trigger: 'blur' }
   ],
   phone_number: [
@@ -87,6 +91,21 @@ const Pwdrules = ref({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' }
+  ],
+  check_password: [
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    {
+      validator: (_rule: any, value: string, callback: any) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== resetPwdForm.value.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur'
+    }
   ]
 });
 
@@ -156,7 +175,8 @@ const backLogin = () => {
   fipped.value = false;
 };
 
-const sendVerifyCode = () => {
+const sendVerifyCode = (event: Event) => {
+  event.preventDefault();
   console.log('sendVerifyCode');
   if (resetPwdForm.value.email === '') {
     ElMessage.error('请输入邮箱');
@@ -168,31 +188,32 @@ const sendVerifyCode = () => {
   };
   console.log(data);
   // 发送验证码
+  studentSendResetPwdMailCode(data.email).then((response) => {
+    const res = response.data as any;
+    console.log(res);
+    if (res.code !== 0) {
+      ElMessage.error(res.message);
+      return;
+    }
+    else {
+      ElMessage.success('验证码发送成功');
+      sended.value = true;
+      counter.value = 60;
+      const interval = setInterval(() => {
+        counter.value--;
+        if (counter.value <= 0) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+  }
+  ).catch((_err: any) => {
+    ElMessage.error('发送验证码失败，请检查网络设置');
+  });
 };
 
 const counter = ref(0);
 
 const sended = ref(false);
-
-const sendCode = () => {
-  if (resetPwdForm.value.email === '') {
-    ElMessage.error('请输入邮箱');
-    return;
-  }
-  const data = {
-    email: resetPwdForm.value.email,
-    phone_number: resetPwdForm.value.phone_number
-  };
-  console.log(data);
-  // 发送验证码
-  sended.value = true;
-  counter.value = 60;
-  const timer = setInterval(() => {
-    counter.value--;
-    if (counter.value <= 0) {
-      clearInterval(timer);
-    }
-  }, 1000);
-};
 
 </script>

@@ -40,6 +40,11 @@ export default [
             path: 'files/:file_id',
             name: 'applyFiles',
             component: () => import('@/views/apply/views/FilesPage.vue'),
+          },
+          {
+            path: 'previewfiles/:file_id',
+            name: 'applyPreviewFile',
+            component: () => import('@/views/apply/views/PreviewFilePage.vue'),
           }
         ],
       },

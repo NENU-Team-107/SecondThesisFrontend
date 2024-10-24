@@ -36,10 +36,10 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
-import { ElMessage, UploadProps, UploadUserFile } from 'element-plus';
+import { ElMessage, ElMessageBox, UploadProps, UploadUserFile } from 'element-plus';
 import { CommonFileParams } from '@/types/apis/common';
 import axios from 'axios';
-import { studentUploadFile } from '@/api/apis/student';
+import { studentDeleteFile, studentUploadFile } from '@/api/apis/student';
 const route = useRoute();
 const file_id = route.params.file_id;
 const baseurl = useSiteInfoStore().getBaseUrl();
@@ -199,11 +199,31 @@ const handlePreview: UploadProps['onPreview'] = (file) => {
 
 const handleBeforeRemove: UploadProps['beforeRemove'] = (file, fileList) => {
   console.log(file, fileList);
+  ElMessageBox.confirm(
+    '确定删除该文件吗？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(() => {
+    const data = {
+      class: getIndex(file.name).toString(),
+      id: file_id,
+    } as CommonFileParams;
+    studentDeleteFile(data).then(() => {
+      ElMessage.success('删除成功');
+      fetchFileList();
+    }).catch(err => {
+      ElMessage.error('删除失败，请重试');
+      console.log(err);
+    });
+  }).catch(() => {
+    ElMessage.info('已取消删除');
+  });
   return true;
 }
 
-const handleRemove: UploadProps['onRemove'] = (file, fileList) => {
-  console.log(file, fileList);
-}
 
 </script>

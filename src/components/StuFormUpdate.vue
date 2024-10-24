@@ -5,6 +5,7 @@
       <el-col :span="24">
         <el-form-item label="个人照片">
           <el-upload class="h-32 w-32 justify-center items-center border-dotted border-2 border-gray-200"
+          tip="只能上传PNG格式的照片，大小不超过2MB"
             :name="photoUpload.name" :action="photoUpload.url" :headers="photoUpload.headers" :show-file-list="false"
             :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
             <font-awesome-icon icon="fa-solid fa-plus" />
@@ -386,17 +387,16 @@ const handleAvatarSuccess = (res: { message: string; code: number }, file: any) 
 }
 
 const beforeAvatarUpload = (file: any) => {
-  const isJPG = file.type === 'image/jpeg';
   const isPNG = file.type === 'image/png';
   const isLt2M = file.size / 1024 / 1024 < 2;
 
-  if (!isJPG && !isPNG) {
-    ElMessage.error('上传头像图片只能是 JPG/PNG 格式!');
+  if (!isPNG) {
+    ElMessage.error('上传头像图片只能是 PNG 格式!');
   }
   if (!isLt2M) {
     ElMessage.error('上传头像图片大小不能超过 2MB!');
   }
-  return (isJPG || isPNG) && isLt2M;
+  return isPNG && isLt2M;
 }
 
 const dialogVisible = ref(false)

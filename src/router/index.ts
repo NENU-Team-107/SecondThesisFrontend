@@ -24,8 +24,8 @@ const router = createRouter({
 
 // 路由护卫
 router.beforeEach((to, from, next) => {
-  // console.log('to:', to);
-  // console.log('from:', from);
+  console.log('to:', to);
+  console.log('from:', from);
   if (to.path === '/logout') {
     // ElMessageBox.confirm(
     //   '确定退出登录吗?',
@@ -76,11 +76,19 @@ router.beforeEach((to, from, next) => {
   //     next();
   //   } else {
   //     ElMessage.error(res.message);
-  //     if(to.path.startsWith('/admin')) {
+  //     if (to.path.startsWith('/admin')) {
   //       next('/admin/login');
   //     } else {
   //       next('/login');
   //     }
+  //   }
+  // }).catch((error) => { 
+  //   console.log(error);
+  //   ElMessage.error('网络错误');
+  //   if (to.path.startsWith('/admin')) {
+  //     next('/admin/login');
+  //   } else {
+  //     next('/login');
   //   }
   // });
 });

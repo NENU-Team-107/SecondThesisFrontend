@@ -3,25 +3,25 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const asideList = ref([
   {
-    index: '1',
+    index: '/admin/manager',
     title: '管理员',
     icon: 'user-tie',
     path: '/admin/manager',
   },
   {
-    index: '2',
+    index: '/admin/manager/student',
     title: '账号管理',
     icon: 'user-graduate',
     path: '/admin/manager/student',
     children: [
       {
-        index: "2-1",
+        index: "/admin/manager/student/create",
         title: "创建账号",
         icon: 'user-graduate',
         path: "/admin/manager/student/create",
       },
       {
-        index: "2-2",
+        index: "/admin/manager/student/query",
         title: "查询信息",
         icon: 'user-tie',
         path: "/admin/manager/student/query",
@@ -29,19 +29,19 @@ const asideList = ref([
     ]
   },
   {
-    index: '3',
+    index: '/admin/manager/apply',
     title: '全部申请',
     icon: 'hand',
     path: '/admin/manager/apply',
     children: [
       {
-        index: "3-1",
+        index: "/admin/manager/apply/todo",
         title: "待处理",
         icon: 'clock',
         path: "/admin/manager/apply/todo",
       },
       {
-        index: "3-2",
+        index: "/admin/manager/apply/history",
         title: "历史申请",
         icon: 'check',
         path: "/admin/manager/apply/history",
@@ -49,19 +49,19 @@ const asideList = ref([
     ],
   },
   {
-    index: '4',
+    index: '/admin/manager/profile',
     title: '我的信息',
     icon: 'user',
     path: '/admin/manager/profile',
     children: [
       {
-        index: "4-1",
+        index: "/admin/manager/profile/info",
         title: "个人信息",
         icon: 'id-card',
         path: '/admin/manager/profile/info',
       },
       {
-        index: "4-2",
+        index: "/admin/manager/profile/update",
         title: "账号信息",
         icon: 'rotate',
         path: '/admin/manager/profile/update',
@@ -69,33 +69,32 @@ const asideList = ref([
     ],
   },
   {
-    index: '4',
+    index: '/logout',
     title: '退出登录',
     icon: 'shuffle',
-    path: 'logout',
+    path: '/logout',
   }
 ]);
+
+const handleClick = (index: string) => {
+  if (index === '/logout') {
+    dialogVisible.value = true;
+  }
+};
 
 const dialogVisible = ref(false);
 
 const router = useRouter();
-const toPath = (path: string) => {
-  if (path === 'logout') {
-    dialogVisible.value = true;
-    return;
-  }
-  router.push(path);
-};
 
 const logout = () => {
   dialogVisible.value = false;
   localStorage.clear();
-  router.push('/login');
+  router.push('/admin/login');
 };
 
 </script>
 <template>
-  <el-menu default-active="1" class="w-full h-full text-xl">
+  <el-menu default-active="/admin/manager" class="w-full h-full text-xl" router>
     <div v-for="item in asideList">
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>
@@ -105,14 +104,15 @@ const logout = () => {
           </div>
         </template>
         <el-menu-item :index="subitem.index" v-for="subitem in item.children">
-          <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(subitem.path)">
+          <div class="flex items-center m-3 w-16 h-full text-lg">
             <font-awesome-icon :icon="'fa-solid fa-' + subitem.icon" />
             <div class="ml-3 text-sm font-bold">{{ subitem.title }}</div>
           </div>
         </el-menu-item>
       </el-sub-menu>
-      <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body">
-        <div class="flex items-center m-3 w-16 h-full text-lg" @click="toPath(item.path)">
+      <el-menu-item v-else :index="item.index" class="flex items-center w-full p-2 text-xl font-body"
+        @click="handleClick(item.path)">
+        <div class="flex items-center m-3 w-16 h-full text-lg">
           <font-awesome-icon :icon="'fa-solid fa-' + item.icon" />
           <div class="ml-3 text-sm font-bold">{{ item.title }}</div>
         </div>

@@ -59,7 +59,7 @@ const asideList = ref([
     index: '/logout',
     title: '退出登录',
     icon: 'shuffle',
-    path: 'logout',
+    path: '/logout',
   }
 ]);
 

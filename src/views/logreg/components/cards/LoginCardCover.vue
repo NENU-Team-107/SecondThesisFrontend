@@ -1,17 +1,17 @@
 <template>
-    <div :class="fipped?'bg-white relative w-full py-auto duration-500 h-108':'bg-white relative w-full py-auto duration-500 h-80'">
-        <div :class="fipped ? 'front-fipped' : 'front'">
+    <div :class="fipped?'bg-white relative w-full py-auto duration-500 h-32rem':'bg-white relative w-full py-auto duration-500 h-80'">
+        <div v-if="!fipped" :class="fipped ? 'front-fipped' : 'front'">
             <LoginCard v-model="fipped" />
         </div>
-        <div :class="fipped ? 'back-fipped' : 'back'">
+        <div v-else :class="fipped ? 'back-fipped' : 'back'">
             <ResetPwdCard v-model="fipped" />
         </div>
     </div>
 </template>
 
 <style scoped>
-.h-108{
-    height: 27rem;
+.h-32rem{
+    height: 32rem;
 }
 .front {
     box-sizing: border-box;
@@ -62,7 +62,7 @@
     width: 100%;
     height: 100%;
     background-color: white;
-    z-index: 2;
+    z-index: 1;
     margin: auto;
 }
 </style>

@@ -57,6 +57,7 @@
     </el-form>
     <div v-if="IsHistory" class="flex justify-end w-full px-10">
       <el-button type="success" @click="exportForm">导出报名表</el-button>
+      <el-button type="primary" @click="checkFiles">查看附件</el-button>
     </div>
     <div v-else class="flex justify-end w-full">
       <el-button v-if="!commitInfo.Commit" type="success" @click="submit" class="mr-5">立即申请</el-button>
@@ -68,7 +69,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { CommitDetail } from '@/types/apis/common';
-import { studentExport, studentSaveCommit } from '@/api/apis/student';
+import { studentSaveCommit } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { studentSaveCommitRes } from '@/types/apis/student';
@@ -118,7 +119,12 @@ const submit = () => {
 };
 
 const checkFiles = () => {
-  router.push('/apply/files/' + commitInfo.value.file_id);
+  if (IsHistory) {
+    router.push('/apply/previewfiles/' + commitInfo.value.file_id);
+  }
+  else {
+    router.push('/apply/files/' + commitInfo.value.file_id);
+  }
 };
 
 const exportForm = () => {
