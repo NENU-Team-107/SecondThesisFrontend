@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center p-2 w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">历史提交</h1>
-      <Pagination v-model:paginator="paginator" @update:pagenation="handlePageChange" />
+      <Pagination v-model:paginator="paginator" @update:pagination="handlePageChange" />
       <div class="text-2xl font-bold my-3 w-full text-center">
       </div>
     </div>

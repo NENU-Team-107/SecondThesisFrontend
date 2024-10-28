@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-semibold text-slate-900">学生信息管理</h1>
     </div>
     <div class="px-3 flex items-center justify-between w-full">
-      <Pagination v-model:pagination="pagination" @update:pagenation="handlePageChange" />
+      <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
       <el-button @click="fetchData" type="primary" round>重新获取</el-button>
     </div>
     <StudentList v-model="studentList" />

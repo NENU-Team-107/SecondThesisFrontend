@@ -26,13 +26,14 @@ const props = defineProps({
 });
 
 
-const emit = defineEmits(['update:pagenation']);
+const emit = defineEmits(['update:pagination']);
 
 const pageSizes = [10, 20, 30, 40];
 
 const handleSizeChange = (val: number) => {
   console.log(props.pagination);
-  emit('update:pagenation', {
+  props.pagination.page = 1;
+  emit('update:pagination', {
     ...props.pagination,
     limit: val,
   });
@@ -40,7 +41,7 @@ const handleSizeChange = (val: number) => {
 
 const handleCurrentChange = (val: number) => {
   console.log(props.pagination);
-  emit('update:pagenation', {
+  emit('update:pagination', {
     ...props.pagination,
     page: val,
   });

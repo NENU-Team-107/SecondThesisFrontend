@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center">
+  <div class="flex flex-col items-center justify-center w-full">
     <el-card class="w-4/5">
       <div class="flex justify-between items-center my-2 flex-col">
         <h1 class="text-2xl font-bold w-fit">创建学生账号</h1>
@@ -64,7 +64,7 @@ const addIdCode = () => {
     id_code.value = '';
     return;
   }
-  let pattern = /^[0-9]{17}[0-9X]$/;
+  let pattern = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
   if (!pattern.test(id_code.value)) {
     ElNotification({
       title: '添加失败',

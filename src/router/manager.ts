@@ -13,6 +13,7 @@ export default [
       {
         path: 'manager',
         name: 'adminManager',
+        redirect: '/admin/manager/student/query',
         component: () => import('@/views/admin/main/index.vue'),
         children: [
           {

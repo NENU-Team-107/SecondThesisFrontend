@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col items-center justify-center">
+  <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
-      <Pagination v-model:pagination="pagination" @update:pagenation="handlePageChange" />
+      <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
       <div class="font-bold my-3 w-full text-center">
         <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsAdmin="isadmin" />
       </div>
