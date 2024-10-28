@@ -4,6 +4,7 @@ export default [
   {
     path: '/admin',
     name: 'admin',
+    redirect: '/admin/manager',
     meta: {
       requireAuth: true,
     },
@@ -28,7 +29,7 @@ export default [
                 path: 'create',
                 name: 'adminManagerStudentCreate',
                 component: () => import('@/views/admin/views/student/views/CreatePage.vue'),
-              }
+              },
             ],
           },
           {
@@ -62,7 +63,7 @@ export default [
                 path: 'update',
                 name: 'adminProfileUpdate',
                 component: () => import('@/views/admin/views/profile/views/UpdatePage.vue'),
-              }
+              },
             ],
           },
         ],

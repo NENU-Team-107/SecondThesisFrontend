@@ -1,7 +1,7 @@
 <template>
   <div class="m-2 flex justify-center items-center flex-col">
-    <h1 class="text-m font-bold my-3 w-full text-left px-10 text-gray-600">申请编号：{{ commitInfo.file_id }}</h1>
-    <el-form class="w-full text-lg px-10">
+    <span class="text-m font-bold my-3 w-full text-left px-10 text-gray-600">申请编号：{{ commitInfo.file_id }}</span>
+    <el-form class="w-full text-m px-10">
       <el-row>
         <el-col :span="12">
           <el-form-item>
@@ -54,28 +54,50 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item>
+            <template #label>
+              <span class="font-semibold text-slate-900 truncate text-lg">同意/驳回理由：</span>
+            </template>
+            <span class="text-lg">{{ commitInfo.reason }}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
-    <div v-if="IsHistory" class="flex justify-end w-full px-10">
-      <el-button type="success" @click="exportForm">导出报名表</el-button>
-      <el-button type="primary" @click="checkFiles">查看附件</el-button>
+    <div v-if="IsAdmin" class="flex justify-between w-full px-10">
+      <div class="flex-1 mr-3">
+        <el-input v-model="resson" placeholder="请输入同意/驳回理由" />
+      </div>
+      <div>
+        <el-button type="success" @click="checkCommit(true)" class="mr-3">同意</el-button>
+        <el-button type="danger" @click="checkCommit(false)" class="mr-3">驳回</el-button>
+        <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
+      </div>
+    </div>
+    <div v-else-if="!IsHistory" class="flex justify-end w-full px-10">
+      <el-button v-if="!commitInfo.Commit" type="success" @click="submit" class="mr-3">立即申请</el-button>
+      <el-button v-if="!commitInfo.Commit" type="primary" @click="checkFiles">查看附件信息</el-button>
     </div>
     <div v-else class="flex justify-end w-full">
-      <el-button v-if="!commitInfo.Commit" type="success" @click="submit" class="mr-5">立即申请</el-button>
-      <el-button v-if="!commitInfo.Commit" type="primary" @click="checkFiles">查看附件信息</el-button>
+      <el-button type="success" @click="exportForm">导出报名表</el-button>
+      <el-button type="primary" @click="checkFiles">查看附件</el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CommitDetail } from '@/types/apis/common';
+import { CommitDetail, CommitResp } from '@/types/apis/common';
 import { studentSaveCommit } from '@/api/apis/student';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { studentSaveCommitRes } from '@/types/apis/student';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useAccessTokenStore } from '@/store/accessToken';
 import axios from 'axios';
+import { adminCheckCommit } from '@/api/apis/admin';
+import { CommitDetails } from '@/types/apis/admin';
 const router = useRouter();
 const commitInfo = defineModel('CommitInfo', {
   required: true,
@@ -83,6 +105,11 @@ const commitInfo = defineModel('CommitInfo', {
 });
 
 const confirmed = ref(false);
+const IsAdmin = defineModel('IsAdmin', {
+  required: false,
+  type: Boolean,
+  default: false,
+});
 
 const testCommitInfo = () => {
   if (commitInfo.value.Commit) {
@@ -118,8 +145,42 @@ const submit = () => {
   });
 };
 
-const checkFiles = () => {
-  if (IsHistory) {
+const resson = ref('');
+
+const checkCommit = (status: boolean) => {
+  const msg = status ? '确认通过该申请吗？' : '确认驳回该申请吗？';
+  ElMessageBox.confirm(msg, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    submitCheck(status);
+  }).catch(() => {
+    ElMessage.info('已取消');
+  });
+};
+
+const submitCheck = (status: boolean) => {
+  const data = {
+    id: commitInfo.value.id,
+    committer_name: commitInfo.value.committer_name,
+    commit: commitInfo.value.Commit,
+    passed: status,
+    reason: resson.value,
+  } as CommitDetails;
+  console.log(data);
+  adminCheckCommit(data).then((response) => {
+    const res = response.data as CommitResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    ElMessage.success(res.message);
+  });
+}
+
+const checkFiles = (_index: number) => {
+  if (IsHistory || IsAdmin) {
     router.push('/apply/previewfiles/' + commitInfo.value.file_id);
   }
   else {

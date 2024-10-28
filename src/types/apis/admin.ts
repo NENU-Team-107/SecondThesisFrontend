@@ -16,11 +16,11 @@ interface CommitDetails{
     file_id: string;
     id: number;
     passed: true;
-    resson: string;
+    reason: string;
 }
 
 interface AdminAccountsReq { 
-    id_code: string[];
+    id_codes: string[];
 }
 
 interface CommitIDs { 

@@ -15,7 +15,7 @@
         <el-input v-model="ruleForm.idCode" placeholder="请输入身份证号" clearable />
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="ruleForm.password" placeholder="请输入密码" show-password clearable />
+        <el-input v-model="ruleForm.password" type="password" placeholder="请输入密码" show-password clearable />
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
         <el-input v-model="ruleForm.checkPass" placeholder="请再次输入密码" show-password clearable />

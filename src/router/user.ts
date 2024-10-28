@@ -4,21 +4,22 @@ export default [
   {
     path: '/',
     name: 'root',
-    redirect: '/home',
+    redirect: '/apply',
     meta: {
       // 添加该字段，表示进入这个路由是需要登录的
       requireAuth: true,
     },
     component: () => import('@/views/main/index.vue'),
     children: [
-      {
-        path: '/home',
-        name: 'home',
-        component: () => import('@/views/home/index.vue'),
-      },
+      // {
+      //   path: '/home',
+      //   name: 'home',
+      //   component: () => import('@/views/home/index.vue'),
+      // },
       {
         path: '/apply',
         name: 'apply',
+        redirect: '/apply/newapply',
         component: () => import('@/views/apply/index.vue'),
         children: [
           {
@@ -45,7 +46,7 @@ export default [
             path: 'previewfiles/:file_id',
             name: 'applyPreviewFile',
             component: () => import('@/views/apply/views/PreviewFilePage.vue'),
-          }
+          },
         ],
       },
       {

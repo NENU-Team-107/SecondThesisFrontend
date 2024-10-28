@@ -10,7 +10,7 @@
       </div>
       <el-alert v-show="!completed" title="请完善个人信息并提交更新" type="warning" :closable="false" show-icon />
       <div v-if="!editStatus" class="grid gap-6 grid-flow-row">
-        <StuProfileCard :StudentData="studentData" />
+        <StuProfileCard :StudentData="studentData" :PhotoStatus="photoStatus" />
       </div>
       <div v-else>
         <StuFormUpdate :StudentData="studentData" SubmitText="立即更新" :Message="msg" v-model:Confirm="confirm" />
@@ -21,17 +21,16 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-// import defaultAvatar from '@/assets/image/default_avatar.png';
 import { ProfileDetail, StudentProfileResp } from '@/types/apis/student';
 import { Edit } from '@element-plus/icons-vue';
 import { studentProfile } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import StuProfileCard from '@/components/StuProfileCard.vue';
 import StuFormUpdate from '@/components/StuFormUpdate.vue';
-import axios from 'axios';
-import { useSiteInfoStore } from '@/store/siteInfo';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { useSiteInfoStore } from '@/store/siteInfo';
 import { useStudentStore } from '@/store/student';
+import axios from 'axios';
 
 const msg = ref<string>('确认更新个人信息吗？');
 const confirm = ref<boolean>(false);
@@ -82,7 +81,17 @@ const checkCompleted = () => {
   completed.value = true;
 }
 
-
+const photoStatus = ref(false);
+const validateImage = (url: string) => {
+  let img = new Image();
+  img.src = url;
+  img.onload = () => {
+    photoStatus.value = true;
+  }
+  img.onerror = () => {
+    photoStatus.value = false;
+  }
+}
 const fetchStudentData = () => {
   studentProfile().then(response => {
     const res = response.data as StudentProfileResp;
@@ -91,30 +100,31 @@ const fetchStudentData = () => {
       return;
     }
     let profileData = res.profile;
-
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`, { responseType: 'arraybuffer', 
-    headers: {
-      'Authorization': useAccessTokenStore().getAccessToken(),
-    },
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        'Authorization': useAccessTokenStore().getAccessToken(),
+      },
     }
     ).then(response => {
       let blob = new Blob([response.data], { type: response.headers['content-type'] });
       let url = window.URL.createObjectURL(blob);
       profileData.photo = url;
+      validateImage(url);
       console.log(profileData);
       studentData.value = profileData;
-      useStudentStore().setProfile(profileData);
       checkCompleted();
+      useStudentStore().setProfile(profileData);
     })
-
     checkCompleted();
   });
 }
 
 fetchStudentData();
 
-const editStatus = ref(false);
 
+
+const editStatus = ref(false);
 const edit = () => {
   editStatus.value = !editStatus.value;
 }

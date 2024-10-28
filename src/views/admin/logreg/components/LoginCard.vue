@@ -2,8 +2,8 @@
   <div>
     <h2 class="w-full text-center font-bold text-xl">管理员登录</h2>
   </div>
-  <el-form ref="loginRef" :model="ruleForm" :rules="rules" label-width="auto" label-position="top" class="px-2 py-5 bg-white">
-    <el-form-item label="账号" prop="username">
+  <el-form ref="loginRef" :model="ruleForm" :rules="rules" label-width="auto" label-position="top" class="px-2 py-5 bg-white w-80">
+    <el-form-item label="账号" prop="name">
       <el-input v-model="ruleForm.name" placeholder="请输入管理员账号" clearable />
     </el-form-item>
     <el-form-item label="密码" prop="password">

@@ -183,6 +183,12 @@ const submitText = defineModel('SubmitText', {
   default: '提交更新',
 });
 
+const EditStatus = defineModel('EditStatus', {
+  required: false,
+  type: Boolean,
+  default: true,
+});
+
 const props = defineProps({
   Confirm: {
     type: Boolean,
@@ -238,7 +244,7 @@ const rules = {
     { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码1', trigger: 'blur' },
   ],
   standby_phone_number: [
-    { required: true, message: '请输入手机号码2', trigger: 'blur' },
+    // { required: true, message: '请输入手机号码2', trigger: 'blur' },
     { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码2', trigger: 'blur' },
   ],
   email: [

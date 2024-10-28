@@ -152,11 +152,10 @@ const studentData = defineModel('StudentData', {
   type: Object as () => ProfileDetail,
 });
 
-const photoStatus = ref<Boolean>(false);
+const photoStatus = defineModel('PhotoStatus', {
+  required: true,
+  type: Boolean,
+  default: false,
+});
 
-const fetchPhoto = () => {
-  photoStatus.value = true;
-}
-
-fetchPhoto();
 </script>

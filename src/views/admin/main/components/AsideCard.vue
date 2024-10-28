@@ -48,26 +48,26 @@ const asideList = ref([
       },
     ],
   },
-  {
-    index: '/admin/manager/profile',
-    title: '我的信息',
-    icon: 'user',
-    path: '/admin/manager/profile',
-    children: [
-      {
-        index: "/admin/manager/profile/info",
-        title: "个人信息",
-        icon: 'id-card',
-        path: '/admin/manager/profile/info',
-      },
-      {
-        index: "/admin/manager/profile/update",
-        title: "账号信息",
-        icon: 'rotate',
-        path: '/admin/manager/profile/update',
-      },
-    ],
-  },
+  // {
+  //   index: '/admin/manager/profile',
+  //   title: '我的信息',
+  //   icon: 'user',
+  //   path: '/admin/manager/profile',
+  //   children: [
+  //     {
+  //       index: "/admin/manager/profile/info",
+  //       title: "个人信息",
+  //       icon: 'id-card',
+  //       path: '/admin/manager/profile/info',
+  //     },
+  //     {
+  //       index: "/admin/manager/profile/update",
+  //       title: "账号信息",
+  //       icon: 'rotate',
+  //       path: '/admin/manager/profile/update',
+  //     },
+  //   ],
+  // },
   {
     index: '/logout',
     title: '退出登录',
@@ -94,7 +94,7 @@ const logout = () => {
 
 </script>
 <template>
-  <el-menu default-active="/admin/manager" class="w-full h-full text-xl" router>
+  <el-menu default-active="/admin/manager" :unique-opened="true" class="w-full h-full text-xl" router>
     <div v-for="item in asideList">
       <el-sub-menu v-if="item.children" :index="item.index">
         <template #title>

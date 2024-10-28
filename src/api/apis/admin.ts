@@ -3,7 +3,7 @@ import type { Paginator } from '@/types/apis/common';
 import type { AdminLoginReq, CommitDetails, AdminAccountsReq, CommitIDs } from '@/types/apis/admin';
 
 export const adminLogin = (data: AdminLoginReq) => service.post('/admin/login', data);
-export const adminAccounts = (data: Paginator) => service.post('/admin/accounts', data);
+export const adminAccounts = (data: Paginator) => service.get(`/admin/accounts?limit=${data.limit}&page=${data.page}`);
 export const adminCheckCommit = (data: CommitDetails) => service.post('/admin/checkCommit', data);
 export const adminCreateAccounts = (data: AdminAccountsReq) => service.post('/admin/createAccounts', data);
 export const adminDeleteAccounts = (data: AdminAccountsReq) => service.post('/admin/deleteAccounts', data);

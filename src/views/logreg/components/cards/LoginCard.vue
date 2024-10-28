@@ -1,10 +1,10 @@
 <template>
   <el-form ref="loginRef" :model="ruleForm" :rules="rules" label-width="auto" label-position="top" class="px-2 py-5">
     <el-form-item label="账号" prop="username">
-      <el-input v-model="ruleForm.username" placeholder="请输入身份证号/邮箱/手机号" clearable />
+      <el-input v-model="ruleForm.username" type="mail" placeholder="请输入身份证号/邮箱" clearable />
     </el-form-item>
     <el-form-item label="密码" prop="password">
-      <el-input v-model="ruleForm.password" placeholder="请输入密码" show-password clearable />
+      <el-input v-model="ruleForm.password" type="password" placeholder="请输入密码" show-password clearable />
     </el-form-item>
     <div class="flex w-full mb-6">
       <button class="flex-1 text-right rounded-md text-blue-800 text-sm underline" type="button" link

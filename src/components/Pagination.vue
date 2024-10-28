@@ -1,13 +1,15 @@
 <template>
   <div class="w-full flex">
-    <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.limit"
-      :page-sizes="pageSizes" size="default" :disabled="false" :background="true"
-      layout="total, sizes, prev, pager, next, jumper" prev-text="上一页" next-text="下一页" :total="pagination.total"
-      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+    <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.limit" :page-sizes="pageSizes"
+      size="default" :disabled="false" :background="true" layout="total, sizes, prev, pager, next, jumper"
+      prev-text="上一页" next-text="下一页" :total="pagination.total" @size-change="handleSizeChange"
+      @current-change="handleCurrentChange" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { Paginator } from '@/types/apis/common';
 
 const props = defineProps({
@@ -23,10 +25,13 @@ const props = defineProps({
   },
 });
 
+
 const emit = defineEmits(['update:pagenation']);
 
+const pageSizes = [10, 20, 30, 40];
+
 const handleSizeChange = (val: number) => {
-  console.log(`每页 ${val} 条`);
+  console.log(props.pagination);
   emit('update:pagenation', {
     ...props.pagination,
     limit: val,
@@ -34,13 +39,12 @@ const handleSizeChange = (val: number) => {
 };
 
 const handleCurrentChange = (val: number) => {
-  console.log(`当前页: ${val}`);
+  console.log(props.pagination);
   emit('update:pagenation', {
     ...props.pagination,
     page: val,
   });
 };
 
-const pageSizes = [10, 20, 30, 40];
 
 </script>

@@ -16,7 +16,6 @@ routes.push({
   component: () => import('@/views/NotFound/NotFound.vue'),
 });
 
-
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -36,14 +35,14 @@ router.beforeEach((to, from, next) => {
     //     type: 'warning',
     //   }
     // ).then(() => {
-      localStorage.clear();
-      if (to.path.startsWith('/admin')) {
-        next('/admin/login');
-        return;
-      } else {
-        next('/login');
-        return;
-      }
+    localStorage.clear();
+    if (to.path.startsWith('/admin')) {
+      next('/admin/login');
+      return;
+    } else {
+      next('/login');
+      return;
+    }
     // })
   }
   if (to.path === '/login' || to.path === '/admin/login') {
@@ -63,34 +62,34 @@ router.beforeEach((to, from, next) => {
     }).then(() => {
       if (to.path.startsWith('/admin')) {
         next('/admin/login');
-      } else { 
+      } else {
         next('/login');
       }
-    })
+    });
     return;
   }
-  next();
-  // commonOnline().then((response) => {
-  //   const res = response.data;
-  //   if (res.code === 0) {
-  //     next();
-  //   } else {
-  //     ElMessage.error(res.message);
-  //     if (to.path.startsWith('/admin')) {
-  //       next('/admin/login');
-  //     } else {
-  //       next('/login');
-  //     }
-  //   }
-  // }).catch((error) => { 
-  //   console.log(error);
-  //   ElMessage.error('网络错误');
-  //   if (to.path.startsWith('/admin')) {
-  //     next('/admin/login');
-  //   } else {
-  //     next('/login');
-  //   }
-  // });
+  // next();
+  commonOnline().then((response) => {
+    const res = response.data;
+    if (res.code === 0) {
+      next();
+    } else {
+      ElMessage.error(res.message);
+      if (to.path.startsWith('/admin')) {
+        next('/admin/login');
+      } else {
+        next('/login');
+      }
+    }
+  }).catch((error) => {
+    console.log(error);
+    ElMessage.error('网络错误');
+    if (to.path.startsWith('/admin')) {
+      next('/admin/login');
+    } else {
+      next('/login');
+    }
+  });
 });
 
 export default router;
