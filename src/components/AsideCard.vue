@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { AsideDetail } from '@/types/views';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const defaultPath = defineModel('DefaultPath', {
   required: true,

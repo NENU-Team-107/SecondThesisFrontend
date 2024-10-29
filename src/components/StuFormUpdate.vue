@@ -174,7 +174,6 @@ const studentData = defineModel('StudentData', {
   type: Object as () => ProfileDetail,
 });
 
-const photoStatus = ref<boolean>(true);
 
 const message = defineModel('Message', {
   required: true,

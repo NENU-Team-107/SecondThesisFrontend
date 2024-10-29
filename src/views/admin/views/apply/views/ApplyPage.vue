@@ -26,9 +26,8 @@ import { ref } from 'vue';
 import { commonCommits } from '@/api/apis/common';
 import { CommitDetail, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
-import { adminDeleteCommits } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -82,37 +81,4 @@ const handleCheck = (commit_id: number) => {
 }
 
 const editStatus = ref(false);
-const edit = () => {
-  editStatus.value = !editStatus.value;
-}
-
-const submitDelete = () => {
-  const data = {
-    ids: delList.value,
-  }
-  adminDeleteCommits(data).then((response) => {
-    const res = response.data;
-    if (res.code !== 0) {
-      ElMessage.error(res.message);
-      return;
-    }
-    ElMessage.success('删除成功');
-    fetchCommits();
-  });
-}
-
-const removeCommit = () => {
-  ElMessageBox.confirm('此操作将永久删除该申请, 是否继续?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    submitDelete();
-  }).catch(() => {
-    ElMessage.info('已取消删除');
-  });
-}
-
-
-
 </script>

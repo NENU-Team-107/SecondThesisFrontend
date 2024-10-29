@@ -145,7 +145,7 @@ const removeAccount = () => {
   });
 }
 
-const handleDelete = (index: number, row: ProfileDetail) => {
+const handleDelete = (_index: number, row: ProfileDetail) => {
   let data = {
     id_codes: [row.id_code],
   } as AdminAccountsReq;
