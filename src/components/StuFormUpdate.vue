@@ -10,7 +10,7 @@
             :before-upload="beforeAvatarUpload">
             <font-awesome-icon icon="fa-solid fa-plus" />
           </el-upload>
-          <div v-if="photoStatus" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
+          <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
             <img :src="studentData.photo" :onerror="fetchProfile" class="h-full w-full object-cover ">
             <div
               class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">

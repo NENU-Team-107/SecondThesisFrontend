@@ -196,6 +196,7 @@ const sendVerifyCode = (event: Event) => {
 };
 
 const submit = () => {
+  verifyCode.value = verifyCode.value.trim();
   if (verifyCode.value === '') {
     ElMessage.error('请输入验证码');
     return;

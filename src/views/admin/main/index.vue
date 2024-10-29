@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import HeaderCard from '@/components/HeaderCard.vue';
 import AsideCard from '@/components/AsideCard.vue';
 const title = ref('第二学位系统-管理员端');

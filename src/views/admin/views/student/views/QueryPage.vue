@@ -7,7 +7,7 @@
       <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
       <el-button @click="fetchData" type="primary" round>重新获取</el-button>
     </div>
-    <StudentList v-model="studentList" />
+    <StudentList v-model:StudentList="studentList" @update:StudentList="handleUpdateStuList" />
   </div>
 </template>
 
@@ -45,7 +45,6 @@ const fetchData = () => {
       studentList.value = res.data;
 
     }
-    // ElMessage.success('获取成功');
   }).catch((err) => {
     console.log(err);
     ElMessage.error('获取失败');
@@ -53,6 +52,10 @@ const fetchData = () => {
 };
 
 const handlePageChange = () => {
+  fetchData();
+};
+
+const handleUpdateStuList = () => {
   fetchData();
 };
 

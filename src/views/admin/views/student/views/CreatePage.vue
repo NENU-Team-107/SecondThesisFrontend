@@ -64,7 +64,7 @@ const addIdCode = () => {
     id_code.value = '';
     return;
   }
-  let pattern = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+  let pattern =  /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
   if (!pattern.test(id_code.value)) {
     ElNotification({
       title: '添加失败',
@@ -97,7 +97,7 @@ const addIdCodeTotal = () => {
     if (idCodeArray.value.includes(id)) {
       return;
     }
-    let pattern = /^[0-9]{17}[0-9X]$/;
+    let pattern =  /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
     if (!pattern.test(id)) {
       return;
     }
@@ -115,7 +115,7 @@ const addIdCodeTotal = () => {
   }
   ElNotification({
     title: '添加成功',
-    message: '已添加身份证号' + idListSuccess.join(','),
+    message: '已添加' + idListSuccess.length + '个身份证号',
     type: 'success',
     offset: 100,
   });

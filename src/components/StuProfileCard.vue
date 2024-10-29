@@ -42,7 +42,6 @@
     </div>
 
     <div class="flex items-center flex-col h-52 w-4/12 justify-around">
-
       <div class="ml-4 flex gap-4 w-full flex-col">
         <el-avatar v-if="photoStatus" :src="studentData.photo" :size="160" fit="fill"
           class="w-48 h-48 rounded-full mx-auto" />
@@ -144,7 +143,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { ProfileDetail } from '@/types/apis/student';
 
 const studentData = defineModel('StudentData', {

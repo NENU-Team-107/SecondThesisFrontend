@@ -84,6 +84,7 @@ const fetchStudentData = () => {
   fetchProfile().then(
     () => {
       studentData.value = useStudentStore().getStudentProfile();
+      photoStatus.value = studentData.value.photo !== '';
       checkCompleted();
     }
   )

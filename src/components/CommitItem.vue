@@ -44,7 +44,7 @@
         <el-col :span="12">
           <el-form-item>
             <template #label>
-              <span class="font-semibold text-slate-900 truncate text-lg">是否通过：</span>
+              <span class="font-semibold text-slate-900 truncate text-lg">状态：</span>
             </template>
             <span class="text-lg">
               {{ commitInfo.passed ? '通过' : '未通过' }}
@@ -77,7 +77,7 @@
     </div>
     <div v-else-if="!IsHistory" class="flex justify-end w-full px-10">
       <el-button v-if="!commitInfo.commit" type="success" @click="submit" class="mr-3">立即申请</el-button>
-      <el-button v-if="!commitInfo.commit" type="primary" @click="checkFiles">查看附件信息</el-button>
+      <el-button v-if="!commitInfo.commit" type="primary" @click="checkFiles">上传附件信息</el-button>
     </div>
     <div v-else class="flex justify-end w-full">
       <el-button type="success" @click="exportForm">导出报名表</el-button>
@@ -180,8 +180,9 @@ const submitCheck = (status: boolean) => {
   });
 }
 
-const checkFiles = (_index: number) => {
-  if (IsHistory || IsAdmin) {
+const checkFiles = () => {
+  console.log(IsHistory.value, IsAdmin.value);
+  if (IsHistory.value || IsAdmin.value) {
     router.push('/apply/previewfiles/' + commitInfo.value.file_id);
   }
   else {
