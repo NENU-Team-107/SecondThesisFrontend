@@ -47,9 +47,18 @@
               <span class="font-semibold text-slate-900 truncate text-lg">状态：</span>
             </template>
             <span class="text-lg">
-              {{ commitInfo.passed ? '通过' : '未通过' }}
-              <font-awesome-icon v-if="commitInfo.passed" icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
-              <font-awesome-icon v-else icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
+              <span v-if="commitInfo.passed === 2">
+                待处理
+                <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
+              </span>
+              <span v-else-if="commitInfo.passed === -1">
+                未通过
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
+              </span>
+              <span v-else>
+                已通过
+                <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+              </span>
             </span>
           </el-form-item>
         </el-col>
@@ -67,11 +76,11 @@
     </el-form>
     <div v-if="IsAdmin" class="flex justify-between w-full px-10">
       <div class="flex-1 mr-3">
-        <el-input v-model="resson" placeholder="请输入同意/驳回理由" />
+        <el-input v-if="commitInfo.passed === 2" v-model="resson" placeholder="请输入同意/驳回理由" />
       </div>
       <div>
-        <el-button type="success" @click="checkCommit(true)" class="mr-3">同意</el-button>
-        <el-button type="danger" @click="checkCommit(false)" class="mr-3">驳回</el-button>
+        <el-button v-if="commitInfo.passed === 2" type="success" @click="checkCommit(1)" class="mr-3">同意</el-button>
+        <el-button v-if="commitInfo.passed === 2" type="danger" @click="checkCommit(-1)" class="mr-3">驳回</el-button>
         <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
       </div>
     </div>
@@ -148,7 +157,7 @@ const submit = () => {
 
 const resson = ref('');
 
-const checkCommit = (status: boolean) => {
+const checkCommit = (status: number) => {
   const msg = status ? '确认通过该申请吗？' : '确认驳回该申请吗？';
   ElMessageBox.confirm(msg, '提示', {
     confirmButtonText: '确定',
@@ -161,7 +170,7 @@ const checkCommit = (status: boolean) => {
   });
 };
 
-const submitCheck = (status: boolean) => {
+const submitCheck = (status: number) => {
   const data = {
     id: commitInfo.value.id,
     committer_name: commitInfo.value.committer_name,

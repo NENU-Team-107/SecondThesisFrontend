@@ -44,26 +44,14 @@ export default [
                 component: () => import('@/views/admin/views/apply/views/ApplyPage.vue'),
               },
               {
-                path: 'history',
-                name: 'adminManagerApplyHistory',
-                component: () => import('@/views/admin/views/apply/views/HistoryPage.vue'),
-              },
-            ],
-          },
-          {
-            path: 'profile',
-            name: 'adminProfile',
-            component: () => import('@/views/admin/views/profile/index.vue'),
-            children: [
-              {
-                path: 'info',
-                name: 'adminProfileInfo',
-                component: () => import('@/views/admin/views/profile/views/InfoPage.vue'),
+                path: 'history/accepted',
+                name: 'adminManagerApplyAC',
+                component: () => import('@/views/admin/views/apply/views/AcceptPage.vue'),
               },
               {
-                path: 'update',
-                name: 'adminProfileUpdate',
-                component: () => import('@/views/admin/views/profile/views/UpdatePage.vue'),
+                path: 'history/rejected',
+                name: 'adminManagerApplyRE',
+                component: () => import('@/views/admin/views/apply/views/RejectedPage.vue'),
               },
             ],
           },

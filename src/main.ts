@@ -46,6 +46,8 @@ import {
   faCircleCheck,
   faCircleXmark,
   faFile,
+  faQuestionCircle,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
@@ -69,7 +71,9 @@ library.add(
   faMagnifyingGlassPlus,
   faCircleCheck,
   faCircleXmark,
+  faXmark,
   faFile,
+  faQuestionCircle,
 );
 
 createApp(App).use(pinia).use(router).use(ElementPlus, { locale: zhCn }).component('font-awesome-icon', FontAwesomeIcon).mount('#app');

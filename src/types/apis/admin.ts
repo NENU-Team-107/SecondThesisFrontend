@@ -14,7 +14,7 @@ interface CommitDetails{
     enroll_major: string;
     file_id: string;
     id: number;
-    passed: true;
+    passed: number;
     reason: string;
 }
 

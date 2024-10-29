@@ -30,7 +30,7 @@ interface CommitDetail {
   enroll_major: string;
   file_id: string;
   id: number;
-  passed: boolean;
+  passed: number;
   reason: string;
 }
 

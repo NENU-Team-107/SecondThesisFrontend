@@ -3,13 +3,6 @@
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
       <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
-      <div class="w-full flex justify-end items-end pr-5 my-4">
-        <el-button v-show="editStatus" type="danger" @click="removeCommit" size="small" class="mr-8">删除{{ delList.length
-          }}个申请</el-button>
-        <el-button :type="editStatus ? 'danger' : 'success'" :icon="Edit" link @click="edit" size="large">
-          {{ editStatus ? "退出编辑" : "编辑" }}
-        </el-button>
-      </div>
       <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
         <div v-for="commit in commitsList" class="flex">
           <div v-show="editStatus" class="flex justify-center items-center mx-3">
@@ -35,7 +28,6 @@ import { CommitDetail, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
-import { Edit } from '@element-plus/icons-vue';
 import { adminDeleteCommits } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
@@ -50,14 +42,22 @@ const isadmin = ref<boolean>(true);
 const commitsList = ref<CommitDetail[]>([]);
 
 const fetchCommits = () => {
-  commonCommits(pagination.value, 0).then((response) => {
+  commonCommits(pagination.value, true, 2).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {
       ElMessage.error(res.msg);
       return;
     }
-    commitsList.value = res.data;
+    if(res.data) {
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].commit) {
+          commitsList.value.push(res.data[i]);
+        }
+      }
+    } else {
+      commitsList.value = [];
+    }
 
     pagination.value.total = res.total;
     pagination.value.page = res.page;
@@ -102,7 +102,6 @@ const submitDelete = () => {
 }
 
 const removeCommit = () => {
-  // console.log(delList.value);
   ElMessageBox.confirm('此操作将永久删除该申请, 是否继续?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
