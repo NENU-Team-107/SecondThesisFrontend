@@ -40,13 +40,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import type { ProfileDetail, StudentProfileResp, StudentResetPwdReq, StudentResetPwdResp } from '@/types/apis/student';
-import { studentProfile, studentResetPwd, studentSendResetPwdMailCode } from '@/api/apis/student';
+import type { StudentResetPwdReq, StudentResetPwdResp } from '@/types/apis/student';
+import { studentResetPwd, studentSendResetPwdMailCode } from '@/api/apis/student';
 import router from '@/router';
 import { useStudentStore } from '@/store/student';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import axios from 'axios';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { fetchProfile } from '@/utils/profiles/profiles';
 
 const studentResetPwdData = ref<StudentResetPwdReq>({
   email: '',
@@ -109,30 +108,6 @@ const Pwdrules = ref({
   ]
 });
 
-const fetchProfile = () => {
-  studentProfile().then((response) => {
-    const res = response.data as StudentProfileResp;
-    if (res.code === -1) {
-      ElMessage.error(res.message);
-      return;
-    }
-    let profile = res.profile as ProfileDetail;
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profile.photo}`, {
-      responseType: 'arraybuffer',
-      headers: {
-        'Authorization': useAccessTokenStore().getAccessToken(),
-      },
-    }
-    ).then(response => {
-      let blob = new Blob([response.data], { type: 'image/png' });
-      let url = window.URL.createObjectURL(blob);
-      profile.photo = url;
-      useStudentStore().setProfile(profile);
-      router.push('/');
-    })
-  });
-};
-
 const submitForm = (event: Event) => {
   event.preventDefault();
   resetPwdRef.value.validate((valid: any) => {
@@ -152,7 +127,11 @@ const submitForm = (event: Event) => {
           ElMessage.success('修改密码成功');
           useAccessTokenStore().setToken(res.token);
           useStudentStore().setToken(res.token);
-          fetchProfile();
+          fetchProfile().then(
+            () => {
+              router.push('/');
+            }
+          );
         }
       }
       ).catch((_err: any) => {

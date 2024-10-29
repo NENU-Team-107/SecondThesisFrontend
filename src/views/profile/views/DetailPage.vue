@@ -21,16 +21,13 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ProfileDetail, StudentProfileResp } from '@/types/apis/student';
+import { ProfileDetail } from '@/types/apis/student';
 import { Edit } from '@element-plus/icons-vue';
-import { studentProfile } from '@/api/apis/student';
 import { ElMessage } from 'element-plus';
 import StuProfileCard from '@/components/StuProfileCard.vue';
 import StuFormUpdate from '@/components/StuFormUpdate.vue';
-import { useAccessTokenStore } from '@/store/accessToken';
-import { useSiteInfoStore } from '@/store/siteInfo';
 import { useStudentStore } from '@/store/student';
-import axios from 'axios';
+import { fetchProfile } from '@/utils/profiles/profiles';
 
 const msg = ref<string>('确认更新个人信息吗？');
 const confirm = ref<boolean>(false);
@@ -82,42 +79,15 @@ const checkCompleted = () => {
 }
 
 const photoStatus = ref(false);
-const validateImage = (url: string) => {
-  let img = new Image();
-  img.src = url;
-  img.onload = () => {
-    photoStatus.value = true;
-  }
-  img.onerror = () => {
-    photoStatus.value = false;
-  }
-}
+
 const fetchStudentData = () => {
-  studentProfile().then(response => {
-    const res = response.data as StudentProfileResp;
-    if (res.code === -1) {
-      ElMessage.error(res.message);
-      return;
-    }
-    let profileData = res.profile;
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`, {
-      responseType: 'arraybuffer',
-      headers: {
-        'Authorization': useAccessTokenStore().getAccessToken(),
-      },
-    }
-    ).then(response => {
-      let blob = new Blob([response.data], { type: response.headers['content-type'] });
-      let url = window.URL.createObjectURL(blob);
-      profileData.photo = url;
-      validateImage(url);
-      console.log(profileData);
-      studentData.value = profileData;
+  fetchProfile().then(
+    () => {
+      studentData.value = useStudentStore().getStudentProfile();
       checkCompleted();
-      useStudentStore().setProfile(profileData);
-    })
-    checkCompleted();
-  });
+    }
+  )
+  checkCompleted();
 }
 
 fetchStudentData();

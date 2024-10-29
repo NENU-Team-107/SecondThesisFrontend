@@ -11,11 +11,6 @@ export default [
     },
     component: () => import('@/views/main/index.vue'),
     children: [
-      // {
-      //   path: '/home',
-      //   name: 'home',
-      //   component: () => import('@/views/home/index.vue'),
-      // },
       {
         path: '/apply',
         name: 'apply',

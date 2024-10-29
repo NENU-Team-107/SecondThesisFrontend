@@ -63,6 +63,7 @@ import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/store/student';
 import { CommonResp } from '@/types/apis/common';
 import { useAccessTokenStore } from '@/store/accessToken';
+import { fetchProfile } from '@/utils/profiles/profiles';
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
@@ -215,14 +216,19 @@ const submit = () => {
       // 存储token
       useStudentStore().setToken(res.token);
       useAccessTokenStore().setToken(res.token);
-      const timer = setInterval(() => {
-        regCounter.value--;
-        successMsg.value = regCounter.value + msg.value;
-        if (regCounter.value <= 0) {
-          clearInterval(timer);
-          router.push('/');
+      fetchProfile().then(
+        () => {
+          console.log('fetch profile success');
+          const timer = setInterval(() => {
+            regCounter.value--;
+            successMsg.value = regCounter.value + msg.value;
+            if (regCounter.value <= 0) {
+              clearInterval(timer);
+              router.push('/');
+            }
+          }, 1000);
         }
-      }, 1000);
+      );
     }
   }).catch((err: any) => {
     ElMessage.error('注册失败');
