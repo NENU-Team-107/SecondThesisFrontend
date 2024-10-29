@@ -16,7 +16,7 @@ export default defineConfig({
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
   root: './',
-  base: './',
+  base: '/',
   publicDir: 'public',
   cacheDir: 'node_modules/.vite',
   envDir: './',
