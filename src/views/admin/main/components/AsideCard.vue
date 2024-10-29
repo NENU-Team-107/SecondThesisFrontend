@@ -48,26 +48,6 @@ const asideList = ref([
       },
     ],
   },
-  // {
-  //   index: '/admin/manager/profile',
-  //   title: '我的信息',
-  //   icon: 'user',
-  //   path: '/admin/manager/profile',
-  //   children: [
-  //     {
-  //       index: "/admin/manager/profile/info",
-  //       title: "个人信息",
-  //       icon: 'id-card',
-  //       path: '/admin/manager/profile/info',
-  //     },
-  //     {
-  //       index: "/admin/manager/profile/update",
-  //       title: "账号信息",
-  //       icon: 'rotate',
-  //       path: '/admin/manager/profile/update',
-  //     },
-  //   ],
-  // },
   {
     index: '/logout',
     title: '退出登录',

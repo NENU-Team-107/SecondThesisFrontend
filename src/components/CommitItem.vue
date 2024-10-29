@@ -35,8 +35,8 @@
               <span class="font-semibold text-slate-900 truncate text-lg">是否提交：</span>
             </template>
             <span class="text-lg">
-              {{ commitInfo.Commit ? '已提交' : '未提交' }}
-              <font-awesome-icon v-if="commitInfo.Commit" icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+              {{ commitInfo.commit ? '已提交' : '未提交' }}
+              <font-awesome-icon v-if="commitInfo.commit" icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               <font-awesome-icon v-else icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
             </span>
           </el-form-item>
@@ -60,7 +60,7 @@
             <template #label>
               <span class="font-semibold text-slate-900 truncate text-lg">同意/驳回理由：</span>
             </template>
-            <span class="text-lg">{{ commitInfo.reason }}</span>
+            <span class="text-lg"><em>{{ commitInfo.reason == "" ? "暂无" : commitInfo.reason }}</em></span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -76,13 +76,14 @@
       </div>
     </div>
     <div v-else-if="!IsHistory" class="flex justify-end w-full px-10">
-      <el-button v-if="!commitInfo.Commit" type="success" @click="submit" class="mr-3">立即申请</el-button>
-      <el-button v-if="!commitInfo.Commit" type="primary" @click="checkFiles">查看附件信息</el-button>
+      <el-button v-if="!commitInfo.commit" type="success" @click="submit" class="mr-3">立即申请</el-button>
+      <el-button v-if="!commitInfo.commit" type="primary" @click="checkFiles">查看附件信息</el-button>
     </div>
     <div v-else class="flex justify-end w-full">
       <el-button type="success" @click="exportForm">导出报名表</el-button>
-      <el-button type="primary" @click="checkFiles">查看附件</el-button>
+      <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
     </div>
+    <el-divider></el-divider>
   </div>
 </template>
 
@@ -112,7 +113,7 @@ const IsAdmin = defineModel('IsAdmin', {
 });
 
 const testCommitInfo = () => {
-  if (commitInfo.value.Commit) {
+  if (commitInfo.value.commit) {
     confirmed.value = true;
   }
 };
@@ -164,7 +165,7 @@ const submitCheck = (status: boolean) => {
   const data = {
     id: commitInfo.value.id,
     committer_name: commitInfo.value.committer_name,
-    commit: commitInfo.value.Commit,
+    commit: commitInfo.value.commit,
     passed: status,
     reason: resson.value,
   } as CommitDetails;

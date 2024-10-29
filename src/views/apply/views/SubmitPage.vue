@@ -2,12 +2,15 @@
   <div class="flex flex-col items-center justify-center p-2 w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">提交材料预览</h1>
-      <Pagination v-model:pagination="paginator" @update:pagination="handlePageChange"  />
-      <div class="text-2xl font-bold my-3 w-full text-center">
+      <Pagination v-model:pagination="paginator" @update:pagination="handlePageChange" />
+      <div class="mt-3 w-4/5 p-2 justify-center mx-auto">
+        <div v-if="commitsList.length !== 0" >
+          <CommitItem v-for="commit in commitsList" :CommitInfo="commit" />
+        </div>
+        <div v-else>
+          <el-empty />
+        </div>
       </div>
-    </div>
-    <div class="mt-3 w-4/5 bg-white rounded-lg shadow-md p-2">
-      <CommitItem v-for="commit in commitsList" :CommitInfo="commit" />
     </div>
   </div>
 </template>
@@ -32,7 +35,7 @@ const commitsList = ref<CommitDetail[]>([]);
 
 const fetchCommits = () => {
   console.log('fetchCommits');
-  commonCommits(paginator.value).then((response) => {
+  commonCommits(paginator.value, 0).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code === -1) {

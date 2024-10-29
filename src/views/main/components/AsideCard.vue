@@ -38,22 +38,8 @@ const asideList = ref([
   {
     index: '/profile',
     title: '我的信息',
-    icon: 'user',
+    icon: 'id-card',
     path: '/profile',
-    children: [
-      {
-        index: "/profile/info",
-        title: "个人信息",
-        icon: 'id-card',
-        path: '/profile/info',
-      },
-      {
-        index: "/profile/update",
-        title: "修改密码",
-        icon: 'rotate',
-        path: '/profile/update',
-      },
-    ],
   },
   {
     index: '/logout',

@@ -3,8 +3,26 @@
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
       <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
-      <div class="font-bold my-3 w-full text-center">
-        <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsAdmin="isadmin" />
+      <div class="w-full flex justify-end items-end pr-5 my-4">
+        <el-button v-show="editStatus" type="danger" @click="removeCommit" size="small" class="mr-8">删除{{ delList.length
+          }}个申请</el-button>
+        <el-button :type="editStatus ? 'danger' : 'success'" :icon="Edit" link @click="edit" size="large">
+          {{ editStatus ? "退出编辑" : "编辑" }}
+        </el-button>
+      </div>
+      <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
+        <div v-for="commit in commitsList" class="flex">
+          <div v-show="editStatus" class="flex justify-center items-center mx-3">
+            <el-checkbox @change="handleCheck(commit.id)"
+              class="bg-slate-100 h-8 w-8 flex justify-center items-center rounded-lg" />
+          </div>
+          <div class="flex-1">
+            <CommitItem :CommitInfo="commit" :IsAdmin="isadmin" />
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <el-empty />
       </div>
     </div>
   </div>
@@ -15,8 +33,10 @@ import { ref } from 'vue';
 import { commonCommits } from '@/api/apis/common';
 import { CommitDetail, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
+import { Edit } from '@element-plus/icons-vue';
+import { adminDeleteCommits } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -30,7 +50,7 @@ const isadmin = ref<boolean>(true);
 const commitsList = ref<CommitDetail[]>([]);
 
 const fetchCommits = () => {
-  commonCommits(pagination.value).then((response) => {
+  commonCommits(pagination.value, 0).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {
@@ -51,4 +71,49 @@ const handlePageChange = () => {
 };
 
 fetchCommits();
+
+const delList = ref<number[]>([]);
+const handleCheck = (commit_id: number) => {
+  if (delList.value.includes(commit_id)) {
+    delList.value.splice(delList.value.indexOf(commit_id), 1);
+  } else {
+    delList.value.push(commit_id);
+  }
+}
+
+const editStatus = ref(false);
+const edit = () => {
+  editStatus.value = !editStatus.value;
+}
+
+const submitDelete = () => {
+  const data = {
+    ids: delList.value,
+  }
+  adminDeleteCommits(data).then((response) => {
+    const res = response.data;
+    if (res.code !== 0) {
+      ElMessage.error(res.message);
+      return;
+    }
+    ElMessage.success('删除成功');
+    fetchCommits();
+  });
+}
+
+const removeCommit = () => {
+  // console.log(delList.value);
+  ElMessageBox.confirm('此操作将永久删除该申请, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    submitDelete();
+  }).catch(() => {
+    ElMessage.info('已取消删除');
+  });
+}
+
+
+
 </script>

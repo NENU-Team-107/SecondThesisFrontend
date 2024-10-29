@@ -52,19 +52,7 @@ export default [
       {
         path: '/profile',
         name: 'profile',
-        component: () => import('@/views/profile/index.vue'),
-        children: [
-          {
-            path: 'info',
-            name: 'info',
-            component: () => import('@/views/profile/views/DetailPage.vue'),
-          },
-          {
-            path: 'update',
-            name: 'StudentInfoUpdate',
-            component: () => import('@/views/profile/views/UpdatePage.vue'),
-          },
-        ],
+        component: () => import('@/views/profile/views/DetailPage.vue'),
       },
     ],
   },

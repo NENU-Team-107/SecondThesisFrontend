@@ -1,4 +1,3 @@
-import { adminCreateAccounts } from './../../api/apis/admin';
 interface AdminLoginReq { 
     name: string;
     password: string;

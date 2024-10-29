@@ -5,13 +5,13 @@
       <el-col :span="24">
         <el-form-item label="个人照片">
           <el-upload class="h-32 w-32 justify-center items-center border-dotted border-2 border-gray-200"
-          tip="只能上传PNG格式的照片，大小不超过2MB"
-            :name="photoUpload.name" :action="photoUpload.url" :headers="photoUpload.headers" :show-file-list="false"
-            :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            tip="只能上传PNG格式的照片，大小不超过2MB" :name="photoUpload.name" :action="photoUpload.url"
+            :headers="photoUpload.headers" :show-file-list="false" :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
             <font-awesome-icon icon="fa-solid fa-plus" />
           </el-upload>
-          <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
-            <img :src="studentData.photo" class="h-full w-full object-cover ">
+          <div v-if="photoStatus" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
+            <img :src="studentData.photo" :onerror="fetchProfile" class="h-full w-full object-cover ">
             <div
               class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">
               <font-awesome-icon icon="fa-solid fa-magnifying-glass-plus" style="color: #ffffff;" />
@@ -166,12 +166,16 @@ import { ElMessage, FormInstance } from 'element-plus';
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useStudentStore } from '@/store/student';
+import { fetchProfile } from '@/utils/profiles/profiles';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
   required: true,
   type: Object as () => ProfileDetail,
 });
+
+const photoStatus = ref<boolean>(true);
+
 const message = defineModel('Message', {
   required: true,
   type: String,

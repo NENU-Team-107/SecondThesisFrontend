@@ -2,13 +2,16 @@
   <div class="flex flex-col items-center justify-center p-2 w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">历史提交</h1>
-      <Pagination v-model:paginator="paginator" @update:pagination="handlePageChange" />
-      <div class="text-2xl font-bold my-3 w-full text-center">
+      <Pagination v-model:pagination="paginator" @update:pagination="handlePageChange" />
+      <div class="mt-3 w-4/5 p-2 justify-center mx-auto">
+        <div v-if="commitsList.length !== 0">
+          <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsHistory="true" />
+        </div>
+        <div v-else>
+          <el-empty />
+        </div>
       </div>
     </div>
-    <div class="mt-3 w-4/5 bg-white rounded-lg shadow-md p-2">
-    <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsHistory="true"/>
-  </div>
   </div>
 </template>
 
@@ -32,23 +35,25 @@ const commitsList = ref<CommitDetail[]>([]);
 
 const fetchCommits = () => {
   console.log('fetchCommits');
-  commonCommits(paginator.value).then((response) => {
+  commonCommits(paginator.value, 1).then((response) => {
     const res = response.data;
     console.log(res);
-    if (res.code === -1) {
-      ElMessage.error(res.msg);
+    if (res.code !== 0) {
+      ElMessage.error(res.message);
       return;
     } else {
-      for (let i = 0; i < res.data.length; i++){
-        if (res.data[i].Commit) {
-          commitsList.value.push(res.data[i]);
+      if (res.data) {
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].Commit) {
+            commitsList.value.push(res.data[i]);
+          }
         }
       }
       paginator.value.total = res.total;
       paginator.value.page = res.page;
       paginator.value.limit = res.limit;
       paginator.value.offset = res.offset;
-      
+
     }
   });
 };
