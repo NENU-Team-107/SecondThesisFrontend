@@ -47,7 +47,7 @@ export default defineConfig({
     cssCodeSplit: true,
     sourcemap: false,
     manifest: false,
-    minify: 'terser',
+    // minify: 'terser',
     target: 'es2015',
     chunkSizeWarningLimit: 1500,
 
@@ -59,7 +59,7 @@ export default defineConfig({
         manualChunks: {
           vue: ['vue'],
           'vue-router': ['vue-router'],
-          'vuex': ['vuex'],
+          // 'vuex': ['vuex'],
           'axios': ['axios'],
           'element-plus': ['element-plus'],
         }
