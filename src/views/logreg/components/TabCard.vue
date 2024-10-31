@@ -41,8 +41,8 @@ import { ref } from 'vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
 import LoginCardCover from './cards/LoginCardCover.vue';
 import RegisterCard from './cards/RegisterCard.vue';
-// import titleImage from '@/assets/image/nenu-title.png';
-const titleImage = require('@/assets/image/nenu-title.png');
+import titleImage from '@/assets/image/nenu-title.png';
+// const titleImage = require('@/assets/image/nenu-title.png');
 
 const categories = ref({
   'login': {

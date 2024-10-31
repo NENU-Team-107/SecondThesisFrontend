@@ -1,44 +1,28 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-// import { resolve } from 'path';
 import * as path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // '@': resolve(__dirname, 'src'),
     },
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
-  root: '/',
+  // 移除 root 配置或设置为项目根目录
+  root: './', // 或者直接删除这行
   base: '/',
   publicDir: 'public',
   cacheDir: 'node_modules/.vite',
-  envDir: '/',
+  // 移除 envDir 配置或设置为正确的环境变量目录
+  envDir: './', // 或者直接删除这行
 
   server: {
     host: 'localhost',
     port: 5481,
-    open: true, // 是否自动打开浏览器
+    open: true,
     cors: true,
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:3000',
-    //     changeOrigin: true,
-    //     rewrite: (path) => path.replace(/^\/api/, '')
-    //   },
-    //   '/socket.io': {
-    //     target: 'http://localhost:3000',
-    //     changeOrigin: true,
-    //     ws: true,
-    //     rewrite: (path) => path.replace(/^\/socket.io/, '')
-    //   },
-    // }
   },
   build: {
     outDir: 'dist',
@@ -51,7 +35,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 2500,
 
     rollupOptions: {
-      input:'index.html',
+      input: path.resolve(__dirname, 'index.html'), // 修改为完整路径
       output: {
         chunkFileNames: 'assets/chunks/[name]-[hash].js',
         entryFileNames: 'assets/chunks/[name]-[hash].js',
@@ -59,10 +43,10 @@ export default defineConfig({
         manualChunks: {
           vue: ['vue'],
           'vue-router': ['vue-router'],
-          'axios': ['axios'],
+          axios: ['axios'],
           'element-plus': ['element-plus'],
-        }
-      }
-    }
+        },
+      },
+    },
   },
 });
