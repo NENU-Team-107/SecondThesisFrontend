@@ -10,16 +10,16 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, './src'),
       // '@': resolve(__dirname, 'src'),
     },
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
-  root: './',
+  root: '/',
   base: '/',
   publicDir: 'public',
   cacheDir: 'node_modules/.vite',
-  envDir: './',
+  envDir: '/',
 
   server: {
     host: 'localhost',
@@ -47,11 +47,11 @@ export default defineConfig({
     cssCodeSplit: true,
     sourcemap: false,
     manifest: false,
-    // minify: 'terser',
     target: 'es2015',
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 2500,
 
     rollupOptions: {
+      input:'index.html',
       output: {
         chunkFileNames: 'assets/chunks/[name]-[hash].js',
         entryFileNames: 'assets/chunks/[name]-[hash].js',
@@ -59,7 +59,6 @@ export default defineConfig({
         manualChunks: {
           vue: ['vue'],
           'vue-router': ['vue-router'],
-          // 'vuex': ['vuex'],
           'axios': ['axios'],
           'element-plus': ['element-plus'],
         }
