@@ -47,7 +47,7 @@ export default defineConfig({
     cssCodeSplit: true,
     sourcemap: false,
     manifest: false,
-    target: 'es2015',
+    target: 'es2022',
     chunkSizeWarningLimit: 2500,
 
     rollupOptions: {

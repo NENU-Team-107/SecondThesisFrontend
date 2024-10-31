@@ -29,7 +29,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false
   },
-  "files": [],
+  // "files": [],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
@@ -42,12 +42,12 @@
     "node_modules",
     "dist"
   ],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  // "references": [
+  //   {
+  //     "path": "./tsconfig.app.json"
+  //   },
+  //   {
+  //     "path": "./tsconfig.node.json"
+  //   }
+  // ]
 }
