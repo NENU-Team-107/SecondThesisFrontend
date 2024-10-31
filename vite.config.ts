@@ -40,4 +40,30 @@ export default defineConfig({
     //   },
     // }
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    assetsInlineLimit: 4096,
+    cssCodeSplit: true,
+    sourcemap: false,
+    manifest: false,
+    minify: 'terser',
+    target: 'es2015',
+    chunkSizeWarningLimit: 1500,
+
+    rollupOptions: {
+      output: {
+        chunkFileNames: 'assets/chunks/[name]-[hash].js',
+        entryFileNames: 'assets/chunks/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        manualChunks: {
+          vue: ['vue'],
+          'vue-router': ['vue-router'],
+          'vuex': ['vuex'],
+          'axios': ['axios'],
+          'element-plus': ['element-plus'],
+        }
+      }
+    }
+  },
 });

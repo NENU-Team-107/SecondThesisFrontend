@@ -20,7 +20,6 @@ import { CommitDetail, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
 import { ElMessage } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
-import { useRoute } from 'vue-router';
 
 const status = ref<number>(1);
 
