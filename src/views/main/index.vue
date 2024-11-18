@@ -17,7 +17,7 @@ import { ref } from 'vue';
 import HeaderCard from '@/components/HeaderCard.vue';
 import AsideCard from '@/components/AsideCard.vue';
 
-const title = ref('第二学位系统');
+const title = ref('第二学士学位报名系统');
 
 const defaultPath = '/';
 

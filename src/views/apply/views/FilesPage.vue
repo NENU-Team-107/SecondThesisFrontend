@@ -11,15 +11,18 @@
         <h1 class="text-lg font-thin my-2 w-full ">
           {{ item.name }}
         </h1>
-        <el-upload drag :action="item.url" :headers="headers" :on-success="handleSuccess"
-          method="post" :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true"
-          :on-preview="handlePreview" :before-remove="handleBeforeRemove" :on-exceed="handleExceed"
-          :before-upload="handleBeforeUpload" :show-file-list="true" class="w-full">
+        <el-upload drag :action="item.url" :headers="headers" :on-success="handleSuccess" method="post"
+          :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true" :on-preview="handlePreview"
+          :before-remove="handleBeforeRemove" :on-exceed="handleExceed" :before-upload="handleBeforeUpload"
+          :show-file-list="true" class="w-full"
+          accept="application/pdf,image/jpeg,image/png"
+          >
           <el-icon class="el-icon--upload">
             <upload-filled />
           </el-icon>
           <div class="el-upload__text">
-            拖拽文件到此处，或<em>点击此处上传文件</em>
+            <div>上传文件为pdf或jpg等图片格式，大小不超过10MB</div>
+            <div>拖拽文件到此处，或<em>点击此处上传文件</em></div>
           </div>
           <template #tip>
             已上传：{{ fileMap[item.index].length }} / {{ item.limit }}
@@ -47,43 +50,43 @@ const baseurl = useSiteInfoStore().getBaseUrl();
 const classTypeList = ref([
   {
     index: 2,
-    name: '本人身份证复印件（正反面）',
+    name: '一、本人身份证扫描件（正反面）',
     url: baseurl + '/student/uploadFile/2/' + file_id,
     limit: 1,
   },
   {
     index: 3,
-    name: '本科毕业证书、学位证书复印件',
+    name: '二、本科毕业证书、学位证书扫描件',
     url: baseurl + '/student/uploadFile/3/' + file_id,
     limit: 1,
   },
   {
     index: 4,
-    name: '《中国高等教育学位在线验证报告》学信网打印件（日期要求）',
+    name: '三、《中国高等教育学位在线验证报告》学信网扫描件（日期要求）',
     url: baseurl + '/student/uploadFile/4/' + file_id,
     limit: 1,
   },
   {
     index: 5,
-    name: '《教育部学历证书电子注册备案表》学信网打印件（日期要求）',
+    name: '四、《教育部学历证书电子注册备案表》学信网扫描件（日期要求）',
     url: baseurl + '/student/uploadFile/5/' + file_id,
     limit: 1,
   },
   {
     index: 6,
-    name: '《教育部学籍在线验证报告》学信网打印件（仅应届生）',
+    name: '五、《教育部学籍在线验证报告》学信网扫描件（仅应届生）',
     url: baseurl + '/student/uploadFile/6/' + file_id,
     limit: 1,
   },
   {
     index: 7,
-    name: '本科学习成绩单复印件（须加盖本科教务公章）',
+    name: '六、本科学习成绩单扫描件（须加盖本科教务公章）',
     url: baseurl + '/student/uploadFile/7/' + file_id,
     limit: 1,
   },
   {
     index: 8,
-    name: '与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料复印件（近三年）',
+    name: '七、与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料扫描件（近三年）',
     url: baseurl + '/student/uploadFile/8/' + file_id,
     limit: 1,
   }
@@ -158,6 +161,19 @@ const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
 }
 
 const handleBeforeUpload: UploadProps['beforeUpload'] = (file) => {
+  // 为pdf或jpg等图片格式，大小不超过10MB
+  const isPDF = file.type === 'application/pdf';
+  const isJPG = file.type === 'image/jpeg';
+  const isPNG = file.type === 'image/png';
+  const isLt10M = file.size / 1024 / 1024 < 10;
+  if (!isPDF && !isJPG && !isPNG) {
+    ElMessage.error('上传文件只能是pdf、jpg或png格式!');
+    return false;
+  }
+  if (!isLt10M) {
+    ElMessage.error('上传文件大小不能超过10MB!');
+    return false;
+  }
   console.log(file);
   return true;
 }

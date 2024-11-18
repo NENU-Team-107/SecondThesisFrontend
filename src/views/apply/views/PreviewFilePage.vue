@@ -36,43 +36,43 @@ const baseurl = useSiteInfoStore().getBaseUrl();
 const classTypeList = ref([
   {
     index: 2,
-    name: '本人身份证复印件（正反面）',
+    name: '一、本人身份证扫描件（正反面）',
     url: baseurl + '/student/uploadFile/2/' + file_id,
     limit: 1,
   },
   {
     index: 3,
-    name: '本科毕业证书、学位证书复印件',
+    name: '二、本科毕业证书、学位证书扫描件',
     url: baseurl + '/student/uploadFile/3/' + file_id,
     limit: 1,
   },
   {
     index: 4,
-    name: '《中国高等教育学位在线验证报告》学信网打印件（日期要求）',
+    name: '三、《中国高等教育学位在线验证报告》学信网扫描件（日期要求）',
     url: baseurl + '/student/uploadFile/4/' + file_id,
     limit: 1,
   },
   {
     index: 5,
-    name: '《教育部学历证书电子注册备案表》学信网打印件（日期要求）',
+    name: '四、《教育部学历证书电子注册备案表》学信网扫描件（日期要求）',
     url: baseurl + '/student/uploadFile/5/' + file_id,
     limit: 1,
   },
   {
     index: 6,
-    name: '《教育部学籍在线验证报告》学信网打印件（仅应届生）',
+    name: '五、《教育部学籍在线验证报告》学信网扫描件（仅应届生）',
     url: baseurl + '/student/uploadFile/6/' + file_id,
     limit: 1,
   },
   {
     index: 7,
-    name: '本科学习成绩单复印件（须加盖本科教务公章）',
+    name: '六、本科学习成绩单扫描件（须加盖本科教务公章）',
     url: baseurl + '/student/uploadFile/7/' + file_id,
     limit: 1,
   },
   {
     index: 8,
-    name: '与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料复印件（近三年）',
+    name: '七、与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料扫描件（近三年）',
     url: baseurl + '/student/uploadFile/8/' + file_id,
     limit: 1,
   }

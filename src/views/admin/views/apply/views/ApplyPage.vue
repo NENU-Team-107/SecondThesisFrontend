@@ -3,16 +3,30 @@
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
       <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
-      <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
-        <div v-for="commit in commitsList" class="flex">
-          <div v-show="editStatus" class="flex justify-center items-center mx-3">
-            <el-checkbox @change="handleCheck(commit.id)"
-              class="bg-slate-100 h-8 w-8 flex justify-center items-center rounded-lg" />
-          </div>
-          <div class="flex-1">
-            <CommitItem :CommitInfo="commit" :IsAdmin="isadmin" />
-          </div>
+
+      <div class="flex items-center justify-between my-3">
+        <div class="mr-2">
+          <el-checkbox v-model="allSelected" @change="toggleAllSelection">全选本页提交</el-checkbox>
         </div>
+        <div class="flex-1">
+          <el-input v-model="batchReason" placeholder="输入批量处理原因" :disabled="selectedCommits.length === 0" />
+        </div>
+        <div class="ml-2">
+          <el-button @click="batchPreAdmit" type="warning">拟录取</el-button>
+          <el-button @click="batchApprove" type="success">通过</el-button>
+          <el-button @click="batchReject" type="danger">不通过</el-button>
+        </div>
+      </div>
+
+      <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
+        <el-checkbox-group v-model="selectedCommits">
+          <div v-for="commit in commitsList" :key="commit.id" class="flex items-center">
+            <el-checkbox :value="commit.id" class="mx-3" />
+            <div class="flex-1">
+              <CommitItem :CommitInfo="commit" :IsAdmin="isadmin" />
+            </div>
+          </div>
+        </el-checkbox-group>
       </div>
       <div v-else>
         <el-empty />
@@ -22,12 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { commonCommits } from '@/api/apis/common';
-import { CommitDetail, Paginator } from '@/types/apis/common';
+import { CommitDetail, CommitResp, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
+import { CommitDetails } from '@/types/apis/admin';
+import { adminCheckCommit } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -37,8 +53,10 @@ const pagination = ref<Paginator>({
 });
 
 const isadmin = ref<boolean>(true);
-
 const commitsList = ref<CommitDetail[]>([]);
+const selectedCommits = ref<number[]>([]);
+const allSelected = ref(false);
+const batchReason = ref('');
 
 const fetchCommits = () => {
   commonCommits(pagination.value, true, 2).then((response) => {
@@ -69,16 +87,108 @@ const handlePageChange = () => {
   fetchCommits();
 };
 
-fetchCommits();
-
-const delList = ref<number[]>([]);
-const handleCheck = (commit_id: number) => {
-  if (delList.value.includes(commit_id)) {
-    delList.value.splice(delList.value.indexOf(commit_id), 1);
+const toggleAllSelection = () => {
+  if (allSelected.value) {
+    selectedCommits.value = commitsList.value.map(commit => commit.id);
   } else {
-    delList.value.push(commit_id);
+    selectedCommits.value = [];
   }
+};
+
+watch(selectedCommits, (newSelection) => {
+  allSelected.value = newSelection.length === commitsList.value.length;
+});
+
+const batchPreAdmit = () => {
+  if (selectedCommits.value.length === 0) {
+    ElMessage.warning('请先选择提交项');
+    return;
+  }
+  for(let i = 0; i < selectedCommits.value.length; i++) {
+    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
+    if (commit) {
+      // TODO:拟录取的状态码根据后端定义修改
+      checkCommit(2, commit, batchReason.value);
+    }
+  }
+  // Handle batch pre-admit logic here
+  ElMessage.success(`已拟录取 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
+  selectedCommits.value = [];
+  batchReason.value = '';
+  fetchCommits();
 }
 
-const editStatus = ref(false);
+const batchApprove = () => {
+  if (selectedCommits.value.length === 0) {
+    ElMessage.warning('请先选择提交项');
+    return;
+  }
+  for(let i = 0; i < selectedCommits.value.length; i++) {
+    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
+    if (commit) {
+      checkCommit(1, commit, batchReason.value);
+    }
+  }
+  // Handle batch approve logic here
+  ElMessage.success(`已通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
+  selectedCommits.value = [];
+  batchReason.value = '';
+  fetchCommits();
+};
+
+const batchReject = () => {
+  if (selectedCommits.value.length === 0) {
+    ElMessage.warning('请先选择提交项');
+    return;
+  }
+
+  for(let i = 0; i < selectedCommits.value.length; i++) {
+    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
+    if (commit) {
+      checkCommit(-1, commit, batchReason.value);
+    }
+  }
+  // Handle batch reject logic here
+  ElMessage.success(`不通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
+
+  selectedCommits.value = [];
+  batchReason.value = '';
+  fetchCommits();
+};
+
+
+const checkCommit = (status: number, commitInfo: CommitDetail, reason: String) => {
+  const msg = status ? '确认通过该申请吗？' : '确认不通过该申请吗？';
+  ElMessageBox.confirm(msg, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    submitCheck(status, commitInfo, reason);
+  }).catch(() => {
+    ElMessage.info('已取消');
+  });
+};
+
+const submitCheck = (status: number, commitInfo:CommitDetail,reason:String) => {
+  const data = {
+    id: commitInfo.id,
+    committer_name: commitInfo.committer_name,
+    commit: commitInfo.commit,
+    passed: status,
+    reason: reason,
+  } as CommitDetails;
+  console.log(data);
+  adminCheckCommit(data).then((response) => {
+    const res = response.data as CommitResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    ElMessage.success(res.message);
+  });
+}
+
+
+fetchCommits();
 </script>

@@ -47,6 +47,20 @@
         <el-form-item label="民族" prop="nation">
           <el-select v-model="studentData.nation" placeholder="请选择民族">
             <el-option v-for="item in nations" :key="item.value" :label="item.label" :value="item.value" />
+
+            <template #footer>
+              <el-button v-if="!isAdding" text bg size="small" @click="onAddOption">
+                添加其他民族
+              </el-button>
+              <template v-else>
+                <el-input v-model="optionName" placeholder="请输入民族名称" size="small" class="my-1"  />
+                <el-button type="primary" size="small" @click="onConfirm">
+                  确认
+                </el-button>
+                <el-button size="small" @click="clear">取消</el-button>
+              </template>
+            </template>
+
           </el-select>
         </el-form-item>
       </el-col>
@@ -284,7 +298,7 @@ const rules = {
   ]
 };
 
-const nations = [
+const nations = ref([
   { value: '汉族', label: '汉族' },
   { value: '蒙古族', label: '蒙古族' },
   { value: '回族', label: '回族' },
@@ -341,8 +355,34 @@ const nations = [
   { value: '门巴族', label: '门巴族' },
   { value: '珞巴族', label: '珞巴族' },
   { value: '基诺族', label: '基诺族' },
-  { value: '其他', label: '其他' },
-];
+  // { value: '其他', label: '其他' },
+]);
+
+const optionName = ref('');
+const isAdding = ref(false);
+const onAddOption = () => {
+  isAdding.value = true;
+}
+const onConfirm = () => {
+  if (optionName.value === '') {
+    ElMessage.error('请输入民族名称');
+    return;
+  }
+  if(nations.value.find(item => item.value === optionName.value)) {
+    ElMessage.info('该民族已存在，已为您自动选择');
+    studentData.value.nation = optionName.value;
+    return;
+  }
+  nations.value.push({ value: optionName.value, label: optionName.value });
+  studentData.value.nation = optionName.value;
+  isAdding.value = false;
+  optionName.value = '';
+  ElMessage.success('添加成功');
+}
+const clear = () => {
+  isAdding.value = false;
+  optionName.value = '';
+}
 
 const visible = ref<boolean>(false);
 const handleClose = () => {
@@ -397,10 +437,11 @@ const handleAvatarSuccess = (res: { message: string; code: number }, file: any) 
 
 const beforeAvatarUpload = (file: any) => {
   const isPNG = file.type === 'image/png';
+  const isJPG = file.type === 'image/jpeg';
   const isLt2M = file.size / 1024 / 1024 < 2;
 
-  if (!isPNG) {
-    ElMessage.error('上传头像图片只能是 PNG 格式!');
+  if (!isPNG && !isJPG) {
+    ElMessage.error('上传头像图片只能是 PNG 或 JPG 格式!');
   }
   if (!isLt2M) {
     ElMessage.error('上传头像图片大小不能超过 2MB!');

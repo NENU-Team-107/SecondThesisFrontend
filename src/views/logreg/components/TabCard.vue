@@ -1,5 +1,5 @@
 <template>
-  <div class="flex px-5 pt-5 flex-col bg-neutral-100 rounded-xl shadow-lg h-auto ease-in-out duration-500">
+  <div class="flex px-5 pt-5 flex-col bg-white rounded-xl shadow-lg h-auto ease-in-out duration-500">
     <el-image :src="titleImage" :key="titleImage" class="w-96 mb-5" />
     <div class="w-full max-w-md px-2 py-4 sm:px-0">
       <TabGroup>

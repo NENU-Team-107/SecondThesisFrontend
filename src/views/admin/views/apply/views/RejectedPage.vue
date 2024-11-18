@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
-      <h1 class="text-2xl font-bold my-3 w-full text-center">已驳回申请</h1>
+      <h1 class="text-2xl font-bold my-3 w-full text-center">不通过申请</h1>
       <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
       <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
         <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsAdmin="isadmin" />

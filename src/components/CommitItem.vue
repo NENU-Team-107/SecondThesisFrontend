@@ -14,14 +14,18 @@
         <el-col :span="12">
           <el-form-item>
             <template #label>
-              <span class="font-semibold text-slate-900 truncate text-lg">报读专业：</span>
+              <span class="font-semibold text-slate-900 truncate text-lg">第二学士学位报名专业：</span>
             </template>
-            <span class="text-lg">
+            <span class="text-lg text-start w-full">
               <span v-if="IsHistory">
                 {{ commitInfo.enroll_major ? commitInfo.enroll_major : '未填写' }}
               </span>
               <span v-else class="w-1/2">
-                <el-input v-if="!confirmed" v-model="commitInfo.enroll_major" placeholder="请输入报读专业" />
+                <div v-if="!confirmed">
+                  <el-select v-model="commitInfo.enroll_major" placeholder="请选择报读专业">
+                    <el-option v-for="item in majorList"  :key="item.value" :label="item.label" :value="item.value" />
+                  </el-select>
+                </div>
                 <span v-else>{{ commitInfo.enroll_major }}</span>
               </span>
             </span>
@@ -47,6 +51,7 @@
               <span class="font-semibold text-slate-900 truncate text-lg">状态：</span>
             </template>
             <span class="text-lg">
+              <!-- TODO:拟录取passed状态码展示 -->
               <span v-if="commitInfo.passed === 2">
                 待处理
                 <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
@@ -67,7 +72,7 @@
         <el-col :span="24">
           <el-form-item>
             <template #label>
-              <span class="font-semibold text-slate-900 truncate text-lg">同意/驳回理由：</span>
+              <span class="font-semibold text-slate-900 truncate text-lg">通过/不通过理由：</span>
             </template>
             <span class="text-lg"><em>{{ commitInfo.reason == "" ? "暂无" : commitInfo.reason }}</em></span>
           </el-form-item>
@@ -76,11 +81,12 @@
     </el-form>
     <div v-if="IsAdmin" class="flex justify-between w-full px-10">
       <div class="flex-1 mr-3">
-        <el-input v-if="commitInfo.passed === 2" v-model="resson" placeholder="请输入同意/驳回理由" />
+        <el-input v-if="commitInfo.passed === 2" v-model="resson" placeholder="请输入拟录取/通过/不通过理由" />
       </div>
       <div>
-        <el-button v-if="commitInfo.passed === 2" type="success" @click="checkCommit(1)" class="mr-3">同意</el-button>
-        <el-button v-if="commitInfo.passed === 2" type="danger" @click="checkCommit(-1)" class="mr-3">驳回</el-button>
+        <el-button v-if="commitInfo.passed === 2" type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
+        <el-button v-if="commitInfo.passed === 2" type="success" @click="checkCommit(1)" class="mr-3">通过</el-button>
+        <el-button v-if="commitInfo.passed === 2" type="danger" @click="checkCommit(-1)" class="mr-3">不通过</el-button>
         <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
       </div>
     </div>
@@ -121,6 +127,22 @@ const IsAdmin = defineModel('IsAdmin', {
   default: false,
 });
 
+const majorList = ref([
+  { value: '化学', label: '化学' },
+  { value: '地理科学', label: '地理科学' },
+  { value: '材料物理', label: '材料物理' },
+  { value: '生物技术', label: '生物技术' },
+  { value: '计算机科学与技术', label: '计算机科学与技术' },
+  { value: '环境科学', label: '环境科学' },
+  { value: '环境工程', label: '环境工程' },
+  { value: '生态学', label: '生态学' },
+  { value: '学前教育', label: '学前教育' },
+  { value: '历史学', label: '历史学' },
+  { value: '思想政治教育', label: '思想政治教育' },
+  { value: '哲学', label: '哲学' },
+  { value: '社会学', label: '社会学' }
+]);
+
 const testCommitInfo = () => {
   if (commitInfo.value.commit) {
     confirmed.value = true;
@@ -158,7 +180,7 @@ const submit = () => {
 const resson = ref('');
 
 const checkCommit = (status: number) => {
-  const msg = status ? '确认通过该申请吗？' : '确认驳回该申请吗？';
+  const msg = status ? '确认通过该申请吗？' : '确认不通过该申请吗？';
   ElMessageBox.confirm(msg, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
