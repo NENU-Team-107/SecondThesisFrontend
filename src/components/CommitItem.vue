@@ -23,7 +23,7 @@
               <span v-else class="w-1/2">
                 <div v-if="!confirmed">
                   <el-select v-model="commitInfo.enroll_major" placeholder="请选择报读专业">
-                    <el-option v-for="item in majorList"  :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option v-for="item in majorList" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </div>
                 <span v-else>{{ commitInfo.enroll_major }}</span>
@@ -81,12 +81,12 @@
     </el-form>
     <div v-if="IsAdmin" class="flex justify-between w-full px-10">
       <div class="flex-1 mr-3">
-        <el-input v-if="commitInfo.passed === 2" v-model="resson" placeholder="请输入拟录取/通过/不通过理由" />
+        <el-input v-model="resson" placeholder="请输入拟录取/通过/不通过理由" />
       </div>
       <div>
-        <el-button v-if="commitInfo.passed === 2" type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
-        <el-button v-if="commitInfo.passed === 2" type="success" @click="checkCommit(1)" class="mr-3">通过</el-button>
-        <el-button v-if="commitInfo.passed === 2" type="danger" @click="checkCommit(-1)" class="mr-3">不通过</el-button>
+        <el-button type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
+        <el-button type="success" @click="checkCommit(1)" class="mr-3">通过</el-button>
+        <el-button type="danger" @click="checkCommit(-1)" class="mr-3">不通过</el-button>
         <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
       </div>
     </div>
@@ -234,7 +234,7 @@ const exportForm = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = '报名表.docx';
+    a.download = commitInfo.value.id + '_报名表.pdf';
     a.click();
     window.URL.revokeObjectURL(url); // 释放内存
   }).catch((error) => {
