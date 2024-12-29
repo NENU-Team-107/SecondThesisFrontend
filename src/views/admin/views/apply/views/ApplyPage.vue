@@ -1,8 +1,25 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
+
+    <div class="w-4/5 bg-white rounded-lg shadow-md p-2 my-1">
+      <h1 class="text-2xl font-bold my-3 w-full text-center">设置截止时间</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="col-span-2">
+          <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
+            format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+        </div>
+        <div>
+          <el-button @click="setDeadline" type="primary" round>确定</el-button>
+        </div>
+      </div>
+    </div>
+
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
-      <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
-      <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
+      <div class="flex">
+        <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
+        <div class="my-3"><el-button @click="exportAllCommits" type="success" round>导出所有申请数据</el-button></div>
+      </div>
+
 
       <div class="flex items-center justify-between my-3">
         <div class="mr-2">
@@ -31,6 +48,11 @@
       <div v-else>
         <el-empty />
       </div>
+
+      <div class="flex justify-self-center">
+        <Pagination v-model:pagination="pagination" @update:pagination="handlePageChange" />
+      </div>
+
     </div>
   </div>
 </template>
@@ -43,7 +65,10 @@ import CommitItem from '@/components/CommitItem.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
 import { CommitDetails } from '@/types/apis/admin';
-import { adminCheckCommit } from '@/api/apis/admin';
+import { useSiteInfoStore } from '@/store/siteInfo';
+import { useAccessTokenStore } from '@/store/accessToken';
+import axios from 'axios';
+import { adminCheckCommit, adminSetDeadline } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -57,6 +82,7 @@ const commitsList = ref<CommitDetail[]>([]);
 const selectedCommits = ref<number[]>([]);
 const allSelected = ref(false);
 const batchReason = ref('');
+const deadline = ref('')
 
 const fetchCommits = () => {
   commonCommits(pagination.value, true, 2).then((response) => {
@@ -66,7 +92,8 @@ const fetchCommits = () => {
       ElMessage.error(res.msg);
       return;
     }
-    if(res.data) {
+
+    if (res.data) {
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].commit) {
           commitsList.value.push(res.data[i]);
@@ -80,6 +107,7 @@ const fetchCommits = () => {
     pagination.value.page = res.page;
     pagination.value.limit = res.limit;
     pagination.value.offset = res.offset;
+
   });
 };
 
@@ -104,7 +132,7 @@ const batchPreAdmit = () => {
     ElMessage.warning('请先选择提交项');
     return;
   }
-  for(let i = 0; i < selectedCommits.value.length; i++) {
+  for (let i = 0; i < selectedCommits.value.length; i++) {
     const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
     if (commit) {
       // TODO:拟录取的状态码根据后端定义修改
@@ -123,7 +151,7 @@ const batchApprove = () => {
     ElMessage.warning('请先选择提交项');
     return;
   }
-  for(let i = 0; i < selectedCommits.value.length; i++) {
+  for (let i = 0; i < selectedCommits.value.length; i++) {
     const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
     if (commit) {
       checkCommit(1, commit, batchReason.value);
@@ -142,7 +170,7 @@ const batchReject = () => {
     return;
   }
 
-  for(let i = 0; i < selectedCommits.value.length; i++) {
+  for (let i = 0; i < selectedCommits.value.length; i++) {
     const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
     if (commit) {
       checkCommit(-1, commit, batchReason.value);
@@ -170,7 +198,7 @@ const checkCommit = (status: number, commitInfo: CommitDetail, reason: String) =
   });
 };
 
-const submitCheck = (status: number, commitInfo:CommitDetail,reason:String) => {
+const submitCheck = (status: number, commitInfo: CommitDetail, reason: String) => {
   const data = {
     id: commitInfo.id,
     committer_name: commitInfo.committer_name,
@@ -189,6 +217,38 @@ const submitCheck = (status: number, commitInfo:CommitDetail,reason:String) => {
   });
 }
 
+
+const setDeadline = () => {
+  adminSetDeadline(deadline.value).then((response) => {
+    const res = response.data
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+    } else {
+      ElMessage.success(res.message);
+    }
+  });
+}
+
+const exportAllCommits = () => {
+  const apiurl = `${useSiteInfoStore().getBaseUrl()}/admin/exportCommits`;
+  axios.get(apiurl, {
+    headers: {
+      'Authorization': useAccessTokenStore().getAccessToken(),
+    },
+    responseType: 'blob',
+  }).then((response) => {
+    const blob = response.data;
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '报名数据.csv';
+    a.click();
+    window.URL.revokeObjectURL(url); // 释放内存
+  }).catch((error) => {
+    console.error('下载失败', error);
+    ElMessage.error('下载失败');
+  });
+}
 
 fetchCommits();
 </script>

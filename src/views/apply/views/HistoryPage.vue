@@ -35,7 +35,7 @@ const commitsList = ref<CommitDetail[]>([]);
 
 const fetchCommits = () => {
   console.log('fetchCommits');
-  commonCommits(paginator.value, true , 2).then((response) => {
+  commonCommits(paginator.value, true, 2).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {
