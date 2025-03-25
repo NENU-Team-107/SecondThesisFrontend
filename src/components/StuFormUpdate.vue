@@ -450,17 +450,17 @@ const handleAvatarSuccess = (res: { message: string; code: number }, file: any) 
 }
 
 const beforeAvatarUpload = (file: any) => {
-  const isPNG = file.type === 'image/png';
-  const isJPG = file.type === 'image/jpeg';
+  const isJPG = file.type === 'image/jpg' || file.type === 'image/jpeg';
   const isLt2M = file.size / 1024 / 1024 < 2;
 
-  if (!isPNG && !isJPG) {
-    ElMessage.error('上传头像图片只能是 PNG 或 JPG 格式!');
+  if (!isJPG) {
+    ElMessage.error('上传头像图片只能是JPG 格式!');
   }
   if (!isLt2M) {
     ElMessage.error('上传头像图片大小不能超过 2MB!');
   }
-  return isPNG && isLt2M;
+
+  return isJPG && isLt2M;
 }
 
 const dialogVisible = ref(false)
