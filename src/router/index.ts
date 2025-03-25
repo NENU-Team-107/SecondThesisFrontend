@@ -46,7 +46,7 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
-  const notLogin = useAccessTokenStore().getAccessToken() === '';
+  const notLogin = (useAccessTokenStore().getAccessToken() === '');
   if (notLogin) {
     ElMessageBox.confirm('请先登录', '提示', {
       confirmButtonText: '确定',

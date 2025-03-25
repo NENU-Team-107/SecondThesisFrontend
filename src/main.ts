@@ -1,9 +1,13 @@
 import { createApp } from 'vue';
 import './style.css';
+import { createPinia } from 'pinia';
+import router from './router';
+
 import App from './App.vue';
 
-import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -13,10 +17,6 @@ zhCn.el.pagination.pagesize = '条/页';
 zhCn.el.pagination.goto = '前往';
 zhCn.el.pagination.pageClassifier = '页';
 
-import router from './router';
-
-const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core';

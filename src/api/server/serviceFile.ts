@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { useAccessTokenStore } from '@/store/accessToken';
-// import { useSiteInfoStore } from '@/store/siteInfo';
-
+import { useSiteInfoStore } from '@/store/siteInfo';
+import axios from 'axios';
+// const baseUrl = 'http://localhost:8080/api/v1';
 const baseUrl = 'http://139.9.138.253/api/v1';
 // const baseUrl = useSiteInfoStore().getBaseUrl();
 const servicefile = axios.create({

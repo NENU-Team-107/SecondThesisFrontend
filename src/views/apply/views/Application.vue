@@ -19,8 +19,7 @@
           </el-alert>
         </div>
         <div>
-          <h1 class="text-xl font-bold my-3 w-full text-center">基本信息</h1>
-          <StuFormUpdate :StudentData="applyForm" SubmitText="新建申请" :Message="msg" v-model:Confirm="confirm" />
+          <StuFormUpdate :StudentData="applyForm" SubmitText="下一步" :Message="msg" v-model:Confirm="confirm" />
         </div>
       </div>
       <div v-else>

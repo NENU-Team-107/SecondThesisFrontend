@@ -15,7 +15,8 @@
         <el-input v-model="ruleForm.idCode" placeholder="请输入身份证号" clearable />
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="ruleForm.password" type="password" placeholder="请输入密码" show-password clearable />
+        <el-input v-model="ruleForm.password" type="password" placeholder="密码长度在 6 到 20 个字符，必须包含数字和字母" show-password
+          clearable />
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
         <el-input v-model="ruleForm.checkPass" placeholder="请再次输入密码" show-password clearable />
@@ -30,8 +31,8 @@
           <el-input v-model="verifyCode" placeholder="请检查邮件并填写验证码" />
           <button
             class="border-transparent border rounded-md w-28 bg-blue-800/90 text-sm font-medium text-white hover:bg-blue-900  focus:outline-none focus: focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-blue-800/50 disabled:cursor-not-allowed"
-            @click="sendVerifyCode" :disabled="ruleForm.email === ''">{{ sended ? (counter <= 0 ? '重新发送' : counter
-              + 's') : '发送验证码' }}</button>
+            @click="sendVerifyCode" :disabled="ruleForm.email === ''">{{ sended ? (counter <= 0 ? '重新发送' : counter + 's'
+            ) : '发送验证码' }}</button>
         </div>
       </el-form-item>
     </div>
@@ -78,7 +79,7 @@ const nextStep = (event: Event) => {
   if (activeStep.value == 1) {
     submit();
   }
-  else if(activeStep.value == 2) {
+  else if (activeStep.value == 2) {
     return;
   }
   else {
@@ -201,7 +202,7 @@ const submit = () => {
     ElMessage.error('请输入验证码');
     return;
   }
-  const data= ref<StudentVerifyMailCodeReq>({
+  const data = ref<StudentVerifyMailCodeReq>({
     code: verifyCode.value,
     mail: ruleForm.value.email,
   });

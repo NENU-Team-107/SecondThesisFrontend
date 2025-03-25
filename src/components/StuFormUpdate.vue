@@ -4,20 +4,25 @@
     <el-row>
       <el-col :span="24">
         <el-form-item label="个人照片">
-          <el-upload class="h-32 w-32 justify-center items-center border-dotted border-2 border-gray-200"
-            tip="只能上传PNG格式的照片，大小不超过2MB" :name="photoUpload.name" :action="photoUpload.url"
-            :headers="photoUpload.headers" :show-file-list="false" :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <font-awesome-icon icon="fa-solid fa-plus" />
-          </el-upload>
-          <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
-            <img :src="studentData.photo" :onerror="fetchProfile" class="h-full w-full object-cover ">
-            <div
-              class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">
-              <font-awesome-icon icon="fa-solid fa-magnifying-glass-plus" style="color: #ffffff;" />
-              <span class="text-white">查看图片</span>
+          <div class="flex items-center w-full h-fit">
+            <el-upload class="h-32 w-32 flex justify-center items-center border-dotted border-2 border-gray-200"
+              :name="photoUpload.name" :action="photoUpload.url" tip="请上传JPG格式的一寸照照片，大小不超过2MB"
+              :headers="photoUpload.headers" :show-file-list="false" :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <div>
+                <font-awesome-icon icon="fa-solid fa-plus" />
+              </div>
+            </el-upload>
+            <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
+              <img :src="studentData.photo" :onerror="fetchProfile" class="h-full w-full object-cover ">
+              <div
+                class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">
+                <font-awesome-icon icon="fa-solid fa-magnifying-glass-plus" style="color: #ffffff;" />
+                <span class="text-white">查看图片</span>
+              </div>
             </div>
           </div>
+          <span class="text-gray-700 italic">请上传JPG格式的一寸照照片，大小不超过2MB</span>
         </el-form-item>
       </el-col>
     </el-row>
@@ -53,7 +58,7 @@
                 添加其他民族
               </el-button>
               <template v-else>
-                <el-input v-model="optionName" placeholder="请输入民族名称" size="small" class="my-1"  />
+                <el-input v-model="optionName" placeholder="请输入民族名称" size="small" class="my-1" />
                 <el-button type="primary" size="small" @click="onConfirm">
                   确认
                 </el-button>
@@ -235,6 +240,14 @@ const checkDate = (_rule: any, value: string, callback: (message?: string) => vo
   }
 };
 
+const checkPhone = (_rule: any, value: string, callback: (message?: string) => void) => {
+  if (value === studentData.value.major_phone_number) {
+    callback('手机号码1和手机号码2不能相同');
+  } else {
+    callback();
+  }
+};
+
 const rules = {
   name: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
@@ -258,11 +271,12 @@ const rules = {
   ],
   major_phone_number: [
     { required: true, message: '请输入手机号码1', trigger: 'blur' },
-    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码1', trigger: 'blur' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码格式', trigger: 'blur' },
   ],
   standby_phone_number: [
-    // { required: true, message: '请输入手机号码2', trigger: 'blur' },
-    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码2', trigger: 'blur' },
+    { required: true, message: '请输入手机号码2', trigger: 'blur' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码格式', trigger: 'blur' },
+    { validator: checkPhone, trigger: 'blur' },
   ],
   email: [
     { required: true, message: '请输入电子邮箱', trigger: 'blur' },
@@ -368,7 +382,7 @@ const onConfirm = () => {
     ElMessage.error('请输入民族名称');
     return;
   }
-  if(nations.value.find(item => item.value === optionName.value)) {
+  if (nations.value.find(item => item.value === optionName.value)) {
     ElMessage.info('该民族已存在，已为您自动选择');
     studentData.value.nation = optionName.value;
     return;
