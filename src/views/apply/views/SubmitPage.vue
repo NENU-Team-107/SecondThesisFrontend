@@ -41,15 +41,13 @@ const fetchCommits = () => {
     if (res.code === -1) {
       ElMessage.error(res.msg);
       return;
-    } else {
-      commitsList.value = res.data;
-
-      paginator.value.total = res.total;
-      paginator.value.page = res.page;
-      paginator.value.limit = res.limit;
-      paginator.value.offset = res.offset;
-
     }
+    commitsList.value = res.data;
+
+    paginator.value.total = res.total;
+    paginator.value.page = res.page;
+    paginator.value.limit = res.limit;
+    paginator.value.offset = res.offset;
   });
 };
 

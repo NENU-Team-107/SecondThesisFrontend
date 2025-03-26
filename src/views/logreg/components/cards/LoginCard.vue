@@ -109,7 +109,6 @@ const submitForm = (event: Event) => {
         useAccessTokenStore().setToken(res.token);
         fetchProfile().then(
           () => {
-            console.log('fetch profile success');
             router.push('/');
           }
         )

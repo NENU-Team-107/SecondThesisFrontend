@@ -1,26 +1,20 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
-
-    <div class="w-4/5 bg-white rounded-lg shadow-md p-2 my-1">
-      <h1 class="text-2xl font-bold my-3 w-full text-center">设置截止时间</h1>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-2">
-          <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
-            format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
-        </div>
-        <div>
-          <el-button @click="setDeadline" type="primary" round>确定</el-button>
-        </div>
-      </div>
-    </div>
-
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
-      <div class="flex">
-        <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
+      <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
+      <div class="flex justify-between items-center">
+        <div class="flex w-full px-5">
+          <span>设置截止时间</span>
+          <div class="px-5">
+            <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
+              format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+          </div>
+          <div class="flex justify-center items-center">
+            <el-button @click="setDeadline" type="primary" round>确定</el-button>
+          </div>
+        </div>
         <div class="my-3"><el-button @click="exportAllCommits" type="success" round>导出所有申请数据</el-button></div>
       </div>
-
-
       <div class="flex items-center justify-between my-3">
         <div class="mr-2">
           <el-checkbox v-model="allSelected" @change="toggleAllSelection">全选本页提交</el-checkbox>
@@ -30,8 +24,8 @@
         </div>
         <div class="ml-2">
           <el-button @click="batchPreAdmit" type="warning">拟录取</el-button>
-          <el-button @click="batchApprove" type="success">通过</el-button>
-          <el-button @click="batchReject" type="danger">不通过</el-button>
+          <el-button @click="batchApprove" type="success">初审通过</el-button>
+          <el-button @click="batchReject" type="danger">初审不通过</el-button>
         </div>
       </div>
 
@@ -40,7 +34,7 @@
           <div v-for="commit in commitsList" :key="commit.id" class="flex items-center">
             <el-checkbox :value="commit.id" class="mx-3" />
             <div class="flex-1">
-              <CommitItem :CommitInfo="commit" :IsAdmin="isadmin" />
+              <CommitItem :CommitInfo="commit" :IsAdmin="isadmin" :Status="status" />
             </div>
           </div>
         </el-checkbox-group>
@@ -77,6 +71,8 @@ const pagination = ref<Paginator>({
   page: 1,
 });
 
+const status = ref<number>(2); // 待处理申请
+
 const isadmin = ref<boolean>(true);
 const commitsList = ref<CommitDetail[]>([]);
 const selectedCommits = ref<number[]>([]);
@@ -85,7 +81,7 @@ const batchReason = ref('');
 const deadline = ref('')
 
 const fetchCommits = () => {
-  commonCommits(pagination.value, true, 2).then((response) => {
+  commonCommits(pagination.value, true, status.value).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {
@@ -224,7 +220,7 @@ const setDeadline = () => {
     if (res.code === -1) {
       ElMessage.error(res.message);
     } else {
-      ElMessage.success(res.message);
+      ElMessage.success("成功设置截止时间为" + deadline.value);
     }
   });
 }

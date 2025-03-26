@@ -57,11 +57,15 @@
                 <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
               </span>
               <span v-else-if="commitInfo.passed === -1">
-                未通过
+                初审不通过
                 <font-awesome-icon icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
               </span>
+              <span v-else-if="commitInfo.passed === 3">
+                拟录取
+                <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
+              </span>
               <span v-else>
-                已通过
+                初审已通过
                 <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               </span>
             </span>
@@ -72,7 +76,7 @@
         <el-col :span="24">
           <el-form-item>
             <template #label>
-              <span class="font-semibold text-slate-900 truncate text-lg">通过/不通过理由：</span>
+              <span class="font-semibold text-slate-900 truncate text-lg">初审通过/初审不通过理由：</span>
             </template>
             <span class="text-lg"><em>{{ commitInfo.reason == "" ? "暂无" : commitInfo.reason }}</em></span>
           </el-form-item>
@@ -81,12 +85,12 @@
     </el-form>
     <div v-if="IsAdmin" class="flex justify-between w-full px-10">
       <div class="flex-1 mr-3">
-        <el-input v-model="resson" placeholder="请输入拟录取/通过/不通过理由" />
+        <el-input v-if="status === 2" v-model="resson" placeholder="请输入拟录取/初审通过/初审不通过理由" />
       </div>
       <div>
-        <el-button type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
-        <el-button type="success" @click="checkCommit(1)" class="mr-3">通过</el-button>
-        <el-button type="danger" @click="checkCommit(-1)" class="mr-3">不通过</el-button>
+        <el-button v-if="status === 2" type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
+        <el-button v-if="status === 2" type="success" @click="checkCommit(1)" class="mr-3">初审通过</el-button>
+        <el-button v-if="status === 2" type="danger" @click="checkCommit(-1)" class="mr-3">初审不通过</el-button>
         <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
       </div>
     </div>
@@ -125,6 +129,12 @@ const IsAdmin = defineModel('IsAdmin', {
   required: false,
   type: Boolean,
   default: false,
+});
+
+const status = defineModel('Status', {
+  required: false,
+  type: Number,
+  default: 0,
 });
 
 const majorList = ref([

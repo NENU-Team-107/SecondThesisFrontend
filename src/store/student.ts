@@ -1,3 +1,4 @@
+import { CommitDetail } from '@/types/apis/common';
 import { ProfileDetail } from '@/types/apis/student';
 import { defineStore } from 'pinia';
 
@@ -6,6 +7,7 @@ export const useStudentStore = defineStore('student', {
     return {
       token: '' as string,
       profile: {} as ProfileDetail,
+      commits:[] as CommitDetail[]
     };
   },
   getters: {
@@ -32,6 +34,9 @@ export const useStudentStore = defineStore('student', {
     setPhoto(photo: string) {
       this.profile.photo = photo;
     },
+    setCommits(commits: CommitDetail[]) {
+      this.commits = commits;
+    }
   },
   persist: true,
 });

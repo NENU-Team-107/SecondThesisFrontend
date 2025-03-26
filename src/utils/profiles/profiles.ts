@@ -1,3 +1,4 @@
+import { commonCommits } from './../../api/apis/common';
 import { studentProfile } from '@/api/apis/student';
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
@@ -7,7 +8,6 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 const fetchProfile = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    console.log('重新获取个人信息');
     studentProfile()
       .then((response) => {
         const res = response.data as StudentProfileResp;
@@ -36,9 +36,10 @@ const fetchProfile = (): Promise<void> => {
             })
             .catch((error) => {
               ElMessage.error('获取照片失败');
+              useStudentStore().setProfile(profile);
               reject(error);
             });
-        } else { 
+        } else {
           useStudentStore().setProfile(profile);
           resolve();
         }

@@ -53,6 +53,11 @@ export default [
                 name: 'adminManagerApplyRE',
                 component: () => import('@/views/admin/views/apply/views/RejectedPage.vue'),
               },
+              {
+                path: 'history/finished',
+                name: 'adminManagerApplyFI',
+                component: () => import('@/views/admin/views/apply/views/FinishedPage.vue'),
+              }
             ],
           },
         ],

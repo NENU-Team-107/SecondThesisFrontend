@@ -59,16 +59,22 @@ const asideList = ref([
       },
       {
         index: "/admin/manager/apply/history/accepted",
-        title: "已通过申请",
+        title: "初审通过",
         icon: 'check',
         path: "/admin/manager/apply/history/accepted",
       },
       {
         index: "/admin/manager/apply/history/rejected",
-        title: "不通过申请",
+        title: "初审不通过",
         icon: 'xmark',
         path: "/admin/manager/apply/history/rejected",
       },
+      {
+        index: "/admin/manager/apply/history/finished",
+        title: "拟录取申请",
+        icon: 'check-circle',
+        path: "/admin/manager/apply/history/finished",
+      }
     ],
   },
   {
