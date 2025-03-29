@@ -53,26 +53,34 @@
             <span class="text-lg">
               <!-- TODO:拟录取passed状态码展示 -->
               <span v-if="commitInfo.passed === 2">
-                待处理
+                初审待处理
                 <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
               </span>
               <span v-else-if="commitInfo.passed === -1">
                 初审不通过
                 <font-awesome-icon icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
               </span>
+              <span v-else-if="commitInfo.passed === 1">
+                初审通过
+                <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+              </span>
               <span v-else-if="commitInfo.passed === 3">
-                拟录取
-                <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
+                拟录取已通过
+                <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+              </span>
+              <span v-else-if="commitInfo.passed === 4">
+                拟录取不通过
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
               </span>
               <span v-else>
-                初审已通过
+                未知状态
                 <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               </span>
             </span>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row >
         <el-col :span="24">
           <el-form-item>
             <template #label>
@@ -83,14 +91,17 @@
         </el-col>
       </el-row>
     </el-form>
+
     <div v-if="IsAdmin" class="flex justify-between w-full px-10">
       <div class="flex-1 mr-3">
-        <el-input v-if="status === 2" v-model="resson" placeholder="请输入拟录取/初审通过/初审不通过理由" />
+        <el-input v-if="status === 2 || status === 1" v-model="resson" placeholder="请输入处理理由" />
       </div>
       <div>
-        <el-button v-if="status === 2" type="warning" @click="checkCommit(2)" class="mr-3">拟录取</el-button>
         <el-button v-if="status === 2" type="success" @click="checkCommit(1)" class="mr-3">初审通过</el-button>
         <el-button v-if="status === 2" type="danger" @click="checkCommit(-1)" class="mr-3">初审不通过</el-button>
+
+        <el-button v-if="status === 1" type="success" @click="checkCommit(3)" class="mr-3">拟录取通过</el-button>
+        <el-button v-if="status === 1" type="danger" @click="checkCommit(4)" class="mr-3">拟录取不通过</el-button>
         <el-button type="primary" @click="checkFiles">查看附件信息</el-button>
       </div>
     </div>
@@ -118,6 +129,7 @@ import { useAccessTokenStore } from '@/store/accessToken';
 import axios from 'axios';
 import { adminCheckCommit } from '@/api/apis/admin';
 import { CommitDetails } from '@/types/apis/admin';
+import { ElLoading } from 'element-plus';
 const router = useRouter();
 const commitInfo = defineModel('CommitInfo', {
   required: true,
@@ -232,8 +244,13 @@ const checkFiles = () => {
 };
 
 const exportForm = () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在下载报名表',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
   const apiurl = `${useSiteInfoStore().getBaseUrl()}/student/export/${commitInfo.value.id}`;
-  console.log(apiurl);
   axios.get(apiurl, {
     headers: {
       'Authorization': useAccessTokenStore().getAccessToken(),
@@ -250,6 +267,9 @@ const exportForm = () => {
   }).catch((error) => {
     console.error('下载失败', error);
     ElMessage.error('下载失败');
+  }).finally(() => {
+    loading.close(); // 关闭加载动画
+    // 这里可以添加一些清理操作，比如关闭加载动画等
   });
 }
 </script>

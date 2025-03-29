@@ -57,6 +57,11 @@ export default [
                 path: 'history/finished',
                 name: 'adminManagerApplyFI',
                 component: () => import('@/views/admin/views/apply/views/FinishedPage.vue'),
+              },
+              {
+                path: 'history/failed',
+                name: 'adminManagerApplyFA',
+                component: () => import('@/views/admin/views/apply/views/FailedPage.vue'),
               }
             ],
           },

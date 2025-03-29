@@ -1,7 +1,15 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
-      <h1 class="text-2xl font-bold my-3 w-full text-center">待处理申请</h1>
+      <h1 class="text-2xl font-bold my-3 w-full text-center">初审待处理</h1>
+      <div>
+        <el-alert title="提示" type="info">
+          <div>请注意：截止时间是报名截止时间，设置后会影响报名系统的正常使用，请谨慎操作。</div>
+          <div>如果需要修改报名截止时间，请联系管理员。</div>
+          <div>本页进行初审审核，若需要处理初审通过状态的申请（拟录取通过或不通过），请前往初审通过页进行审核。</div>
+        </el-alert>
+      </div>
+      
       <div class="flex justify-between items-center">
         <div class="flex w-full px-5">
           <span>设置截止时间</span>
@@ -23,7 +31,6 @@
           <el-input v-model="batchReason" placeholder="输入批量处理原因" :disabled="selectedCommits.length === 0" />
         </div>
         <div class="ml-2">
-          <el-button @click="batchPreAdmit" type="warning">拟录取</el-button>
           <el-button @click="batchApprove" type="success">初审通过</el-button>
           <el-button @click="batchReject" type="danger">初审不通过</el-button>
         </div>
@@ -122,25 +129,6 @@ const toggleAllSelection = () => {
 watch(selectedCommits, (newSelection) => {
   allSelected.value = newSelection.length === commitsList.value.length;
 });
-
-const batchPreAdmit = () => {
-  if (selectedCommits.value.length === 0) {
-    ElMessage.warning('请先选择提交项');
-    return;
-  }
-  for (let i = 0; i < selectedCommits.value.length; i++) {
-    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
-    if (commit) {
-      // TODO:拟录取的状态码根据后端定义修改
-      checkCommit(2, commit, batchReason.value);
-    }
-  }
-  // Handle batch pre-admit logic here
-  ElMessage.success(`已拟录取 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
-  selectedCommits.value = [];
-  batchReason.value = '';
-  fetchCommits();
-}
 
 const batchApprove = () => {
   if (selectedCommits.value.length === 0) {

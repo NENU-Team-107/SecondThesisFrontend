@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
-      <h1 class="text-2xl font-bold my-3 w-full text-center">拟录取申请</h1>
+      <h1 class="text-2xl font-bold my-3 w-full text-center">拟录取通过申请</h1>
       <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
         <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsAdmin="isadmin" :Status="status" />
       </div>
@@ -27,10 +27,9 @@ import Pagination from '@/components/Pagination.vue';
 
 const status = ref<number>(3); // 拟录取通过
 
-const title = defineModel(
-  'title', {
+const title = defineModel('title', {
+  required: true,
   type: String,
-  default: '待处理申请',
 });
 
 

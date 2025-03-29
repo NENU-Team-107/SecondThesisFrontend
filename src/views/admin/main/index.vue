@@ -53,7 +53,7 @@ const asideList = ref([
     children: [
       {
         index: "/admin/manager/apply/todo",
-        title: "待处理",
+        title: "初审待处理",
         icon: 'clock',
         path: "/admin/manager/apply/todo",
       },
@@ -71,9 +71,15 @@ const asideList = ref([
       },
       {
         index: "/admin/manager/apply/history/finished",
-        title: "拟录取申请",
+        title: "拟录取通过",
         icon: 'check-circle',
         path: "/admin/manager/apply/history/finished",
+      },
+      {
+        index: "/admin/manager/apply/history/failed",
+        title: "拟录取不通过",
+        icon: 'xmark-circle',
+        path: "/admin/manager/apply/history/failed",
       }
     ],
   },
