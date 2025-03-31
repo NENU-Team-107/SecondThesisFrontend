@@ -1,14 +1,16 @@
-interface AdminLoginReq { 
+import type { Paginator } from '@/types/apis/common';
+
+interface AdminLoginReq {
     name: string;
     password: string;
 }
-interface AdminLoginResq { 
+interface AdminLoginResq {
     code: number;
     message: string;
     token: string;
 }
 
-interface CommitDetails{
+interface CommitDetails {
     commit: boolean;
     committer_name: string;
     enroll_major: string;
@@ -18,12 +20,21 @@ interface CommitDetails{
     reason: string;
 }
 
-interface AdminAccountsReq { 
+interface AdminAccountsReq {
     id_codes: string[];
 }
 
-interface CommitIDs { 
+interface CommitIDs {
     ids: number[];
 }
 
-export type { AdminLoginReq, CommitDetails, AdminAccountsReq, CommitIDs, AdminLoginResq };
+interface QueryCommitReq {
+    name: string;
+    id_code: string;
+    major: string;
+    committed: boolean;
+    status: number;
+    paginator: Paginator;
+}
+
+export type { AdminLoginReq, CommitDetails, AdminAccountsReq, CommitIDs, AdminLoginResq, QueryCommitReq };

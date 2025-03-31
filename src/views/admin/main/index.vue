@@ -52,6 +52,12 @@ const asideList = ref([
     path: '/admin/manager/apply',
     children: [
       {
+        index: "/admin/manager/apply/query",
+        title: "查询申请",
+        icon: 'magnifying-glass',
+        path: "/admin/manager/apply/query",
+      },
+      {
         index: "/admin/manager/apply/todo",
         title: "初审待处理",
         icon: 'clock',

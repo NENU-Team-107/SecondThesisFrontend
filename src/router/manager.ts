@@ -39,6 +39,11 @@ export default [
             component: () => import('@/views/admin/views/apply/index.vue'),
             children: [
               {
+                path: 'query',
+                name: 'adminManagerApplyQuery',
+                component: () => import('@/views/admin/views/apply/views/QueryPage.vue'),
+              },
+              {
                 path: 'todo',
                 name: 'adminManagerApplyTodo',
                 component: () => import('@/views/admin/views/apply/views/ApplyPage.vue'),
