@@ -20,7 +20,7 @@ import { ref } from 'vue';
 import Pagination from '@/components/Pagination.vue';
 import CommitItem from '@/components/CommitItem.vue';
 import { commonCommits } from '@/api/apis/common';
-import { Paginator } from '@/types/apis/common';
+import { CommitQuery, Paginator } from '@/types/apis/common';
 import { CommitDetail } from '@/types/apis/common';
 import { ElMessage } from 'element-plus';
 
@@ -33,9 +33,16 @@ const paginator = ref<Paginator>({
 
 const commitsList = ref<CommitDetail[]>([]);
 
+const queryInfo = ref<CommitQuery>({
+  name: '',
+  id_code: '',
+  major: '',
+});
+
+
 const fetchCommits = () => {
   console.log('fetchCommits');
-  commonCommits(paginator.value, false, 2).then((response) => {
+  commonCommits(paginator.value, false, 2, queryInfo.value).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code === -1) {
@@ -43,6 +50,9 @@ const fetchCommits = () => {
       return;
     }
     commitsList.value = res.data;
+    for (let i = 0; i < commitsList.value.length; i++) {
+      commitsList.value[i].committer_name = res.data[i].name;
+    }
 
     paginator.value.total = res.total;
     paginator.value.page = res.page;

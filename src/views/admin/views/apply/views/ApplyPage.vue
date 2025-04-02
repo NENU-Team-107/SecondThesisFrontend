@@ -9,7 +9,7 @@
           <div>本页进行初审审核，若需要处理初审通过状态的申请（拟录取通过或不通过），请前往初审通过页进行审核。</div>
         </el-alert>
       </div>
-      
+
       <div class="flex justify-between items-center">
         <div class="flex w-full px-5">
           <span>设置截止时间</span>
@@ -23,6 +23,20 @@
         </div>
         <div class="my-3"><el-button @click="exportAllCommits" type="success" round>导出所有申请数据</el-button></div>
       </div>
+
+      <div class="w-full flex my-3">
+        <div class="ml-6 text-gray-700">查询条件：</div>
+        <div class="flex-1 mx-3 flex">
+          <el-input v-model="queryInfo.name" placeholder="姓名" class="mx-2" />
+          <el-input v-model="queryInfo.id_code" placeholder="身份证号" class="mx-2" />
+          <el-input v-model="queryInfo.major" placeholder="专业" class="mx-2" />
+          <el-button class="mx-2" type="primary" @click="fetchCommits" round>
+            <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="px-1" />
+            <span>立即查询</span>
+          </el-button>
+        </div>
+      </div>
+
       <div class="flex items-center justify-between my-3">
         <div class="mr-2">
           <el-checkbox v-model="allSelected" @change="toggleAllSelection">全选本页提交</el-checkbox>
@@ -61,7 +75,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { commonCommits } from '@/api/apis/common';
-import { CommitDetail, CommitResp, Paginator } from '@/types/apis/common';
+import { CommitDetail, CommitQuery, CommitResp, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
@@ -87,8 +101,15 @@ const allSelected = ref(false);
 const batchReason = ref('');
 const deadline = ref('')
 
+const queryInfo = ref<CommitQuery>({
+  name: '',
+  id_code: '',
+  major: '',
+});
+
 const fetchCommits = () => {
-  commonCommits(pagination.value, true, status.value).then((response) => {
+  console.log("查询条件：", queryInfo.value.id_code, queryInfo.value.name, queryInfo.value.major);
+  commonCommits(pagination.value, true, status.value, queryInfo.value).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {

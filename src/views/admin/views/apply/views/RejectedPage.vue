@@ -2,6 +2,19 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">不通过申请</h1>
+
+      <div class="w-full flex my-3">
+        <div class="ml-6 text-gray-700">查询条件：</div>
+        <div class="flex-1 mx-3 flex">
+          <el-input v-model="queryInfo.name" placeholder="姓名" class="mx-2" />
+          <el-input v-model="queryInfo.id_code" placeholder="身份证号" class="mx-2" />
+          <el-input v-model="queryInfo.major" placeholder="专业" class="mx-2" />
+          <el-button class="mx-2" type="primary" @click="fetchCommits" round>
+            <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="px-1" />
+            <span>立即查询</span>
+          </el-button>
+        </div>
+      </div>
       <div v-if="commitsList.length !== 0" class="font-bold my-3 w-full text-center">
         <CommitItem v-for="commit in commitsList" :CommitInfo="commit" :IsAdmin="isadmin" :Status="status" />
       </div>
@@ -20,7 +33,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { commonCommits } from '@/api/apis/common';
-import { CommitDetail, Paginator } from '@/types/apis/common';
+import { CommitDetail, CommitQuery, Paginator } from '@/types/apis/common';
 import CommitItem from '@/components/CommitItem.vue';
 import { ElMessage } from 'element-plus';
 import Pagination from '@/components/Pagination.vue';
@@ -44,8 +57,14 @@ const isadmin = ref<boolean>(true);
 
 const commitsList = ref<CommitDetail[]>([]);
 
+const queryInfo = ref<CommitQuery>({
+  name: '',
+  id_code: '',
+  major: '',
+});
+
 const fetchCommits = () => {
-  commonCommits(pagination.value, true, status.value).then((response) => {
+  commonCommits(pagination.value, true, status.value, queryInfo.value).then((response) => {
     const res = response.data;
     console.log(res);
     if (res.code !== 0) {
