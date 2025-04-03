@@ -118,15 +118,19 @@ const fetchCommits = () => {
     }
 
     if (res.data) {
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].commit) {
-          commitsList.value.push(res.data[i]);
-        }
-      }
+      // for (let i = 0; i < res.data.length; i++) {
+      //   if (res.data[i].commit) {
+      //     commitsList.value.push(res.data[i]);
+      //   }
+      // }
+      commitsList.value = res.data;
+      // for (let i = 0; i < commitsList.value.length; i++) {
+      //   commitsList.value[i].commit = true;
+      // }
     } else {
       commitsList.value = [];
     }
-
+    console.log("commitsList.value", commitsList.value);
     pagination.value.total = res.total;
     pagination.value.page = res.page;
     pagination.value.limit = res.limit;

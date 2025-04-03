@@ -32,7 +32,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="!IsAdmin">
         <el-col :span="12">
           <el-form-item>
             <template #label>
