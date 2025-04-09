@@ -11,14 +11,26 @@
       </div>
 
       <div class="flex justify-between items-center">
-        <div class="flex w-full px-5">
-          <span>设置截止时间</span>
-          <div class="px-5">
-            <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
-              format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+        <div class="flex-1 flex items-center justify-between">
+          <div class="flex w-full px-5">
+            <span class="flex justify-center items-center">设置开始时间</span>
+            <div class="px-5">
+              <el-date-picker class="min-w-full" v-model="startTime" type="date" placeholder="开始时间" size="large"
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+            </div>
+            <div class="flex justify-center items-center">
+              <el-button @click="setStartTime" type="primary" round>确定</el-button>
+            </div>
           </div>
-          <div class="flex justify-center items-center">
-            <el-button @click="setDeadline" type="primary" round>确定</el-button>
+          <div class="flex w-full px-5">
+            <span class="flex justify-center items-center">设置截止时间</span>
+            <div class="px-5">
+              <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+            </div>
+            <div class="flex justify-center items-center">
+              <el-button @click="setDeadline" type="primary" round>确定</el-button>
+            </div>
           </div>
         </div>
         <div class="my-3"><el-button @click="exportAllCommits" type="success" round>导出所有申请数据</el-button></div>
@@ -83,7 +95,7 @@ import { CommitDetails } from '@/types/apis/admin';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useAccessTokenStore } from '@/store/accessToken';
 import axios from 'axios';
-import { adminCheckCommit, adminSetDeadline } from '@/api/apis/admin';
+import { adminCheckCommit, adminSetDeadline, adminSetStartTime } from '@/api/apis/admin';
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -226,8 +238,27 @@ const submitCheck = (status: number, commitInfo: CommitDetail, reason: String) =
   });
 }
 
+const startTime = ref('');
+const setStartTime = () => {
+  if (!startTime.value) {
+    ElMessage.error("开始时间不能为空");
+    return;
+  }
+  adminSetStartTime(startTime.value).then((response) => {
+    const res = response.data
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+    } else {
+      ElMessage.success("成功设置开始时间为" + startTime.value);
+    }
+  });
+}
 
 const setDeadline = () => {
+  if (!deadline.value) {
+    ElMessage.error("截止时间不能为空");
+    return;
+  }
   adminSetDeadline(deadline.value).then((response) => {
     const res = response.data
     if (res.code === -1) {

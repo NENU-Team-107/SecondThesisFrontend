@@ -9,4 +9,5 @@ export const adminCreateAccounts = (data: AdminAccountsReq) => service.post('/ad
 export const adminDeleteAccounts = (data: AdminAccountsReq) => service.post('/admin/deleteAccounts', data);
 export const adminDeleteCommits = (data: CommitIDs) => service.post('/admin/deleteCommits', data);
 export const adminSetDeadline = (data: string) => service.get(`/admin/setDeadline?ddl=${data}`);
+export const adminSetStartTime = (data: string) => service.get(`/admin/setStartTime?startTime=${data}`);
 export const adminExportCSV = () => service.get('/admin/exportAllCommits');
