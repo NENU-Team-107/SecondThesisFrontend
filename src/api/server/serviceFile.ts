@@ -1,7 +1,8 @@
 import { useAccessTokenStore } from '@/store/accessToken';
-import { useSiteInfoStore } from '@/store/siteInfo';
 import axios from 'axios';
-const baseUrl = import.meta.env.VITE_APP_API_URL;
+
+// const baseUrl = import.meta.env.VITE_APP_API_URL;
+const baseUrl = '/api'; // 代理地址
 const servicefile = axios.create({
   baseURL: baseUrl, // api的base_url
   timeout: 5000, // 请求超时时间

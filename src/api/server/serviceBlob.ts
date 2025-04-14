@@ -1,9 +1,9 @@
 // 封装axios
 import { useAccessTokenStore } from '@/store/accessToken';
-import { useSiteInfoStore } from '@/store/siteInfo';
 import axios from 'axios';
 
-const baseUrl = import.meta.env.VITE_APP_API_URL;
+// const baseUrl = import.meta.env.VITE_APP_API_URL;
+const baseUrl = '/api'; // 代理地址
 // 创建axios实例
 const service = axios.create({
     baseURL: baseUrl, // api的base_url

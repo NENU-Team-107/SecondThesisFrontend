@@ -23,6 +23,13 @@ export default defineConfig({
     port: 5481,
     open: true,
     cors: true,
+    proxy: {
+      '/api': {
+        target: 'http://139.9.138.253/api/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
   },
   build: {
     outDir: 'dist',
