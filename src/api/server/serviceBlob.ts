@@ -2,9 +2,8 @@
 import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import axios from 'axios';
-const baseUrl = 'http://localhost:8080/api/v1';
-// const baseUrl = 'http://139.9.138.253/api/v1';
-// const baseUrl = useSiteInfoStore().getBaseUrl();
+
+const baseUrl = import.meta.env.VITE_APP_API_URL;
 // 创建axios实例
 const service = axios.create({
     baseURL: baseUrl, // api的base_url
