@@ -187,6 +187,7 @@ import { useSiteInfoStore } from '@/store/siteInfo';
 import { useStudentStore } from '@/store/student';
 import { fetchProfile } from '@/utils/profiles/profiles';
 import { commonCommits } from '@/api/apis/common';
+import { CommitResp } from '@/types/apis/common';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -224,10 +225,22 @@ const emit = defineEmits(['update:Confirm']);
 const updateStatus = () => {
 
   // 检查是否已有提交
-  commonCommits({ "limit": 10, "offset": 10, "total": 10, "page": 1, "committed": false, "status": 2, "name": "", "id_code": "", "major": "" }
+  const paginator = {
+    limit: 10,
+    offset: 10,
+    total: 10,
+    page: 1
+  };
+
+  const queryInfo = {
+    name: "",
+    id_code: "",
+    major: ""
+  };
+
+  commonCommits(paginator, false, 2, queryInfo
   ).then(response => {
     const res = response.data as CommitResp;
-    console.log(res);
     if (res.code === -1) {
       ElMessage.error(res.message);
       return;
@@ -427,10 +440,6 @@ const handleSubmit = (formEl: FormInstance | undefined) => {
       return;
     }
   });
-  if (!studentData.value.photo) {
-    ElMessage.error('请上传个人照片');
-    return;
-  }
   visible.value = true;
 }
 
