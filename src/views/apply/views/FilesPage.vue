@@ -44,7 +44,8 @@ import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox, UploadProps, UploadUserFile } from 'element-plus';
-import { CommonFileParams, commonFile } from '@/types/apis/common';
+import { CommonFileParam } from '@/types/apis/common';
+import { commonFile } from '@/api/apis/common';
 import { studentDeleteFile, studentUploadFile } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -148,12 +149,8 @@ const fetchFileList = () => {
 }
 fetchFileList();
 
-const headers = {
-  'Authorization': useAccessTokenStore().getAccessToken()
-};
 
 const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
-  console.log(response, file, fileList)
   const res = response;
   if (res.code === -1) {
     ElMessage.error(res.message);
@@ -178,7 +175,6 @@ const handleBeforeUpload: UploadProps['beforeUpload'] = (file) => {
     ElMessage.error('上传文件大小不能超过10MB!');
     return false;
   }
-  console.log(file);
   return true;
 }
 
