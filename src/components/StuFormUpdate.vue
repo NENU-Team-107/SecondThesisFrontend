@@ -186,6 +186,7 @@ import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useStudentStore } from '@/store/student';
 import { fetchProfile } from '@/utils/profiles/profiles';
+import { commonCommits } from '@/api/apis/common';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -221,7 +222,22 @@ const props = defineProps({
 const emit = defineEmits(['update:Confirm']);
 
 const updateStatus = () => {
-  emit('update:Confirm', true);
+
+  // 检查是否已有提交
+  commonCommits({ "limit": 10, "offset": 10, "total": 10, "page": 1, "committed": false, "status": 2, "name": "", "id_code": "", "major": "" }
+  ).then(response => {
+    const res = response.data as CommitResp;
+    console.log(res);
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    if (res.data.length > 0) {
+      ElMessage.error('请勿重复提交申请！');
+      return;
+    }
+    emit('update:Confirm', true);
+  });
 }
 
 const contentChange = () => {
@@ -406,12 +422,16 @@ const handleClose = () => {
 const handleSubmit = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate((valid, _fields) => {
-    if (valid) {
-      visible.value = true;
-    } else {
+    if (!valid) {
       ElMessage.error('请检查表单填写是否正确');
+      return;
     }
   });
+  if (!studentData.value.photo) {
+    ElMessage.error('请上传个人照片');
+    return;
+  }
+  visible.value = true;
 }
 
 const submitApplyForm = () => {

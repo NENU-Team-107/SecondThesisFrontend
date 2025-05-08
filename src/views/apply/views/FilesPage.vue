@@ -44,14 +44,19 @@ import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox, UploadProps, UploadUserFile } from 'element-plus';
-import { CommonFileParam } from '@/types/apis/common';
+import { CommonFileParams } from '@/types/apis/common';
 import { commonFile } from '@/api/apis/common';
 import { studentDeleteFile, studentUploadFile } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 const file_id = route.params.file_id;
-const baseurl = useSiteInfoStore().getBaseUrl();
+// const baseurl = useSiteInfoStore().getBaseUrl();
+const baseurl = '/api';
+const headers = {
+  'Authorization': useAccessTokenStore().getAccessToken(),
+  'Content-Type': 'application/x-www-form-urlencoded',
+};
 
 const classTypeList = ref([
   {
@@ -150,10 +155,14 @@ const fetchFileList = () => {
 fetchFileList();
 
 
-const handleSuccess: UploadProps['onSuccess'] = (response, file, fileList) => {
-  const res = response;
+const handleSuccess: UploadProps['onSuccess'] = (res, file, fileList) => {
   if (res.code === -1) {
     ElMessage.error(res.message);
+    // 上传失败后删除文件
+    const index = fileList.findIndex(item => item.uid === file.uid);
+    if (index !== -1) {
+      fileList.splice(index, 1);
+    }
   } else {
     ElMessage.success('上传成功');
     // 上传成功后刷新文件列表
@@ -196,7 +205,7 @@ const handleExceed: UploadProps['onExceed'] = (files, fileList) => {
   } as CommonFileParams;
   studentUploadFile(formData, urldata).then(response => {
     const res = response.data;
-    if (res.code === -1) {
+    if (res.code !== 0) {
       ElMessage.error(res.message);
     } else {
       ElMessage.warning('已覆盖前一个文件。');

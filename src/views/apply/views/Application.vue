@@ -63,6 +63,7 @@ watch(() => confirm.value, (value) => {
 const file_id = ref('');
 const submitApplication = () => {
   // 提交申请表
+  // 提交申请
   studentNewCommit().then(response => {
     const res = response.data as studentNewCommitResp;
     if (res.code === -1) {

@@ -50,8 +50,7 @@
             <template #label>
               <span class="font-semibold text-slate-900 truncate text-lg">状态：</span>
             </template>
-            <span class="text-lg">
-              <!-- TODO:拟录取passed状态码展示 -->
+            <span v-if="IsHistory" class="text-lg">
               <span v-if="commitInfo.passed === 2">
                 初审待处理
                 <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
@@ -77,10 +76,15 @@
                 <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               </span>
             </span>
+            <span v-else class="text-lg">
+              <span>
+                未提交
+              </span>
+            </span>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row >
+      <el-row>
         <el-col :span="24">
           <el-form-item>
             <template #label>
