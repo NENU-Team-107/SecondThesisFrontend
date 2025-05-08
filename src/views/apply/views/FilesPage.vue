@@ -51,12 +51,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 const file_id = route.params.file_id;
-// const baseurl = useSiteInfoStore().getBaseUrl();
-const baseurl = '/api';
-const headers = {
-  'Authorization': useAccessTokenStore().getAccessToken(),
-  'Content-Type': 'application/x-www-form-urlencoded',
-};
+const baseurl = useSiteInfoStore().getBaseUrl();
 
 const headers = {
   'Authorization': useAccessTokenStore().getAccessToken()
