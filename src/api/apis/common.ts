@@ -6,6 +6,6 @@ export const commonCommits = (data: Paginator, committed: boolean, status: numbe
   service.post('/common/commits', { ...data, committed: committed, status: status, ...info });
 // 获取文件
 export const commonFile = (data: CommonFileParams) => servicefile.get(
-  '/common/file', { params: data }
+  '/common/file', { params: data, responseType: 'arraybuffer' }
 );
 export const commonOnline = () => service.get('/common/isOnline');

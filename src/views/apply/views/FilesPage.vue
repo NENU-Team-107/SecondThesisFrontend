@@ -44,8 +44,7 @@ import { useAccessTokenStore } from '@/store/accessToken';
 import { useSiteInfoStore } from '@/store/siteInfo';
 import { useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox, UploadProps, UploadUserFile } from 'element-plus';
-import { CommonFileParams } from '@/types/apis/common';
-import axios from 'axios';
+import { CommonFileParams, commonFile } from '@/types/apis/common';
 import { studentDeleteFile, studentUploadFile } from '@/api/apis/student';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -134,17 +133,7 @@ const fetchFileList = () => {
       class: key.toString(),
       id: file_id
     } as CommonFileParams;
-    console.log(data);
-    console.log(useSiteInfoStore().getBaseUrl());
-    axios.get(`${useSiteInfoStore().getBaseUrl()}/common/file`,
-      {
-        responseType: 'arraybuffer',
-        params: data,
-        headers: {
-          'Authorization': useAccessTokenStore().getAccessToken(),
-        },
-      }
-    ).then((response) => {
+    commonFile(data).then((response) => {
       let blob = new Blob([response.data], { type: response.headers['content-type'] });
       let url = window.URL.createObjectURL(blob);
       const fileData = {

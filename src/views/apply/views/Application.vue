@@ -65,7 +65,6 @@ const submitApplication = () => {
   // 提交申请表
   studentNewCommit().then(response => {
     const res = response.data as studentNewCommitResp;
-    console.log(res);
     if (res.code === -1) {
       ElMessage.error(res.message);
       return;
