@@ -58,6 +58,10 @@ const headers = {
   'Content-Type': 'application/x-www-form-urlencoded',
 };
 
+const headers = {
+  'Authorization': useAccessTokenStore().getAccessToken()
+};
+
 const classTypeList = ref([
   {
     index: 2,
