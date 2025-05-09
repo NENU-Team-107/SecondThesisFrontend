@@ -3,7 +3,7 @@
     class="bg-white w-full h-fit py-8 px-16" :onchange="contentChange">
     <el-row>
       <el-col :span="24">
-        <el-form-item label="个人照片">
+        <el-form-item label="个人照片" prop="photo">
           <div class="flex items-center w-full h-fit">
             <el-upload class="h-32 w-32 flex justify-center items-center border-dotted border-2 border-gray-200"
               :name="photoUpload.name" :action="photoUpload.url" tip="请上传JPG格式的一寸照照片，大小不超过2MB"
@@ -279,6 +279,9 @@ const checkPhone = (_rule: any, value: string, callback: (message?: string) => v
 };
 
 const rules = {
+  photo: [
+    { required: false, message: '请上传个人照片', trigger: 'blur' },
+  ],
   name: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
   ],

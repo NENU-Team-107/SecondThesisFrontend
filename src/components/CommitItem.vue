@@ -39,8 +39,9 @@
               <span class="font-semibold text-slate-900 truncate text-lg">是否提交：</span>
             </template>
             <span class="text-lg">
-              {{ commitInfo.commit ? '已提交' : '未提交' }}
-              <font-awesome-icon v-if="commitInfo.commit" icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+              {{ commitInfo.commit || IsHistory ? '已提交' : '未提交' }}
+              <font-awesome-icon v-if="commitInfo.commit || IsHistory" icon="fa-solid fa-circle-check"
+                style="color: #63E6BE;" />
               <font-awesome-icon v-else icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
             </span>
           </el-form-item>
@@ -73,12 +74,13 @@
               </span>
               <span v-else>
                 未知状态
-                <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
+                <font-awesome-icon icon="fa-solid fa-circle-question" style="color: #FFD700;" />
               </span>
             </span>
             <span v-else class="text-lg">
               <span>
                 未提交
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" style="color: #ff7070;" />
               </span>
             </span>
           </el-form-item>
