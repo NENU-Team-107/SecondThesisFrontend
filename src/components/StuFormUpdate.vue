@@ -280,7 +280,7 @@ const checkPhone = (_rule: any, value: string, callback: (message?: string) => v
 
 const rules = {
   photo: [
-    { required: false, message: '请上传个人照片', trigger: 'blur' },
+    { required: true, message: '请上传个人照片', trigger: 'blur' },
   ],
   name: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
