@@ -14,7 +14,7 @@
               </div>
             </el-upload>
             <div v-if="studentData.photo" class="relative h-32 w-32 mx-3 cursor-pointer" @click="previewPhoto">
-              <img :src="studentData.photo" :onerror="fetchProfile" class="h-full w-full object-cover ">
+              <img :src="studentData.photo" @error="handleImageError" class="h-full w-full object-cover">
               <div
                 class="absolute inset-0 bg-gray-900 bg-opacity-0 hover:bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex justify-center items-center">
                 <font-awesome-icon icon="fa-solid fa-magnifying-glass-plus" style="color: #ffffff;" />
@@ -188,6 +188,7 @@ import { useStudentStore } from '@/store/student';
 import { fetchProfile } from '@/utils/profiles/profiles';
 import { commonCommits } from '@/api/apis/common';
 import { CommitResp } from '@/types/apis/common';
+import axios from 'axios';
 
 const studentDataRef = ref();
 const studentData = defineModel('StudentData', {
@@ -469,13 +470,39 @@ const photoUpload = {
 const handleAvatarSuccess = (res: { message: string; code: number }, file: any) => {
   if (res.code == 0) {
     ElMessage.success(res.message);
-    const photourl = URL.createObjectURL(file.raw);
-    studentData.value.photo = photourl;
-    useStudentStore().setPhoto(photourl);
-  }
-  else {
+    // 清理旧的URL对象
+    if (studentData.value.photo && studentData.value.photo.startsWith('blob:')) {
+      URL.revokeObjectURL(studentData.value.photo);
+    }
+
+    // 使用服务器路径获取实际图片数据
+    axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto`, {
+      responseType: 'arraybuffer',
+      headers: {
+        Authorization: useAccessTokenStore().getAccessToken(),
+      },
+    }).then((response) => {
+      const base64String = btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+      const imageData = `data:image/png;base64,${base64String}`;
+
+      // 更新表单数据和store
+      studentData.value.photo = imageData;
+      useStudentStore().setPhoto(imageData);
+    }).catch((error) => {
+      console.error('Failed to fetch photo:', error);
+      ElMessage.error('获取照片失败');
+    });
+
+  } else {
     ElMessage.error(res.message);
   }
+}
+
+const handleImageError = () => {
+  // 如果图片加载失败，尝试重新获取个人信息
+  fetchProfile().catch(error => {
+    console.error('Failed to load profile:', error);
+  });
 }
 
 const beforeAvatarUpload = (file: any) => {
