@@ -89,7 +89,7 @@ const queryInfo = ref<CommitQuery>({
 const fetchCommits = () => {
   commonCommits(pagination.value, true, status.value, queryInfo.value).then((response) => {
     const res = response.data;
-    console.log(res);
+
     if (res.code !== 0) {
       ElMessage.error(res.msg);
       return;
@@ -97,7 +97,7 @@ const fetchCommits = () => {
 
     if (res.data) {
       for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].commit) {
+        if (res.data[i].passed === 1) {
           commitsList.value.push(res.data[i]);
           commitsList.value[commitsList.value.length - 1].committer_name = res.data[i].name;
         }
