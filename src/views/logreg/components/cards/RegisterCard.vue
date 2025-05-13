@@ -149,7 +149,7 @@ const rules = ref({
   ],
   phone: [
     { required: true, message: '请输入手机号码', trigger: 'blur' },
-    { pattern: /^1[34578]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
+    { pattern: /^1[3456789]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
   ],
 });
 
