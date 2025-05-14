@@ -12,13 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import Pagination from '@/components/Pagination.vue';
-import StudentList from '../components/StudentList.vue';
-import { ProfileDetail } from '@/types/apis/student';
-import { Paginator, PaginatorResp } from '@/types/apis/common';
-import { adminAccounts } from '@/api/apis/admin';
-import { ElMessage } from 'element-plus';
+import { adminAccounts } from "@/api/apis/admin";
+import Pagination from "@/components/Pagination.vue";
+import type { Paginator, PaginatorResp } from "@/types/apis/common";
+import type { ProfileDetail } from "@/types/apis/student";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
+import StudentList from "../components/StudentList.vue";
 
 const studentList = ref<ProfileDetail[]>([]);
 
@@ -30,25 +30,25 @@ const pagination = ref<Paginator>({
 });
 
 const fetchData = () => {
-  adminAccounts(pagination.value).then((response) => {
-    const res = response.data as PaginatorResp<ProfileDetail>;
-    console.log(res);
-    if (res.code !== 0) {
-      ElMessage.error(res.message);
-    }
-    else {
-      pagination.value.total = res.total;
-      pagination.value.page = res.page;
-      pagination.value.limit = res.limit;
-      pagination.value.offset = res.offset;
+  adminAccounts(pagination.value)
+    .then((response) => {
+      const res = response.data as PaginatorResp<ProfileDetail>;
+      console.log(res);
+      if (res.code !== 0) {
+        ElMessage.error(res.message);
+      } else {
+        pagination.value.total = res.total;
+        pagination.value.page = res.page;
+        pagination.value.limit = res.limit;
+        pagination.value.offset = res.offset;
 
-      studentList.value = res.data;
-
-    }
-  }).catch((err) => {
-    console.log(err);
-    ElMessage.error('获取失败');
-  });
+        studentList.value = res.data;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      ElMessage.error("获取失败");
+    });
 };
 
 const handlePageChange = () => {

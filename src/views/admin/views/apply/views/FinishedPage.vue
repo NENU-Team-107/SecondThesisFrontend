@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="w-4/5 bg-white rounded-lg shadow-md p-2">
       <h1 class="text-2xl font-bold my-3 w-full text-center">拟录取通过申请</h1>
-      
+
       <div class="w-full flex my-3">
         <div class="ml-6 text-gray-700">查询条件：</div>
         <div class="flex-1 mx-3 flex">
@@ -32,20 +32,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { commonCommits } from '@/api/apis/common';
-import { CommitDetail, CommitQuery, Paginator } from '@/types/apis/common';
-import CommitItem from '@/components/CommitItem.vue';
-import { ElMessage } from 'element-plus';
-import Pagination from '@/components/Pagination.vue';
+import { commonCommits } from "@/api/apis/common";
+import CommitItem from "@/components/CommitItem.vue";
+import Pagination from "@/components/Pagination.vue";
+import type { CommitDetail, CommitQuery, Paginator } from "@/types/apis/common";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 
 const status = ref<number>(3); // 拟录取通过
 
-const title = defineModel('title', {
+const title = defineModel("title", {
   required: true,
   type: String,
 });
-
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -59,31 +58,32 @@ const isadmin = ref<boolean>(true);
 const commitsList = ref<CommitDetail[]>([]);
 
 const queryInfo = ref<CommitQuery>({
-  name: '',
-  id_code: '',
-  major: '',
+  name: "",
+  id_code: "",
+  major: "",
 });
 
 const fetchCommits = () => {
-  commonCommits(pagination.value, true, status.value, queryInfo.value).then((response) => {
-    const res = response.data;
-    console.log(res);
-    if (res.code !== 0) {
-      ElMessage.error(res.msg);
-      return;
-    }
-    if (res.data) {
-      commitsList.value = res.data;
-    }
-    else {
-      commitsList.value = [];
-    }
+  commonCommits(pagination.value, true, status.value, queryInfo.value).then(
+    (response) => {
+      const res = response.data;
+      console.log(res);
+      if (res.code !== 0) {
+        ElMessage.error(res.msg);
+        return;
+      }
+      if (res.data) {
+        commitsList.value = res.data;
+      } else {
+        commitsList.value = [];
+      }
 
-    pagination.value.total = res.total;
-    pagination.value.page = res.page;
-    pagination.value.limit = res.limit;
-    pagination.value.offset = res.offset;
-  });
+      pagination.value.total = res.total;
+      pagination.value.page = res.page;
+      pagination.value.limit = res.limit;
+      pagination.value.offset = res.offset;
+    },
+  );
 };
 
 const handlePageChange = () => {

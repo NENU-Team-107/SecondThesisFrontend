@@ -20,84 +20,86 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { ProfileDetail } from '@/types/apis/student';
-import { Edit } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
-import StuProfileCard from '@/components/StuProfileCard.vue';
-import StuFormUpdate from '@/components/StuFormUpdate.vue';
-import { useStudentStore } from '@/store/student';
-import { fetchProfile } from '@/utils/profiles/profiles';
+import StuFormUpdate from "@/components/StuFormUpdate.vue";
+import StuProfileCard from "@/components/StuProfileCard.vue";
+import { useStudentStore } from "@/store/student";
+import type { ProfileDetail } from "@/types/apis/student";
+import { fetchProfile } from "@/utils/profiles/profiles";
+import { Edit } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import { ref, watch } from "vue";
 
-const msg = ref<string>('确认更新个人信息吗？');
+const msg = ref<string>("确认更新个人信息吗？");
 const confirm = ref<boolean>(false);
 
-watch(() => confirm.value, (value) => {
-  if (value) {
-    ElMessage.success('更新成功');
-    fetchStudentData();
-  }
-});
+watch(
+  () => confirm.value,
+  (value) => {
+    if (value) {
+      ElMessage.success("更新成功");
+      fetchStudentData();
+    }
+  },
+);
 
 const studentData = ref<ProfileDetail>({
-  bachelor_class: '',
-  bachelor_course: '',
-  bachelor_school: '',
-  birthday: '',
-  domicile: '',
-  email: '',
+  bachelor_class: "",
+  bachelor_course: "",
+  bachelor_school: "",
+  birthday: "",
+  domicile: "",
+  email: "",
   email_verify: true,
-  graduation_no: '',
-  graduation_year: '',
-  home_address: '',
-  id_code: '',
-  major: '',
-  major_phone_number: '',
-  name: '',
-  nation: '',
+  graduation_no: "",
+  graduation_year: "",
+  home_address: "",
+  id_code: "",
+  major: "",
+  major_phone_number: "",
+  name: "",
+  nation: "",
   phone_number_verify: true,
-  photo: '',
-  politics: '',
-  sex: '',
-  standby_phone_number: '',
-  thesis_no: '',
+  photo: "",
+  politics: "",
+  sex: "",
+  standby_phone_number: "",
+  thesis_no: "",
 });
 
 const completed = ref(true);
 
 const checkCompleted = () => {
   for (const key in studentData.value) {
-    if (key === 'phone_number_verify' || key === 'email_verify' || key === 'photo') {
+    if (
+      key === "phone_number_verify" ||
+      key === "email_verify" ||
+      key === "photo"
+    ) {
       continue;
     }
-    if (studentData.value[key as keyof ProfileDetail] === '') {
+    if (studentData.value[key as keyof ProfileDetail] === "") {
       completed.value = false;
       return;
     }
   }
   completed.value = true;
-}
+};
 
 const photoStatus = ref(false);
 
 const fetchStudentData = () => {
-  fetchProfile().then(
-    () => {
-      studentData.value = useStudentStore().getStudentProfile();
-      photoStatus.value = studentData.value.photo !== '';
-      checkCompleted();
-    }
-  )
+  fetchProfile().then(() => {
+    studentData.value = useStudentStore().getStudentProfile();
+    photoStatus.value = studentData.value.photo !== "";
+    checkCompleted();
+  });
   checkCompleted();
-}
+};
 
 fetchStudentData();
-
-
 
 const editStatus = ref(false);
 const edit = () => {
   editStatus.value = !editStatus.value;
-}
-
+};
 </script>

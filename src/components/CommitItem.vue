@@ -124,51 +124,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { CommitDetail, CommitResp } from '@/types/apis/common';
-import { studentSaveCommit } from '@/api/apis/student';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { useRouter } from 'vue-router';
-import { studentSaveCommitRes } from '@/types/apis/student';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import { useAccessTokenStore } from '@/store/accessToken';
-import axios from 'axios';
-import { adminCheckCommit } from '@/api/apis/admin';
-import { CommitDetails } from '@/types/apis/admin';
-import { ElLoading } from 'element-plus';
+import { adminCheckCommit } from "@/api/apis/admin";
+import { studentSaveCommit } from "@/api/apis/student";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useSiteInfoStore } from "@/store/siteInfo";
+import type { CommitDetails } from "@/types/apis/admin";
+import type { CommitDetail, CommitResp } from "@/types/apis/common";
+import type { studentSaveCommitRes } from "@/types/apis/student";
+import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { ElLoading } from "element-plus";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 const router = useRouter();
-const commitInfo = defineModel('CommitInfo', {
+const commitInfo = defineModel("CommitInfo", {
   required: true,
   type: Object as () => CommitDetail,
 });
 
 const confirmed = ref(false);
-const IsAdmin = defineModel('IsAdmin', {
+const IsAdmin = defineModel("IsAdmin", {
   required: false,
   type: Boolean,
   default: false,
 });
 
-const status = defineModel('Status', {
+const status = defineModel("Status", {
   required: false,
   type: Number,
   default: 0,
 });
 
 const majorList = ref([
-  { value: '化学', label: '化学' },
-  { value: '地理科学', label: '地理科学' },
-  { value: '材料物理', label: '材料物理' },
-  { value: '生物技术', label: '生物技术' },
-  { value: '计算机科学与技术', label: '计算机科学与技术' },
-  { value: '环境科学', label: '环境科学' },
-  { value: '环境工程', label: '环境工程' },
-  { value: '生态学', label: '生态学' },
-  { value: '学前教育', label: '学前教育' },
-  { value: '历史学', label: '历史学' },
-  { value: '思想政治教育', label: '思想政治教育' },
-  { value: '哲学', label: '哲学' },
-  { value: '社会学', label: '社会学' }
+  { value: "化学", label: "化学" },
+  { value: "地理科学", label: "地理科学" },
+  { value: "材料物理", label: "材料物理" },
+  { value: "生物技术", label: "生物技术" },
+  { value: "计算机科学与技术", label: "计算机科学与技术" },
+  { value: "环境科学", label: "环境科学" },
+  { value: "环境工程", label: "环境工程" },
+  { value: "生态学", label: "生态学" },
+  { value: "学前教育", label: "学前教育" },
+  { value: "历史学", label: "历史学" },
+  { value: "思想政治教育", label: "思想政治教育" },
+  { value: "哲学", label: "哲学" },
+  { value: "社会学", label: "社会学" },
 ]);
 
 const testCommitInfo = () => {
@@ -179,7 +179,7 @@ const testCommitInfo = () => {
 
 testCommitInfo();
 
-const IsHistory = defineModel('IsHistory', {
+const IsHistory = defineModel("IsHistory", {
   required: false,
   type: Boolean,
   default: false,
@@ -189,9 +189,9 @@ const submit = () => {
   const data: studentSaveCommitRes = {
     id: commitInfo.value.id,
     enroll_major: commitInfo.value.enroll_major,
-  }
+  };
   if (!data.enroll_major) {
-    ElMessage.error('请填写报读专业');
+    ElMessage.error("请填写报读专业");
     return;
   }
   studentSaveCommit(data).then((response) => {
@@ -200,24 +200,26 @@ const submit = () => {
       ElMessage.error(res.message);
       return;
     }
-    ElMessage.success('提交成功');
+    ElMessage.success("提交成功");
     confirmed.value = true;
   });
 };
 
-const resson = ref('');
+const resson = ref("");
 
 const checkCommit = (status: number) => {
-  const msg = status ? '确认通过该申请吗？' : '确认不通过该申请吗？';
-  ElMessageBox.confirm(msg, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    submitCheck(status);
-  }).catch(() => {
-    ElMessage.info('已取消');
-  });
+  const msg = status ? "确认通过该申请吗？" : "确认不通过该申请吗？";
+  ElMessageBox.confirm(msg, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      submitCheck(status);
+    })
+    .catch(() => {
+      ElMessage.info("已取消");
+    });
 };
 
 const submitCheck = (status: number) => {
@@ -237,45 +239,48 @@ const submitCheck = (status: number) => {
     }
     ElMessage.success(res.message);
   });
-}
+};
 
 const checkFiles = () => {
   console.log(IsHistory.value, IsAdmin.value);
   if (IsHistory.value || IsAdmin.value) {
-    router.push('/apply/previewfiles/' + commitInfo.value.file_id);
-  }
-  else {
-    router.push('/apply/files/' + commitInfo.value.file_id);
+    router.push(`/apply/previewfiles/${commitInfo.value.file_id}`);
+  } else {
+    router.push(`/apply/files/${commitInfo.value.file_id}`);
   }
 };
 
 const exportForm = () => {
   const loading = ElLoading.service({
     lock: true,
-    text: '正在下载报名表',
-    background: 'rgba(0, 0, 0, 0.7)',
+    text: "正在下载报名表",
+    background: "rgba(0, 0, 0, 0.7)",
   });
 
   const apiurl = `${useSiteInfoStore().getBaseUrl()}/student/export/${commitInfo.value.id}`;
-  axios.get(apiurl, {
-    headers: {
-      'Authorization': useAccessTokenStore().getAccessToken(),
-    },
-    responseType: 'blob',
-  }).then((response) => {
-    const blob = response.data;
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = commitInfo.value.id + '_报名表.pdf';
-    a.click();
-    window.URL.revokeObjectURL(url); // 释放内存
-  }).catch((error) => {
-    console.error('下载失败', error);
-    ElMessage.error('下载失败');
-  }).finally(() => {
-    loading.close(); // 关闭加载动画
-    // 这里可以添加一些清理操作，比如关闭加载动画等
-  });
-}
+  axios
+    .get(apiurl, {
+      headers: {
+        Authorization: useAccessTokenStore().getAccessToken(),
+      },
+      responseType: "blob",
+    })
+    .then((response) => {
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${commitInfo.value.id}_报名表.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url); // 释放内存
+    })
+    .catch((error) => {
+      console.error("下载失败", error);
+      ElMessage.error("下载失败");
+    })
+    .finally(() => {
+      loading.close(); // 关闭加载动画
+      // 这里可以添加一些清理操作，比如关闭加载动画等
+    });
+};
 </script>

@@ -24,20 +24,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { StudentLoginReq, StudentLoginResp } from '@/types/apis/student';
-import { studentLogin } from '@/api/apis/student';
-import { useStudentStore } from '@/store/student';
-import { useAccessTokenStore } from '@/store/accessToken';
-import { fetchProfile } from '@/utils/profiles/profiles';
-import router from '@/router';
+import { studentLogin } from "@/api/apis/student";
+import router from "@/router";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useStudentStore } from "@/store/student";
+import type { StudentLoginReq, StudentLoginResp } from "@/types/apis/student";
+import { fetchProfile } from "@/utils/profiles/profiles";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 
 const studentLoginData = ref<StudentLoginReq>({
-  email: '',
-  id_code: '',
-  password: '',
-  phone_number: ''
+  email: "",
+  id_code: "",
+  password: "",
+  phone_number: "",
 });
 
 interface LoginData {
@@ -48,8 +48,8 @@ interface LoginData {
 const loginRef = ref();
 
 const ruleForm = ref<LoginData>({
-  username: '',
-  password: ''
+  username: "",
+  password: "",
 });
 
 // 根据表单验证状态判断是否可以提交
@@ -60,66 +60,64 @@ const idCard = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
 
 const rules = ref({
   username: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
+    { required: true, message: "请输入账号", trigger: "blur" },
     {
-      validator: (_: any, value: string, callback: (arg0: Error | undefined) => void) => {
+      validator: (
+        _: any,
+        value: string,
+        callback: (arg0: Error | undefined) => void,
+      ) => {
         if (!phone.test(value) && !email.test(value) && !idCard.test(value)) {
-          callback(new Error('请输入正确的身份证号码/邮箱/手机号'));
-        }
-        else {
+          callback(new Error("请输入正确的身份证号码/邮箱/手机号"));
+        } else {
           callback(undefined);
         }
       },
-      trigger: 'blur'
-    }
+      trigger: "blur",
+    },
   ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ]
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
 const submitForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.validate((valid: any) => {
     if (valid) {
-      console.log('submit!');
+      console.log("submit!");
       console.log(ruleForm.value);
       if (phone.test(ruleForm.value.username)) {
         studentLoginData.value.phone_number = ruleForm.value.username;
-      }
-      else if (email.test(ruleForm.value.username)) {
+      } else if (email.test(ruleForm.value.username)) {
         studentLoginData.value.email = ruleForm.value.username;
-      }
-      else if (idCard.test(ruleForm.value.username)) {
+      } else if (idCard.test(ruleForm.value.username)) {
         studentLoginData.value.id_code = ruleForm.value.username;
       }
       studentLoginData.value.password = ruleForm.value.password;
 
       console.log(studentLoginData.value);
 
-      studentLogin(studentLoginData.value).then((response) => {
-        const res = response.data as StudentLoginResp;
-        console.log(res);
-        if (res.code !== 0) {
-          ElMessage.error(res.message);
-          return;
-        }
-        ElMessage.success('登录成功');
-        useStudentStore().setToken(res.token);
-        useAccessTokenStore().setToken(res.token);
-        fetchProfile().then(
-          () => {
-            router.push('/');
+      studentLogin(studentLoginData.value)
+        .then((response) => {
+          const res = response.data as StudentLoginResp;
+          console.log(res);
+          if (res.code !== 0) {
+            ElMessage.error(res.message);
+            return;
           }
-        )
-      }
-      ).catch((err: any) => {
-        ElMessage.error('登录失败，请检查网络设置');
-        console.log(err);
-      });
+          ElMessage.success("登录成功");
+          useStudentStore().setToken(res.token);
+          useAccessTokenStore().setToken(res.token);
+          fetchProfile().then(() => {
+            router.push("/");
+          });
+        })
+        .catch((err: any) => {
+          ElMessage.error("登录失败，请检查网络设置");
+          console.log(err);
+        });
     } else {
-      console.log('error submit!!');
-      ElMessage.error('请检查输入');
+      console.log("error submit!!");
+      ElMessage.error("请检查输入");
     }
   });
 };
@@ -127,17 +125,16 @@ const submitForm = (event: Event) => {
 const resetForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.resetFields();
-  ElMessage.success('重置成功');
+  ElMessage.success("重置成功");
 };
 
 const fipped = defineModel({
   required: true,
   type: Boolean,
-  default: false
-})
+  default: false,
+});
 
 const forgetPwd = () => {
   fipped.value = true;
 };
-
 </script>

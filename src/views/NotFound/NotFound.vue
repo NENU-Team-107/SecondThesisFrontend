@@ -19,6 +19,7 @@
   width: 100%;
   background: #f1f1f1;
 }
+
 .hit-the-floor-404 {
   color: #fff;
   font-size: 10em;
@@ -45,12 +46,11 @@
 </style>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const back = () => {
-  router.push('/');
+  router.push("/");
 };
-
 </script>

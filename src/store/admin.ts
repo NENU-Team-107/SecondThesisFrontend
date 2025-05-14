@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useAdminStore = defineStore('admin', {
+export const useAdminStore = defineStore("admin", {
   state: () => {
     return {
-      token: '' as string,
+      token: "" as string,
     };
   },
   getters: {
@@ -15,10 +15,9 @@ export const useAdminStore = defineStore('admin', {
     setToken(token: string) {
       this.token = token;
     },
-    removeToken() { 
-      this.token = '';
+    removeToken() {
+      this.token = "";
     },
   },
   persist: true,
 });
-

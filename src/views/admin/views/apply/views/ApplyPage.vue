@@ -85,17 +85,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { commonCommits } from '@/api/apis/common';
-import { CommitDetail, CommitQuery, CommitResp, Paginator } from '@/types/apis/common';
-import CommitItem from '@/components/CommitItem.vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import Pagination from '@/components/Pagination.vue';
-import { CommitDetails } from '@/types/apis/admin';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import { useAccessTokenStore } from '@/store/accessToken';
-import axios from 'axios';
-import { adminCheckCommit, adminSetDeadline, adminSetStartTime } from '@/api/apis/admin';
+import {
+  adminCheckCommit,
+  adminSetDeadline,
+  adminSetStartTime,
+} from "@/api/apis/admin";
+import { commonCommits } from "@/api/apis/common";
+import CommitItem from "@/components/CommitItem.vue";
+import Pagination from "@/components/Pagination.vue";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useSiteInfoStore } from "@/store/siteInfo";
+import type { CommitDetails } from "@/types/apis/admin";
+import type {
+  CommitDetail,
+  CommitQuery,
+  CommitResp,
+  Paginator,
+} from "@/types/apis/common";
+import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { ref, watch } from "vue";
 
 const pagination = ref<Paginator>({
   limit: 10,
@@ -110,45 +119,51 @@ const isadmin = ref<boolean>(true);
 const commitsList = ref<CommitDetail[]>([]);
 const selectedCommits = ref<number[]>([]);
 const allSelected = ref(false);
-const batchReason = ref('');
-const deadline = ref('')
+const batchReason = ref("");
+const deadline = ref("");
 
 const queryInfo = ref<CommitQuery>({
-  name: '',
-  id_code: '',
-  major: '',
+  name: "",
+  id_code: "",
+  major: "",
 });
 
 const fetchCommits = () => {
-  console.log("查询条件：", queryInfo.value.id_code, queryInfo.value.name, queryInfo.value.major);
-  commonCommits(pagination.value, true, status.value, queryInfo.value).then((response) => {
-    const res = response.data;
-    console.log(res);
-    if (res.code !== 0) {
-      ElMessage.error(res.msg);
-      return;
-    }
+  console.log(
+    "查询条件：",
+    queryInfo.value.id_code,
+    queryInfo.value.name,
+    queryInfo.value.major,
+  );
+  commonCommits(pagination.value, true, status.value, queryInfo.value).then(
+    (response) => {
+      const res = response.data;
+      console.log(res);
+      if (res.code !== 0) {
+        ElMessage.error(res.msg);
+        return;
+      }
 
-    if (res.data) {
-      // for (let i = 0; i < res.data.length; i++) {
-      //   if (res.data[i].commit) {
-      //     commitsList.value.push(res.data[i]);
-      //   }
-      // }
-      commitsList.value = res.data;
-      // for (let i = 0; i < commitsList.value.length; i++) {
-      //   commitsList.value[i].commit = true;
-      // }
-    } else {
-      commitsList.value = [];
-    }
-    console.log("commitsList.value", commitsList.value);
-    pagination.value.total = res.total;
-    pagination.value.page = res.page;
-    pagination.value.limit = res.limit;
-    pagination.value.offset = res.offset;
-
-  });
+      if (res.data) {
+        // for (let i = 0; i < res.data.length; i++) {
+        //   if (res.data[i].commit) {
+        //     commitsList.value.push(res.data[i]);
+        //   }
+        // }
+        commitsList.value = res.data;
+        // for (let i = 0; i < commitsList.value.length; i++) {
+        //   commitsList.value[i].commit = true;
+        // }
+      } else {
+        commitsList.value = [];
+      }
+      console.log("commitsList.value", commitsList.value);
+      pagination.value.total = res.total;
+      pagination.value.page = res.page;
+      pagination.value.limit = res.limit;
+      pagination.value.offset = res.offset;
+    },
+  );
 };
 
 const handlePageChange = () => {
@@ -157,7 +172,7 @@ const handlePageChange = () => {
 
 const toggleAllSelection = () => {
   if (allSelected.value) {
-    selectedCommits.value = commitsList.value.map(commit => commit.id);
+    selectedCommits.value = commitsList.value.map((commit) => commit.id);
   } else {
     selectedCommits.value = [];
   }
@@ -169,57 +184,74 @@ watch(selectedCommits, (newSelection) => {
 
 const batchApprove = () => {
   if (selectedCommits.value.length === 0) {
-    ElMessage.warning('请先选择提交项');
+    ElMessage.warning("请先选择提交项");
     return;
   }
   for (let i = 0; i < selectedCommits.value.length; i++) {
-    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
+    const commit = commitsList.value.find(
+      (commit) => commit.id === selectedCommits.value[i],
+    );
     if (commit) {
       checkCommit(1, commit, batchReason.value);
     }
   }
   // Handle batch approve logic here
-  ElMessage.success(`已通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
+  ElMessage.success(
+    `已通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`,
+  );
   selectedCommits.value = [];
-  batchReason.value = '';
+  batchReason.value = "";
   fetchCommits();
 };
 
 const batchReject = () => {
   if (selectedCommits.value.length === 0) {
-    ElMessage.warning('请先选择提交项');
+    ElMessage.warning("请先选择提交项");
     return;
   }
 
   for (let i = 0; i < selectedCommits.value.length; i++) {
-    const commit = commitsList.value.find(commit => commit.id === selectedCommits.value[i]);
+    const commit = commitsList.value.find(
+      (commit) => commit.id === selectedCommits.value[i],
+    );
     if (commit) {
       checkCommit(-1, commit, batchReason.value);
     }
   }
   // Handle batch reject logic here
-  ElMessage.success(`不通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`);
+  ElMessage.success(
+    `不通过 ${selectedCommits.value.length} 项，原因: ${batchReason.value}`,
+  );
 
   selectedCommits.value = [];
-  batchReason.value = '';
+  batchReason.value = "";
   fetchCommits();
 };
 
-
-const checkCommit = (status: number, commitInfo: CommitDetail, reason: String) => {
-  const msg = status ? '确认通过该申请吗？' : '确认不通过该申请吗？';
-  ElMessageBox.confirm(msg, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    submitCheck(status, commitInfo, reason);
-  }).catch(() => {
-    ElMessage.info('已取消');
-  });
+const checkCommit = (
+  status: number,
+  commitInfo: CommitDetail,
+  reason: string,
+) => {
+  const msg = status ? "确认通过该申请吗？" : "确认不通过该申请吗？";
+  ElMessageBox.confirm(msg, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      submitCheck(status, commitInfo, reason);
+    })
+    .catch(() => {
+      ElMessage.info("已取消");
+    });
 };
 
-const submitCheck = (status: number, commitInfo: CommitDetail, reason: String) => {
+const submitCheck = (
+  status: number,
+  commitInfo: CommitDetail,
+  reason: string,
+) => {
   const data = {
     id: commitInfo.id,
     committer_name: commitInfo.committer_name,
@@ -236,23 +268,23 @@ const submitCheck = (status: number, commitInfo: CommitDetail, reason: String) =
     }
     ElMessage.success(res.message);
   });
-}
+};
 
-const startTime = ref('');
+const startTime = ref("");
 const setStartTime = () => {
   if (!startTime.value) {
     ElMessage.error("开始时间不能为空");
     return;
   }
   adminSetStartTime(startTime.value).then((response) => {
-    const res = response.data
+    const res = response.data;
     if (res.code === -1) {
       ElMessage.error(res.message);
     } else {
-      ElMessage.success("成功设置开始时间为" + startTime.value);
+      ElMessage.success(`成功设置开始时间为${startTime.value}`);
     }
   });
-}
+};
 
 const setDeadline = () => {
   if (!deadline.value) {
@@ -260,35 +292,38 @@ const setDeadline = () => {
     return;
   }
   adminSetDeadline(deadline.value).then((response) => {
-    const res = response.data
+    const res = response.data;
     if (res.code === -1) {
       ElMessage.error(res.message);
     } else {
-      ElMessage.success("成功设置截止时间为" + deadline.value);
+      ElMessage.success(`成功设置截止时间为${deadline.value}`);
     }
   });
-}
+};
 
 const exportAllCommits = () => {
   const apiurl = `${useSiteInfoStore().getBaseUrl()}/admin/exportCommits`;
-  axios.get(apiurl, {
-    headers: {
-      'Authorization': useAccessTokenStore().getAccessToken(),
-    },
-    responseType: 'blob',
-  }).then((response) => {
-    const blob = response.data;
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '报名数据.csv';
-    a.click();
-    window.URL.revokeObjectURL(url); // 释放内存
-  }).catch((error) => {
-    console.error('下载失败', error);
-    ElMessage.error('下载失败');
-  });
-}
+  axios
+    .get(apiurl, {
+      headers: {
+        Authorization: useAccessTokenStore().getAccessToken(),
+      },
+      responseType: "blob",
+    })
+    .then((response) => {
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "报名数据.csv";
+      a.click();
+      window.URL.revokeObjectURL(url); // 释放内存
+    })
+    .catch((error) => {
+      console.error("下载失败", error);
+      ElMessage.error("下载失败");
+    });
+};
 
 fetchCommits();
 </script>

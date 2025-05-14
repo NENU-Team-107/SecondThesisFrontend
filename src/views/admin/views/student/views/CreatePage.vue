@@ -41,93 +41,93 @@
 </template>
 
 <script setup lang="ts">
-import { adminCreateAccounts } from '@/api/apis/admin';
-import { AdminAccountsReq } from '@/types/apis/admin';
-import { ElNotification } from 'element-plus';
-import { ref } from 'vue';
+import { adminCreateAccounts } from "@/api/apis/admin";
+import type { AdminAccountsReq } from "@/types/apis/admin";
+import { ElNotification } from "element-plus";
+import { ref } from "vue";
 
-const id_code = ref<string>('');
-const id_code_total = ref<string>('');
+const id_code = ref<string>("");
+const id_code_total = ref<string>("");
 const idCodeArray = ref<string[]>([]);
 
 const addIdCode = () => {
-  if (id_code.value === '') {
+  if (id_code.value === "") {
     return;
   }
   if (idCodeArray.value.includes(id_code.value)) {
     ElNotification({
-      title: '添加失败',
-      message: '该身份证号已添加',
-      type: 'error',
+      title: "添加失败",
+      message: "该身份证号已添加",
+      type: "error",
       offset: 100,
     });
-    id_code.value = '';
+    id_code.value = "";
     return;
   }
-  let pattern =  /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+  const pattern = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
   if (!pattern.test(id_code.value)) {
     ElNotification({
-      title: '添加失败',
-      message: '身份证号格式错误',
-      type: 'error',
+      title: "添加失败",
+      message: "身份证号格式错误",
+      type: "error",
       offset: 100,
     });
     return;
   }
   ElNotification({
-    title: '添加成功',
-    message: '已添加身份证号' + id_code.value,
-    type: 'success',
+    title: "添加成功",
+    message: `已添加身份证号${id_code.value}`,
+    type: "success",
     offset: 100,
   });
   idCodeArray.value.push(id_code.value);
-  id_code.value = '';
+  id_code.value = "";
 };
 
 const addIdCodeTotal = () => {
-  if (id_code_total.value === '') {
+  if (id_code_total.value === "") {
     return;
   }
   const idList = id_code_total.value.split(/,| |\n/);
   const idListSuccess: string[] = [];
-  idList.forEach((id) => {
-    if (id === '') {
-      return;
+  for (const id of idList) {
+    if (id === "") {
+      continue;
     }
     if (idCodeArray.value.includes(id)) {
-      return;
+      continue;
     }
-    let pattern =  /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    const pattern = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
     if (!pattern.test(id)) {
-      return;
+      continue;
     }
     idCodeArray.value.push(id);
     idListSuccess.push(id);
-  });
+  }
   if (idListSuccess.length === 0) {
     ElNotification({
-      title: '添加失败',
-      message: '本次添加的身份证号格式错误或已添加',
-      type: 'error',
+      title: "添加失败",
+      message: "本次添加的身份证号格式错误或已添加",
+      type: "error",
       offset: 100,
     });
     return;
   }
   ElNotification({
-    title: '添加成功',
-    message: '已添加' + idListSuccess.length + '个身份证号',
-    type: 'success',
+    title: "添加成功",
+    message: `已添加${idListSuccess.length}个身份证号`,
+    type: "success",
     offset: 100,
   });
-  id_code_total.value = '';
+  id_code_total.value = "";
 };
 
 const clearAll = () => {
   idCodeArray.value = [];
   ElNotification({
-    title: '清空成功',
-    message: '已清空本次添加的身份证号',
-    type: 'success',
+    title: "清空成功",
+    message: "已清空本次添加的身份证号",
+    type: "success",
     offset: 100,
   });
 };
@@ -141,21 +141,20 @@ const submitCreate = () => {
     const res = response.data;
     if (res.code === -1) {
       ElNotification({
-        title: '创建失败',
+        title: "创建失败",
         message: res.message,
-        type: 'error',
+        type: "error",
         offset: 100,
       });
       return;
     }
     ElNotification({
-      title: '创建成功',
-      message: '已成功创建' + idCodeArray.value.length + '个账号',
-      type: 'success',
+      title: "创建成功",
+      message: `已成功创建${idCodeArray.value.length}个账号`,
+      type: "success",
       offset: 100,
     });
     idCodeArray.value = [];
   });
 };
-
 </script>

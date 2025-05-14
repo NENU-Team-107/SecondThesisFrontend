@@ -38,20 +38,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import type { StudentResetPwdReq, StudentResetPwdResp } from '@/types/apis/student';
-import { studentResetPwd, studentSendResetPwdMailCode } from '@/api/apis/student';
-import router from '@/router';
-import { useStudentStore } from '@/store/student';
-import { useAccessTokenStore } from '@/store/accessToken';
-import { fetchProfile } from '@/utils/profiles/profiles';
+import {
+  studentResetPwd,
+  studentSendResetPwdMailCode,
+} from "@/api/apis/student";
+import router from "@/router";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useStudentStore } from "@/store/student";
+import type {
+  StudentResetPwdReq,
+  StudentResetPwdResp,
+} from "@/types/apis/student";
+import { fetchProfile } from "@/utils/profiles/profiles";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 
 const studentResetPwdData = ref<StudentResetPwdReq>({
-  email: '',
-  password: '',
-  phone_number: '',
-  code: ''
+  email: "",
+  password: "",
+  phone_number: "",
+  code: "",
 });
 
 interface ResetPwdData {
@@ -65,11 +71,11 @@ interface ResetPwdData {
 const resetPwdRef = ref();
 
 const resetPwdForm = ref<ResetPwdData>({
-  email: '',
-  phone_number: '',
-  password: '',
-  code: '',
-  check_password: ''
+  email: "",
+  phone_number: "",
+  password: "",
+  code: "",
+  check_password: "",
 });
 
 // 根据表单验证状态判断是否可以提交
@@ -78,77 +84,70 @@ const phone = /0?(13|14|15|18|17)[0-9]{9}/;
 
 const Pwdrules = ref({
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur'] }
+    { required: true, message: "请输入邮箱", trigger: "blur" },
+    { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur"] },
   ],
-  code: [
-    { required: true, message: '请输入验证码', trigger: 'blur' }
-  ],
+  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
   phone_number: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: phone, message: '请输入正确的手机号', trigger: ['blur'] }
+    { required: true, message: "请输入手机号", trigger: "blur" },
+    { pattern: phone, message: "请输入正确的手机号", trigger: ["blur"] },
   ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
   check_password: [
-    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    { required: true, message: "请再次输入密码", trigger: "blur" },
     {
       validator: (_rule: any, value: string, callback: any) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
+        if (value === "") {
+          callback(new Error("请再次输入密码"));
         } else if (value !== resetPwdForm.value.password) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error("两次输入密码不一致!"));
         } else {
           callback();
         }
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: "blur",
+    },
+  ],
 });
 
 const submitForm = (event: Event) => {
   event.preventDefault();
   resetPwdRef.value.validate((valid: any) => {
     if (valid) {
-      console.log('submit!');
+      console.log("submit!");
       console.log(resetPwdForm.value);
       studentResetPwdData.value = resetPwdForm.value;
 
-      studentResetPwd(studentResetPwdData.value).then((response) => {
-        const res = response.data as StudentResetPwdResp;
-        console.log(res);
-        if (res.code !== 0) {
-          ElMessage.error(res.message);
-          return;
-        }
-        else {
-          ElMessage.success('修改密码成功');
+      studentResetPwd(studentResetPwdData.value)
+        .then((response) => {
+          const res = response.data as StudentResetPwdResp;
+          console.log(res);
+          if (res.code !== 0) {
+            ElMessage.error(res.message);
+            return;
+          }
+          ElMessage.success("修改密码成功");
           useAccessTokenStore().setToken(res.token);
           useStudentStore().setToken(res.token);
-          fetchProfile().then(
-            () => {
-              router.push('/');
-            }
-          );
-        }
-      }
-      ).catch((_err: any) => {
-        ElMessage.error('登录失败，请检查网络设置');
-      });
+          fetchProfile().then(() => {
+            router.push("/");
+          });
+
+        })
+        .catch(() => {
+          ElMessage.error("登录失败，请检查网络设置");
+        });
     } else {
-      ElMessage.error('请检查输入');
+      ElMessage.error("请检查输入");
     }
   });
 };
 
-
 const fipped = defineModel({
   required: true,
   type: Boolean,
-  default: false
-})
+  default: false,
+});
 
 const backLogin = () => {
   fipped.value = false;
@@ -156,26 +155,26 @@ const backLogin = () => {
 
 const sendVerifyCode = (event: Event) => {
   event.preventDefault();
-  console.log('sendVerifyCode');
-  if (resetPwdForm.value.email === '') {
-    ElMessage.error('请输入邮箱');
+  console.log("sendVerifyCode");
+  if (resetPwdForm.value.email === "") {
+    ElMessage.error("请输入邮箱");
     return;
   }
   const data = {
     email: resetPwdForm.value.email,
-    phone_number: resetPwdForm.value.phone_number
+    phone_number: resetPwdForm.value.phone_number,
   };
   console.log(data);
   // 发送验证码
-  studentSendResetPwdMailCode(data.email).then((response) => {
-    const res = response.data as any;
-    console.log(res);
-    if (res.code !== 0) {
-      ElMessage.error(res.message);
-      return;
-    }
-    else {
-      ElMessage.success('验证码发送成功');
+  studentSendResetPwdMailCode(data.email)
+    .then((response) => {
+      const res = response.data as { code: number; message: string; };
+      console.log(res);
+      if (res.code !== 0) {
+        ElMessage.error(res.message);
+        return;
+      }
+      ElMessage.success("验证码发送成功");
       sended.value = true;
       counter.value = 60;
       const interval = setInterval(() => {
@@ -184,15 +183,14 @@ const sendVerifyCode = (event: Event) => {
           clearInterval(interval);
         }
       }, 1000);
-    }
-  }
-  ).catch((_err: any) => {
-    ElMessage.error('发送验证码失败，请检查网络设置');
-  });
+
+    })
+    .catch(() => {
+      ElMessage.error("发送验证码失败，请检查网络设置");
+    });
 };
 
 const counter = ref(0);
 
 const sended = ref(false);
-
 </script>

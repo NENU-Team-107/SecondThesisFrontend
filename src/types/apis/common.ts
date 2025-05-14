@@ -44,10 +44,18 @@ interface CommitResp {
   total: number;
 }
 
-interface CommitQuery{
+interface CommitQuery {
   major?: string;
   id_code?: string;
   name?: string;
 }
 
-export type { Paginator, PaginatorResp, CommonResp, CommonFileParams, CommitResp, CommitDetail, CommitQuery };
+export type {
+  Paginator,
+  PaginatorResp,
+  CommonResp,
+  CommonFileParams,
+  CommitResp,
+  CommitDetail,
+  CommitQuery,
+};

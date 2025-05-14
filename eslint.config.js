@@ -1,24 +1,24 @@
-import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import pluginVue from 'eslint-plugin-vue';
+import pluginJs from "@eslint/js";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default [
   {
     rules: {
-      semi: ['error', 'always'],
+      semi: ["error", "always"],
       allowObjectTypes: true,
-      'prefer-const': 'error',
-      'vue/multi-word-component-names': [
-        'error',
+      "prefer-const": "error",
+      "vue/multi-word-component-names": [
+        "error",
         {
-          ignores: ['index'],
+          ignores: ["index"],
         },
       ],
     },
   },
   {
-    files: ['**/*.{js,mjs,cjs,ts,vue}'],
+    files: ["**/*.{js,mjs,cjs,ts,vue}"],
   },
   {
     languageOptions: {
@@ -30,9 +30,9 @@ export default [
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
-  ...pluginVue.configs['flat/essential'],
+  ...pluginVue.configs["flat/essential"],
   {
-    files: ['**/*.vue'],
+    files: ["**/*.vue"],
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,

@@ -37,27 +37,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
-import LoginCardCover from './cards/LoginCardCover.vue';
-import RegisterCard from './cards/RegisterCard.vue';
-import titleImage from '@/assets/image/nenu-title.png';
+import titleImage from "@/assets/image/nenu-title.png";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue";
+import { ref } from "vue";
+import LoginCardCover from "./cards/LoginCardCover.vue";
+import RegisterCard from "./cards/RegisterCard.vue";
 // const titleImage = require('@/assets/image/nenu-title.png');
 
 const categories = ref({
-  'login': {
-    key: 'login',
-    title: '登录',
-    content: '登录'
-  }
-  ,
-  'register': {
-    key: 'register',
-    title: '注册',
-    content: '注册'
-  }
+  login: {
+    key: "login",
+    title: "登录",
+    content: "登录",
+  },
+  register: {
+    key: "register",
+    title: "注册",
+    content: "注册",
+  },
 });
-
 </script>
-
-<style scoped></style>

@@ -42,16 +42,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, } from 'vue';
-import { ProfileDetail } from '@/types/apis/student';
-import StuProfileCard from '@/components/StuProfileCard.vue';
-import axios from 'axios';
-import { useAccessTokenStore } from '@/store/accessToken';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import { useStudentStore } from '@/store/student';
-import { adminDeleteAccounts } from '@/api/apis/admin';
-import { ElMessage, TableInstance } from 'element-plus';
-import { AdminAccountsReq } from '@/types/apis/admin';
+import { adminDeleteAccounts } from "@/api/apis/admin";
+import StuProfileCard from "@/components/StuProfileCard.vue";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useSiteInfoStore } from "@/store/siteInfo";
+import { useStudentStore } from "@/store/student";
+import type { AdminAccountsReq } from "@/types/apis/admin";
+import type { ProfileDetail } from "@/types/apis/student";
+import axios from "axios";
+import { ElMessage, type TableInstance } from "element-plus";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   StudentList: {
@@ -61,25 +61,27 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:StudentList']);
+const emit = defineEmits(["update:StudentList"]);
 
 const multipleTableRef = ref<TableInstance>();
-const multipleSelection = ref<ProfileDetail[]>([])
+const multipleSelection = ref<ProfileDetail[]>([]);
 
 const handleSelectionChange = (val: ProfileDetail[]) => {
-  multipleSelection.value = val
-  delList.value = val.map((item) => item.id_code)
-}
-const tableData = computed(() => props.StudentList.map((item) => {
-  return {
-    name: item.name,
-    sex: item.sex,
-    id_code: item.id_code,
-    majar: item.major,
-    majar_phone_number: item.major_phone_number,
-    bachelor_school: item.bachelor_school,
-  };
-}));
+  multipleSelection.value = val;
+  delList.value = val.map((item) => item.id_code);
+};
+const tableData = computed(() =>
+  props.StudentList.map((item) => {
+    return {
+      name: item.name,
+      sex: item.sex,
+      id_code: item.id_code,
+      majar: item.major,
+      majar_phone_number: item.major_phone_number,
+      bachelor_school: item.bachelor_school,
+    };
+  }),
+);
 
 console.log(tableData.value);
 
@@ -93,39 +95,45 @@ const stuIndex = ref(0);
 const photoStatus = ref(false);
 
 const validateImage = (url: string) => {
-  let img = new Image();
+  const img = new Image();
   img.onload = () => {
     photoStatus.value = true;
-  }
+  };
   img.onerror = () => {
     photoStatus.value = false;
-  }
+  };
   img.src = url;
-}
+};
 
 const showmore = (index: number) => {
   stuIndex.value = index;
-  let profileData = props.StudentList[index];
-  axios.get(`${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`, {
-    responseType: 'arraybuffer',
-    headers: {
-      'Authorization': useAccessTokenStore().getAccessToken(),
-    },
-  }
-  ).then(response => {
-    let blob = new Blob([response.data], { type: response.headers['content-type'] });
-    let url = window.URL.createObjectURL(blob);
-    profileData.photo = url;
-    console.log(profileData);
-    validateImage(url);
-    useStudentStore().setProfile(profileData);
-  })
+  const profileData = props.StudentList[index];
+  axios
+    .get(
+      `${useSiteInfoStore().getBaseUrl()}/student/getPhoto?photo=${profileData.photo}`,
+      {
+        responseType: "arraybuffer",
+        headers: {
+          Authorization: useAccessTokenStore().getAccessToken(),
+        },
+      },
+    )
+    .then((response) => {
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+      profileData.photo = url;
+      console.log(profileData);
+      validateImage(url);
+      useStudentStore().setProfile(profileData);
+    });
   isvisible.value = true;
 };
 
 const removeAccount = () => {
   if (delList.value.length === 0) {
-    ElMessage.error('请选择要删除的账户');
+    ElMessage.error("请选择要删除的账户");
     return;
   }
   const data = {
@@ -138,15 +146,15 @@ const removeAccount = () => {
       ElMessage.error(res.message);
       return;
     }
-    ElMessage.success('删除成功');
+    ElMessage.success("删除成功");
     delList.value = [];
     stuIndex.value = 0;
-    emit('update:StudentList');
+    emit("update:StudentList");
   });
-}
+};
 
 const handleDelete = (_index: number, row: ProfileDetail) => {
-  let data = {
+  const data = {
     id_codes: [row.id_code],
   } as AdminAccountsReq;
   adminDeleteAccounts(data).then((response) => {
@@ -156,11 +164,10 @@ const handleDelete = (_index: number, row: ProfileDetail) => {
       ElMessage.error(res.message);
       return;
     }
-    ElMessage.success('删除成功');
+    ElMessage.success("删除成功");
     delList.value = [];
     stuIndex.value = 0;
-    emit('update:StudentList');
+    emit("update:StudentList");
   });
-}
-
+};
 </script>

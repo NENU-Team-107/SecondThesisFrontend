@@ -1,5 +1,6 @@
 <template>
-    <div :class="fipped?'bg-white relative w-full py-auto duration-500 h-32rem':'bg-white relative w-full py-auto duration-500 h-80'">
+    <div
+        :class="fipped ? 'bg-white relative w-full py-auto duration-500 h-32rem' : 'bg-white relative w-full py-auto duration-500 h-80'">
         <div v-if="!fipped" :class="fipped ? 'front-fipped' : 'front'">
             <LoginCard v-model="fipped" />
         </div>
@@ -10,9 +11,10 @@
 </template>
 
 <style scoped>
-.h-32rem{
+.h-32rem {
     height: 32rem;
 }
+
 .front {
     box-sizing: border-box;
     perspective: 1000px;
@@ -68,10 +70,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import LoginCard from './LoginCard.vue';
-import ResetPwdCard from './ResetPwdCard.vue';
+import { ref } from "vue";
+import LoginCard from "./LoginCard.vue";
+import ResetPwdCard from "./ResetPwdCard.vue";
 
 const fipped = ref(false);
-
 </script>

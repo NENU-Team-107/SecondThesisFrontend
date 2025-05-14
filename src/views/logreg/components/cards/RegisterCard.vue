@@ -56,39 +56,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { StudentRegisterReq, StudentLoginResp, StudentVerifyMailCodeReq } from '@/types/apis/student';
-import { studentRegister, studentVerifyRegMail } from '@/api/apis/student';
-import { useRouter } from 'vue-router';
-import { useStudentStore } from '@/store/student';
-import { CommonResp } from '@/types/apis/common';
-import { useAccessTokenStore } from '@/store/accessToken';
-import { fetchProfile } from '@/utils/profiles/profiles';
+import { studentRegister, studentVerifyRegMail } from "@/api/apis/student";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useStudentStore } from "@/store/student";
+import type { CommonResp } from "@/types/apis/common";
+import type {
+  StudentLoginResp,
+  StudentRegisterReq,
+  StudentVerifyMailCodeReq,
+} from "@/types/apis/student";
+import { fetchProfile } from "@/utils/profiles/profiles";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 // import { Session } from '@/utils/cache/index';
 const router = useRouter();
 
 const regCounter = ref(6);
-const msg = ref('秒后将自动登入系统，若跳转失败请刷新页面');
+const msg = ref("秒后将自动登入系统，若跳转失败请刷新页面");
 const successMsg = ref(regCounter.value + msg.value);
 
 const sended = ref(false);
 const activeStep = ref(0);
 const nextStep = (event: Event) => {
   event.preventDefault();
-  if (activeStep.value == 1) {
+  if (activeStep.value === 1) {
     submit();
-  }
-  else if (activeStep.value == 2) {
+  } else if (activeStep.value === 2) {
     return;
-  }
-  else {
+  } else {
     // 单项检查不通过
     registerRef.value.validate((valid: any) => {
       if (valid) {
         activeStep.value++;
       } else {
-        ElMessage.error('请检查输入');
+        ElMessage.error("请检查输入");
         return false;
       }
     });
@@ -98,10 +100,10 @@ const nextStep = (event: Event) => {
 const counter = ref(0);
 
 const studentRegisterData = ref<StudentRegisterReq>({
-  email: '',
-  id_code: '',
-  password: '',
-  phone_number: '',
+  email: "",
+  id_code: "",
+  password: "",
+  phone_number: "",
 });
 interface regData {
   idCode: string;
@@ -112,18 +114,22 @@ interface regData {
 }
 const registerRef = ref();
 const ruleForm = ref<regData>({
-  idCode: '',
-  password: '',
-  checkPass: '',
-  email: '',
-  phone: '',
+  idCode: "",
+  password: "",
+  checkPass: "",
+  email: "",
+  phone: "",
 });
-const verifyCode = ref('');
-const checkPass = (_rule: any, value: string, callback: (arg0: Error | undefined) => void) => {
-  if (value === '') {
-    callback(new Error('请再次输入密码'));
+const verifyCode = ref("");
+const checkPass = (
+  _rule: any,
+  value: string,
+  callback: (arg0: Error | undefined) => void,
+) => {
+  if (value === "") {
+    callback(new Error("请再次输入密码"));
   } else if (value !== ruleForm.value.password) {
-    callback(new Error('两次输入密码不一致!'));
+    callback(new Error("两次输入密码不一致!"));
   } else {
     callback(undefined);
   }
@@ -131,25 +137,33 @@ const checkPass = (_rule: any, value: string, callback: (arg0: Error | undefined
 
 const rules = ref({
   idCode: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur" },
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
-    { pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/, message: '密码必须包含数字和字母', trigger: 'blur' },
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" },
+    {
+      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/,
+      message: "密码必须包含数字和字母",
+      trigger: "blur",
+    },
   ],
   checkPass: [
-    { required: true, message: '请再次输入密码', trigger: 'blur' },
-    { validator: checkPass, trigger: 'blur' }
+    { required: true, message: "请再次输入密码", trigger: "blur" },
+    { validator: checkPass, trigger: "blur" },
   ],
   email: [
-    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur'] }
+    { required: true, message: "请输入邮箱地址", trigger: "blur" },
+    { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur"] },
   ],
   phone: [
-    { required: true, message: '请输入手机号码', trigger: 'blur' },
-    { pattern: /^1[3456789]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
+    { required: true, message: "请输入手机号码", trigger: "blur" },
+    {
+      pattern: /^1[3456789]\d{9}$/,
+      message: "手机号码格式不正确",
+      trigger: "blur",
+    },
   ],
 });
 
@@ -158,22 +172,23 @@ const sendVerifyCode = (event: Event) => {
   if (counter.value > 0) {
     return;
   }
-  registerRef.value.validate((valid: any) => {
+  registerRef.value.validate((valid: boolean) => {
     if (valid) {
-      console.log('submit!');
+      console.log("submit!");
       console.log(ruleForm.value);
       studentRegisterData.value.email = ruleForm.value.email;
       studentRegisterData.value.password = ruleForm.value.password;
       studentRegisterData.value.phone_number = ruleForm.value.phone;
       studentRegisterData.value.id_code = ruleForm.value.idCode;
       console.log(studentRegisterData.value);
-      studentRegister(studentRegisterData.value).then((response) => {
-        const res = response.data as CommonResp;
-        console.log(res);
-        if (res.code !== 0) {
-          ElMessage.error(res.message);
-          return;
-        } else {
+      studentRegister(studentRegisterData.value)
+        .then((response) => {
+          const res = response.data as CommonResp;
+          console.log(res);
+          if (res.code !== 0) {
+            ElMessage.error(res.message);
+            return;
+          }
           ElMessage.success(res.message);
           counter.value = 60;
           sended.value = true;
@@ -183,14 +198,14 @@ const sendVerifyCode = (event: Event) => {
               clearInterval(timer);
             }
           }, 1000);
-        }
-      }).catch((err: any) => {
-        ElMessage.error('请检查网络');
-        console.log(err);
-      });
+
+        })
+        .catch(() => {
+          ElMessage.error("请检查网络");
+        });
     } else {
-      ElMessage.error('请检查输入');
-      console.log('error submit!!');
+      ElMessage.error("请检查输入");
+      console.log("error submit!!");
       return false;
     }
   });
@@ -198,44 +213,42 @@ const sendVerifyCode = (event: Event) => {
 
 const submit = () => {
   verifyCode.value = verifyCode.value.trim();
-  if (verifyCode.value === '') {
-    ElMessage.error('请输入验证码');
+  if (verifyCode.value === "") {
+    ElMessage.error("请输入验证码");
     return;
   }
   const data = ref<StudentVerifyMailCodeReq>({
     code: verifyCode.value,
     mail: ruleForm.value.email,
   });
-  studentVerifyRegMail(data.value).then((response) => {
-    const res = response.data as StudentLoginResp;
-    console.log(res);
-    if (res.code !== 0) {
-      ElMessage.error(res.message);
-      return;
-    } else {
+  studentVerifyRegMail(data.value)
+    .then((response) => {
+      const res = response.data as StudentLoginResp;
+      console.log(res);
+      if (res.code !== 0) {
+        ElMessage.error(res.message);
+        return;
+      }
       ElMessage.success(res.message);
       activeStep.value++;
       // 存储token
       useStudentStore().setToken(res.token);
       useAccessTokenStore().setToken(res.token);
-      fetchProfile().then(
-        () => {
-          console.log('fetch profile success');
-          const timer = setInterval(() => {
-            regCounter.value--;
-            successMsg.value = regCounter.value + msg.value;
-            if (regCounter.value <= 0) {
-              clearInterval(timer);
-              router.push('/');
-            }
-          }, 1000);
-        }
-      );
-    }
-  }).catch((err: any) => {
-    ElMessage.error('注册失败');
-    console.log(err);
-  });
-}
+      fetchProfile().then(() => {
+        console.log("fetch profile success");
+        const timer = setInterval(() => {
+          regCounter.value--;
+          successMsg.value = regCounter.value + msg.value;
+          if (regCounter.value <= 0) {
+            clearInterval(timer);
+            router.push("/");
+          }
+        }, 1000);
+      });
 
+    })
+    .catch(() => {
+      ElMessage.error("注册失败");
+    });
+};
 </script>

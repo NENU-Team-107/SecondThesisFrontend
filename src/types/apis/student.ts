@@ -21,7 +21,7 @@ interface StudentRegisterResp {
   message: string;
 }
 
-interface StudentVerifyMailCodeReq { 
+interface StudentVerifyMailCodeReq {
   code: string;
   mail: string;
 }
@@ -68,7 +68,7 @@ interface StudentProfileResp {
   profile: ProfileDetail;
 }
 
-interface studentNewCommitResp{
+interface studentNewCommitResp {
   code: number;
   file_id: string;
   id: number;
@@ -91,5 +91,5 @@ export type {
   ProfileDetail,
   StudentProfileResp,
   studentNewCommitResp,
-  studentSaveCommitRes
+  studentSaveCommitRes,
 };

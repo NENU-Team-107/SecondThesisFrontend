@@ -24,62 +24,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 
-import { adminLogin } from '@/api/apis/admin';
-import { AdminLoginReq,AdminLoginResq } from '@/types/apis/admin';
-import { useAdminStore } from '@/store/admin';
-import { useAccessTokenStore } from '@/store/accessToken';
+import { adminLogin } from "@/api/apis/admin";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useAdminStore } from "@/store/admin";
+import type { AdminLoginReq, AdminLoginResq } from "@/types/apis/admin";
 
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const loginRef = ref();
 
 const ruleForm = ref<AdminLoginReq>({
-  name: '',
-  password: ''
+  name: "",
+  password: "",
 });
 
 // 根据表单验证状态判断是否可以提交
 
 const rules = ref({
-  name: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ]
+  name: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
 const submitForm = (event: Event) => {
   event.preventDefault();
-  loginRef.value.validate((valid: any) => {
+  loginRef.value.validate((valid: boolean) => {
     if (valid) {
-      console.log('submit!');
+      console.log("submit!");
       console.log(ruleForm.value);
 
-      adminLogin(ruleForm.value).then((response) => {
-        const res = response.data as AdminLoginResq;
-        console.log(res);
-        if (res.code !== 0) {
-          ElMessage.error(res.message);
-          return;
-        }
-        ElMessage.success('登录成功');
-        useAdminStore().setToken(res.token);
-        useAccessTokenStore().setToken(res.token);
-        router.push('/admin/manager');
-      }
-      ).catch((err: any) => {
-        ElMessage.error('登录失败，请检查网络设置');
-        console.log(err);
-      });
+      adminLogin(ruleForm.value)
+        .then((response) => {
+          const res = response.data as AdminLoginResq;
+          console.log(res);
+          if (res.code !== 0) {
+            ElMessage.error(res.message);
+            return;
+          }
+          ElMessage.success("登录成功");
+          useAdminStore().setToken(res.token);
+          useAccessTokenStore().setToken(res.token);
+          router.push("/admin/manager");
+        })
+        .catch((err: Error) => {
+          ElMessage.error("登录失败，请检查网络设置");
+          console.log(err);
+        });
     } else {
-      console.log('error submit!!');
-      ElMessage.error('请检查输入');
+      console.log("error submit!!");
+      ElMessage.error("请检查输入");
     }
   });
 };
@@ -87,7 +84,6 @@ const submitForm = (event: Event) => {
 const resetForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.resetFields();
-  ElMessage.success('重置成功');
+  ElMessage.success("重置成功");
 };
-
 </script>

@@ -8,31 +8,30 @@
 </template>
 
 <script setup lang="ts">
-
-import { Paginator } from '@/types/apis/common';
+import type { Paginator } from "@/types/apis/common";
 
 const props = defineProps({
   pagination: {
     required: true,
     type: Object as () => Paginator,
-    default: () => ({
-      limit: 10,
-      offset: 0,
-      total: 0,
-      page: 1,
-    } as Paginator),
+    default: () =>
+      ({
+        limit: 10,
+        offset: 0,
+        total: 0,
+        page: 1,
+      }) as Paginator,
   },
 });
 
-
-const emit = defineEmits(['update:pagination']);
+const emit = defineEmits(["update:pagination"]);
 
 const pageSizes = [10, 20, 30, 40];
 
 const handleSizeChange = (val: number) => {
   console.log(props.pagination);
   props.pagination.page = 1;
-  emit('update:pagination', {
+  emit("update:pagination", {
     ...props.pagination,
     limit: val,
   });
@@ -40,11 +39,9 @@ const handleSizeChange = (val: number) => {
 
 const handleCurrentChange = (val: number) => {
   console.log(props.pagination);
-  emit('update:pagination', {
+  emit("update:pagination", {
     ...props.pagination,
     page: val,
   });
 };
-
-
 </script>

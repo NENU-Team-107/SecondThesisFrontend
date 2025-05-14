@@ -1,13 +1,13 @@
-import { CommitDetail } from '@/types/apis/common';
-import { ProfileDetail } from '@/types/apis/student';
-import { defineStore } from 'pinia';
+import type { CommitDetail } from "@/types/apis/common";
+import type { ProfileDetail } from "@/types/apis/student";
+import { defineStore } from "pinia";
 
-export const useStudentStore = defineStore('student', {
+export const useStudentStore = defineStore("student", {
   state: () => {
     return {
-      token: '' as string,
+      token: "" as string,
       profile: {} as ProfileDetail,
-      commits:[] as CommitDetail[]
+      commits: [] as CommitDetail[],
     };
   },
   getters: {
@@ -26,7 +26,7 @@ export const useStudentStore = defineStore('student', {
       this.token = token;
     },
     removeToken() {
-      this.token = '';
+      this.token = "";
     },
     setProfile(profile: ProfileDetail) {
       this.profile = profile;
@@ -36,7 +36,7 @@ export const useStudentStore = defineStore('student', {
     },
     setCommits(commits: CommitDetail[]) {
       this.commits = commits;
-    }
+    },
   },
   persist: true,
 });

@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useSiteInfoStore = defineStore('siteInfo', {
+export const useSiteInfoStore = defineStore("siteInfo", {
   state: () => {
     return {
-      baseUrl: import.meta.env.VITE_APP_API_URL
+      baseUrl: import.meta.env.VITE_APP_API_URL,
     };
   },
   persist: true,

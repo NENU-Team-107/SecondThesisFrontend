@@ -16,13 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import Pagination from '@/components/Pagination.vue';
-import CommitItem from '@/components/CommitItem.vue';
-import { commonCommits } from '@/api/apis/common';
-import { CommitQuery, Paginator } from '@/types/apis/common';
-import { CommitDetail } from '@/types/apis/common';
-import { ElMessage } from 'element-plus';
+import { commonCommits } from "@/api/apis/common";
+import CommitItem from "@/components/CommitItem.vue";
+import Pagination from "@/components/Pagination.vue";
+import type { CommitQuery, Paginator } from "@/types/apis/common";
+import type { CommitDetail } from "@/types/apis/common";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
 
 const paginator = ref<Paginator>({
   limit: 10,
@@ -34,14 +34,13 @@ const paginator = ref<Paginator>({
 const commitsList = ref<CommitDetail[]>([]);
 
 const queryInfo = ref<CommitQuery>({
-  name: '',
-  id_code: '',
-  major: '',
+  name: "",
+  id_code: "",
+  major: "",
 });
 
-
 const fetchCommits = () => {
-  console.log('fetchCommits');
+  console.log("fetchCommits");
   commonCommits(paginator.value, false, 2, queryInfo.value).then((response) => {
     const res = response.data;
     console.log(res);
@@ -66,6 +65,4 @@ const handlePageChange = () => {
 };
 
 fetchCommits();
-
-
 </script>

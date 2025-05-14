@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "biome lint --write"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -24,6 +25,7 @@
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@eslint/js": "^10.0.0",
     "@varlet/import-resolver": "^3.3.16",
     "@vitejs/plugin-vue": "^5.1.2",

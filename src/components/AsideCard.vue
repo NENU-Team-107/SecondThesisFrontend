@@ -1,16 +1,15 @@
 <script lang="ts" setup>
-import { AsideDetail } from '@/types/views';
+import type { AsideDetail } from "@/types/views";
 
-const defaultPath = defineModel('DefaultPath', {
+const defaultPath = defineModel("DefaultPath", {
   required: true,
   type: String,
 });
 
-const asideList = defineModel('AsideList', {
+const asideList = defineModel("AsideList", {
   required: true,
   type: Array as () => AsideDetail[],
 });
-
 </script>
 <template>
   <el-menu :default-active="defaultPath" :unique-opened="true" class="w-full h-full text-xl" router>

@@ -38,33 +38,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { ElMessage } from 'element-plus';
-import { studentNewCommit } from '@/api/apis/student';
-import { ProfileDetail, studentNewCommitResp } from '@/types/apis/student';
-import StuFormUpdate from '@/components/StuFormUpdate.vue';
-import { useStudentStore } from '@/store/student';
-import { useRouter } from 'vue-router';
+import { studentNewCommit } from "@/api/apis/student";
+import StuFormUpdate from "@/components/StuFormUpdate.vue";
+import { useStudentStore } from "@/store/student";
+import type { ProfileDetail, studentNewCommitResp } from "@/types/apis/student";
+import { ElMessage } from "element-plus";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 const router = useRouter();
 
-const msg = ref<string>('确认更新个人信息并保存本次提交信息吗？');
+const msg = ref<string>("确认更新个人信息并保存本次提交信息吗？");
 
 const applyForm = ref<ProfileDetail>(useStudentStore().getStudentProfile());
 
 const confirm = ref<boolean>(false);
 
-watch(() => confirm.value, (value) => {
-  if (value) {
-    applyForm.value = useStudentStore().getStudentProfile();
-    submitApplication();
-  }
-});
+watch(
+  () => confirm.value,
+  (value) => {
+    if (value) {
+      applyForm.value = useStudentStore().getStudentProfile();
+      submitApplication();
+    }
+  },
+);
 
-const file_id = ref('');
+const file_id = ref("");
 const submitApplication = () => {
   // 提交申请表
   // 提交申请
-  studentNewCommit().then(response => {
+  studentNewCommit().then((response) => {
     const res = response.data as studentNewCommitResp;
     if (res.code === -1) {
       ElMessage.error(res.message);
@@ -73,12 +76,10 @@ const submitApplication = () => {
     ElMessage.success(res.message);
     file_id.value = res.file_id;
   });
-}
+};
 
 const getApply = () => {
   // 跳转到我的申请
-  router.push('/apply/files/' + file_id.value);
-}
-
-
+  router.push(`/apply/files/${file_id.value}`);
+};
 </script>

@@ -119,7 +119,7 @@
         <p class="text-lg font-bold min-w-28">原本科专业所属专业类：</p>
         <p class="text-gray-500 text-lg">{{ studentData.bachelor_class === '' ? '暂无' :
           studentData.bachelor_class
-          }}</p>
+        }}</p>
       </div>
     </div>
   </div>
@@ -129,7 +129,7 @@
         <p class="text-lg font-bold min-w-28">毕业证编号：</p>
         <p class="text-gray-500 text-lg">{{ studentData.graduation_no === '' ? '暂无' :
           studentData.graduation_no
-          }}</p>
+        }}</p>
       </div>
     </div>
     <div class="flex items-center flex-col w-6/12 justify-around">
@@ -143,17 +143,16 @@
 </template>
 
 <script setup lang="ts">
-import { ProfileDetail } from '@/types/apis/student';
+import type { ProfileDetail } from "@/types/apis/student";
 
-const studentData = defineModel('StudentData', {
+const studentData = defineModel("StudentData", {
   required: true,
   type: Object as () => ProfileDetail,
 });
 
-const photoStatus = defineModel('PhotoStatus', {
+const photoStatus = defineModel("PhotoStatus", {
   required: true,
   type: Boolean,
   default: false,
 });
-
 </script>

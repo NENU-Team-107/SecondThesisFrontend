@@ -10,12 +10,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import titleImage from '@/assets/image/nenu-title.png';
+import titleImage from "@/assets/image/nenu-title.png";
 // const titleImage = require('@/assets/image/nenu-title.png');
-const title = defineModel('title', {
+const title = defineModel("title", {
   type: String,
   required: true,
 });
-
-
 </script>

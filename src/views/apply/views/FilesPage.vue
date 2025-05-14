@@ -38,80 +38,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { UploadFilled } from '@element-plus/icons-vue'
-import { useAccessTokenStore } from '@/store/accessToken';
-import { useSiteInfoStore } from '@/store/siteInfo';
-import { useRoute } from 'vue-router';
-import { ElMessage, ElMessageBox, UploadProps, UploadUserFile } from 'element-plus';
-import { CommonFileParams } from '@/types/apis/common';
-import { commonFile } from '@/api/apis/common';
-import { studentDeleteFile, studentUploadFile } from '@/api/apis/student';
-import { useRouter } from 'vue-router';
+import { commonFile } from "@/api/apis/common";
+import { studentDeleteFile, studentUploadFile } from "@/api/apis/student";
+import { useAccessTokenStore } from "@/store/accessToken";
+import { useSiteInfoStore } from "@/store/siteInfo";
+import type { CommonFileParams } from "@/types/apis/common";
+import { UploadFilled } from "@element-plus/icons-vue";
+import {
+  ElMessage,
+  ElMessageBox,
+  type UploadProps,
+  type UploadUserFile,
+} from "element-plus";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const file_id = route.params.file_id;
 const baseurl = useSiteInfoStore().getBaseUrl();
 
 const headers = {
-  'Authorization': useAccessTokenStore().getAccessToken()
+  Authorization: useAccessTokenStore().getAccessToken(),
 };
 
 const classTypeList = ref([
   {
     index: 2,
-    name: '一、本人身份证扫描件（正反面）',
-    url: baseurl + '/student/uploadFile/2/' + file_id,
+    name: "一、本人身份证扫描件（正反面）",
+    url: `${baseurl}/student/uploadFile/2/${file_id}`,
     required: true,
     limit: 1,
   },
   {
     index: 3,
-    name: '二、本科毕业证书、学位证书扫描件',
-    url: baseurl + '/student/uploadFile/3/' + file_id,
+    name: "二、本科毕业证书、学位证书扫描件",
+    url: `${baseurl}/student/uploadFile/3/${file_id}`,
     required: false,
     limit: 1,
   },
   {
     index: 4,
-    name: '三、《中国高等教育学位在线验证报告》学信网扫描件（日期要求）',
-    url: baseurl + '/student/uploadFile/4/' + file_id,
+    name: "三、《中国高等教育学位在线验证报告》学信网扫描件（日期要求）",
+    url: `${baseurl}/student/uploadFile/4/${file_id}`,
     required: false,
     limit: 1,
   },
   {
     index: 5,
-    name: '四、《教育部学历证书电子注册备案表》学信网扫描件（日期要求）',
-    url: baseurl + '/student/uploadFile/5/' + file_id,
+    name: "四、《教育部学历证书电子注册备案表》学信网扫描件（日期要求）",
+    url: `${baseurl}/student/uploadFile/5/${file_id}`,
     required: false,
     limit: 1,
   },
   {
     index: 6,
-    name: '五、《教育部学籍在线验证报告》学信网扫描件（仅应届生）',
-    url: baseurl + '/student/uploadFile/6/' + file_id,
+    name: "五、《教育部学籍在线验证报告》学信网扫描件（仅应届生）",
+    url: `${baseurl}/student/uploadFile/6/${file_id}`,
     required: false,
     limit: 1,
   },
   {
     index: 7,
-    name: '六、本科学习成绩单扫描件（须加盖本科教务公章）',
-    url: baseurl + '/student/uploadFile/7/' + file_id,
+    name: "六、本科学习成绩单扫描件（须加盖本科教务公章）",
+    url: `${baseurl}/student/uploadFile/7/${file_id}`,
     required: true,
     limit: 1,
   },
   {
     index: 8,
-    name: '七、与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料扫描件（近三年）',
-    url: baseurl + '/student/uploadFile/8/' + file_id,
+    name: "七、与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料扫描件（近三年）",
+    url: `${baseurl}/student/uploadFile/8/${file_id}`,
     required: false,
     limit: 1,
-  }
+  },
 ]);
 
 const getFileName = (key: number) => {
   return classTypeList.value[key - 2].name;
-}
+};
 
 const getIndex = (name: string) => {
   for (let i = 0; i < classTypeList.value.length; i++) {
@@ -120,7 +125,7 @@ const getIndex = (name: string) => {
     }
   }
   return -1;
-}
+};
 
 const fileMap = ref<Record<number, UploadUserFile[]>>({
   2: [],
@@ -136,134 +141,140 @@ const fetchFileList = () => {
   for (let key = 2; key <= 8; key++) {
     const data = {
       class: key.toString(),
-      id: file_id
+      id: file_id,
     } as CommonFileParams;
-    commonFile(data).then((response) => {
-      let blob = new Blob([response.data], { type: response.headers['content-type'] });
-      let url = window.URL.createObjectURL(blob);
-      const fileData = {
-        name: getFileName(key),
-        url: url,
-      } as UploadUserFile;
-      fileMap.value[Number(key)] = [fileData];
-    }).catch(err => {
-      console.log(err);
-    });
+    commonFile(data)
+      .then((response) => {
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+        const url = window.URL.createObjectURL(blob);
+        const fileData = {
+          name: getFileName(key),
+          url: url,
+        } as UploadUserFile;
+        fileMap.value[Number(key)] = [fileData];
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
-}
+};
 fetchFileList();
 
-
-const handleSuccess: UploadProps['onSuccess'] = (res, file, fileList) => {
+const handleSuccess: UploadProps["onSuccess"] = (res, file, fileList) => {
   if (res.code === -1) {
     ElMessage.error(res.message);
     // 上传失败后删除文件
-    const index = fileList.findIndex(item => item.uid === file.uid);
+    const index = fileList.findIndex((item) => item.uid === file.uid);
     if (index !== -1) {
       fileList.splice(index, 1);
     }
   } else {
-    ElMessage.success('上传成功');
+    ElMessage.success("上传成功");
     // 上传成功后刷新文件列表
     fetchFileList();
   }
-}
+};
 
-const handleBeforeUpload: UploadProps['beforeUpload'] = (file) => {
+const handleBeforeUpload: UploadProps["beforeUpload"] = (file) => {
   // 为pdf或jpg、png等图片格式，大小不超过10MB
-  const isPDF = file.type === 'application/pdf';
-  const isJPG = file.type === 'image/jpeg';
-  const isPNG = file.type === 'image/png';
+  const isPDF = file.type === "application/pdf";
+  const isJPG = file.type === "image/jpeg";
+  const isPNG = file.type === "image/png";
   const isLt10M = file.size / 1024 / 1024 < 10;
   if (!isPDF && !isJPG && !isPNG) {
-    ElMessage.error('上传文件只能是pdf、jpg或png格式!');
+    ElMessage.error("上传文件只能是pdf、jpg或png格式!");
     return false;
   }
   if (!isLt10M) {
-    ElMessage.error('上传文件大小不能超过10MB!');
+    ElMessage.error("上传文件大小不能超过10MB!");
     return false;
   }
   return true;
-}
+};
 
-const handleExceed: UploadProps['onExceed'] = (files, fileList) => {
+const handleExceed: UploadProps["onExceed"] = (files, fileList) => {
   // 覆盖前一个文件并上传
-  let key = getIndex(fileList[0].name);
-  fileMap.value[key] = files.map(file => ({
+  const key = getIndex(fileList[0].name);
+  fileMap.value[key] = files.map((file) => ({
     name: file.name,
     url: URL.createObjectURL(file),
   }));
   // 上传文件
   const formData = new FormData();
-  files.forEach(file => {
-    formData.append('file', file);
-  });
+  for (const file of files) {
+    formData.append("file", file);
+  }
   const urldata = {
     class: key.toString(),
-    id: file_id
+    id: file_id,
   } as CommonFileParams;
-  studentUploadFile(formData, urldata).then(response => {
-    const res = response.data;
-    if (res.code !== 0) {
-      ElMessage.error(res.message);
-    } else {
-      ElMessage.warning('已覆盖前一个文件。');
-      fetchFileList();
-    }
-  }).catch(err => {
-    console.log(err);
-  });
-  return true;
-}
-
-
-const handlePreview: UploadProps['onPreview'] = (file) => {
-  window.open(file.url, '_blank');
-}
-
-const handleBeforeRemove: UploadProps['beforeRemove'] = (file, fileList) => {
-  console.log(file, fileList);
-  ElMessageBox.confirm(
-    '确定删除该文件吗？',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(() => {
-    const data = {
-      class: getIndex(file.name).toString(),
-      id: file_id,
-    } as CommonFileParams;
-    studentDeleteFile(data).then(() => {
-      ElMessage.success('删除成功');
-      fetchFileList();
-    }).catch(err => {
-      ElMessage.error('删除失败，请重试');
+  studentUploadFile(formData, urldata)
+    .then((response) => {
+      const res = response.data;
+      if (res.code !== 0) {
+        ElMessage.error(res.message);
+      } else {
+        ElMessage.warning("已覆盖前一个文件。");
+        fetchFileList();
+      }
+    })
+    .catch((err) => {
       console.log(err);
     });
-  }).catch(() => {
-    ElMessage.info('已取消删除');
-  });
   return true;
-}
+};
+
+const handlePreview: UploadProps["onPreview"] = (file) => {
+  window.open(file.url, "_blank");
+};
+
+const handleBeforeRemove: UploadProps["beforeRemove"] = (file, fileList) => {
+  console.log(file, fileList);
+  ElMessageBox.confirm("确定删除该文件吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      const data = {
+        class: getIndex(file.name).toString(),
+        id: file_id,
+      } as CommonFileParams;
+      studentDeleteFile(data)
+        .then(() => {
+          ElMessage.success("删除成功");
+          fetchFileList();
+        })
+        .catch((err) => {
+          ElMessage.error("删除失败，请重试");
+          console.log(err);
+        });
+    })
+    .catch(() => {
+      ElMessage.info("已取消删除");
+    });
+  return true;
+};
 
 const nextStep = () => {
   console.log(fileMap.value);
-  let msg = '';
+  let msg = "";
   for (let key = 2; key <= 8; key++) {
-    if (classTypeList.value[key - 2].required && fileMap.value[key].length === 0) {
-      msg += getFileName(key) + '、';
+    if (
+      classTypeList.value[key - 2].required &&
+      fileMap.value[key].length === 0
+    ) {
+      msg += `${getFileName(key)}、`;
     }
   }
-  if (msg !== '') {
+  if (msg !== "") {
     msg = msg.substring(0, msg.length - 1);
-    ElMessage.error('请上传附件' + msg);
+    ElMessage.error(`请上传附件${msg}`);
     return;
   }
-  ElMessage.success('已完成上传附件，请填写其他信息，确认无误后提交报名');
-  router.push('/apply/submit');
-}
-
+  ElMessage.success("已完成上传附件，请填写其他信息，确认无误后提交报名");
+  router.push("/apply/submit");
+};
 </script>

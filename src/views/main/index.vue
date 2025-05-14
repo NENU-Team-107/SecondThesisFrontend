@@ -13,59 +13,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import HeaderCard from '@/components/HeaderCard.vue';
-import AsideCard from '@/components/AsideCard.vue';
+import AsideCard from "@/components/AsideCard.vue";
+import HeaderCard from "@/components/HeaderCard.vue";
+import { ref } from "vue";
 
-const title = ref('第二学士学位报名系统');
+const title = ref("第二学士学位报名系统");
 
-const defaultPath = '/';
+const defaultPath = "/";
 
 const asideList = ref([
   {
-    index: '/',
-    title: '首页',
-    icon: 'house',
-    path: '/',
+    index: "/",
+    title: "首页",
+    icon: "house",
+    path: "/",
   },
   {
-    index: '/myapply',
-    title: '我的申请',
-    icon: 'hand',
-    path: '/myapply',
+    index: "/myapply",
+    title: "我的申请",
+    icon: "hand",
+    path: "/myapply",
     children: [
       {
         index: "/apply/newapply",
         title: "新建申请",
-        icon: 'clipboard',
+        icon: "clipboard",
         path: "/apply/newapply",
       },
       {
         index: "/apply/submit",
         title: "提交报名",
-        icon: 'clock',
+        icon: "clock",
         path: "/apply/submit",
       },
       {
         index: "/apply/history",
         title: "申请记录",
-        icon: 'check',
+        icon: "check",
         path: "/apply/history",
       },
     ],
   },
   {
-    index: '/profile',
-    title: '我的信息',
-    icon: 'id-card',
-    path: '/profile',
+    index: "/profile",
+    title: "我的信息",
+    icon: "id-card",
+    path: "/profile",
   },
   {
-    index: '/logout',
-    title: '退出登录',
-    icon: 'shuffle',
-    path: '/logout',
-  }
+    index: "/logout",
+    title: "退出登录",
+    icon: "shuffle",
+    path: "/logout",
+  },
 ]);
-
 </script>
