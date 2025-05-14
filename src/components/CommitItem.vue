@@ -197,12 +197,12 @@ const submit = () => {
   }
   studentSaveCommit(data).then((response) => {
     const res = response.data;
-    if (res.code === -1) {
-      ElMessage.error(res.message);
+    if (res.code === 0) {
+      ElMessage.success("提交成功，请耐心等待审核，可在申请记录查看申请状态");
+      confirmed.value = true;
       return;
     }
-    ElMessage.success("提交成功，请耐心等待审核，可在申请记录查看申请状态");
-    confirmed.value = true;
+    ElMessage.error(res.message);
   });
 };
 
