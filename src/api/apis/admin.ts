@@ -25,3 +25,5 @@ export const adminSetDeadline = (data: string) =>
 export const adminSetStartTime = (data: string) =>
   service.get(`/admin/setStartTime?startTime=${data}`);
 export const adminExportCSV = () => service.get("/admin/exportAllCommits");
+export const adminRejectMultiCommit = (data: CommitIDs) =>
+  service.post("/admin/rejectMultiCommit", data);

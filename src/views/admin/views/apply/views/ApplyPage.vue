@@ -57,6 +57,7 @@
           <el-input v-model="batchReason" placeholder="输入批量处理原因" :disabled="selectedCommits.length === 0" />
         </div>
         <div class="ml-2">
+          <el-button @click="batchBack" type="info">退回申请</el-button>
           <el-button @click="batchApprove" type="success">初审通过</el-button>
           <el-button @click="batchReject" type="danger">初审不通过</el-button>
         </div>
@@ -87,6 +88,7 @@
 <script setup lang="ts">
 import {
   adminCheckCommit,
+  adminRejectMultiCommit,
   adminSetDeadline,
   adminSetStartTime,
 } from "@/api/apis/admin";
@@ -226,6 +228,32 @@ const batchReject = () => {
   selectedCommits.value = [];
   batchReason.value = "";
   fetchCommits();
+};
+
+const batchBack = () => {
+  if (selectedCommits.value.length === 0) {
+    ElMessage.warning("请先选择提交项");
+    return;
+  }
+  for (let i = 0; i < selectedCommits.value.length; i++) {
+    const commit = commitsList.value.find(
+      (commit) => commit.id === selectedCommits.value[i],
+    );
+    if (commit) {
+      checkCommit(0, commit, batchReason.value);
+    }
+  }
+  adminRejectMultiCommit(
+    { ids: selectedCommits.value },
+  ).then((response) => {
+    const res = response.data as CommitResp;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+      return;
+    }
+    ElMessage.success(res.message);
+    fetchCommits();
+  })
 };
 
 const checkCommit = (

@@ -21,7 +21,7 @@
                 {{ commitInfo.enroll_major ? commitInfo.enroll_major : '未填写' }}
               </span>
               <span v-else class="w-1/2">
-                <div v-if="!confirmed">
+                <div v-if="!confirmed && !IsAdmin">
                   <el-select v-model="commitInfo.enroll_major" placeholder="请选择报读专业">
                     <el-option v-for="item in majorList" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
@@ -103,6 +103,7 @@
         <el-input v-if="status === 2 || status === 1" v-model="resson" placeholder="请输入处理理由" />
       </div>
       <div>
+        <el-button v-if="status === 2" type="info" @click="rejectCommit" class="mr-3">退回申请</el-button>
         <el-button v-if="status === 2" type="success" @click="checkCommit(1)" class="mr-3">初审通过</el-button>
         <el-button v-if="status === 2" type="danger" @click="checkCommit(-1)" class="mr-3">初审不通过</el-button>
 
@@ -124,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import { adminCheckCommit } from "@/api/apis/admin";
+import { adminCheckCommit, adminRejectMultiCommit } from "@/api/apis/admin";
 import { studentSaveCommit } from "@/api/apis/student";
 import { useAccessTokenStore } from "@/store/accessToken";
 import { useSiteInfoStore } from "@/store/siteInfo";
@@ -200,7 +201,7 @@ const submit = () => {
       ElMessage.error(res.message);
       return;
     }
-    ElMessage.success("提交成功");
+    ElMessage.success("提交成功，请耐心等待审核，可在申请记录查看申请状态");
     confirmed.value = true;
   });
 };
@@ -281,6 +282,28 @@ const exportForm = () => {
     .finally(() => {
       loading.close(); // 关闭加载动画
       // 这里可以添加一些清理操作，比如关闭加载动画等
+    });
+};
+
+const rejectCommit = () => {
+  const msg = "确认退回该申请吗？";
+  ElMessageBox.confirm(msg, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      adminRejectMultiCommit({ ids: [commitInfo.value.id] }).then((response) => {
+        const res = response.data as CommitResp;
+        if (res.code === -1) {
+          ElMessage.error(res.message);
+          return;
+        }
+        ElMessage.success(res.message);
+      });
+    })
+    .catch(() => {
+      ElMessage.info("已取消");
     });
 };
 </script>
