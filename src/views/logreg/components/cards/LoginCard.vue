@@ -107,8 +107,8 @@ const submitForm = (event: Event) => {
           ElMessage.success("登录成功");
           useStudentStore().setToken(res.token);
           useAccessTokenStore().setToken(res.token);
-          fetchProfile().then(() => {
-            router.push("/");
+          fetchProfile().finally(() => {
+            router.push("apply/newapply");
           });
         })
         .catch((err: any) => {
