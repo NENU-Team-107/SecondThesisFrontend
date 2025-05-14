@@ -27,6 +27,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/js": "^10.0.0",
+    "@rollup/plugin-strip": "^3.0.4",
     "@varlet/import-resolver": "^3.3.16",
     "@vitejs/plugin-vue": "^5.1.2",
     "autoprefixer": "^10.4.20",

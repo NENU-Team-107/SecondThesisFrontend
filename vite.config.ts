@@ -1,9 +1,16 @@
 import * as path from "node:path";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import strip from "@rollup/plugin-strip";
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    strip({
+      include: ["**/*.(js|ts|vue)"],
+      functions: ["console.*"], // 移除所有console
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
