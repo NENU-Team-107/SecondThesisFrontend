@@ -25,3 +25,6 @@ export const commonFile = (data: CommonFileParams) =>
     responseType: "arraybuffer",
   });
 export const commonOnline = () => service.get("/common/isOnline");
+
+// 获取系统时间配置：报名开始、报名截止（逾期不能再报名）和查看审核时间（控制可以看到审核状态）
+export const commonGetTimeConfig = () => service.get("/common/getConfig");

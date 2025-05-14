@@ -38,6 +38,7 @@ import {
   faLocation,
   faMagnifyingGlass,
   faMagnifyingGlassPlus,
+  faFileExport,
   faPeopleGroup,
   faPlus,
   faQuestionCircle,
@@ -75,6 +76,7 @@ library.add(
   faFile,
   faQuestionCircle,
   faMagnifyingGlass,
+  faFileExport,
 );
 
 createApp(App)

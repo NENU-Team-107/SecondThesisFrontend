@@ -12,28 +12,37 @@
 
       <div class="flex justify-between items-center">
         <div class="flex-1 flex items-center justify-between">
-          <div class="flex w-full px-5">
-            <span class="flex justify-center items-center">设置开始时间</span>
-            <div class="px-5">
+          <div class="flex w-full px-5 flex-col items-start">
+            <div class="flex items-center justify-between w-full">
+              <span class="flex justify-center items-center">报名开始时间</span>
+              <el-button @click="setStartTime" type="primary" round>确认设置</el-button>
+            </div>
+            <div class="flex w-full py-1">
               <el-date-picker class="min-w-full" v-model="startTime" type="date" placeholder="开始时间" size="large"
                 format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
             </div>
-            <div class="flex justify-center items-center">
-              <el-button @click="setStartTime" type="primary" round>确定</el-button>
-            </div>
           </div>
-          <div class="flex w-full px-5">
-            <span class="flex justify-center items-center">设置截止时间</span>
-            <div class="px-5">
+          <div class="flex w-full px-5 flex-col items-start">
+            <div class="flex items-center justify-between w-full">
+              <span class="flex justify-center items-center">报名截止时间</span>
+              <el-button @click="setDeadline" type="primary" round>确认设置</el-button>
+            </div>
+            <div class="flex w-full py-1">
               <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
                 format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
             </div>
-            <div class="flex justify-center items-center">
-              <el-button @click="setDeadline" type="primary" round>确定</el-button>
+          </div>
+          <div class="flex w-full px-5 flex-col items-start">
+            <div class="flex items-center justify-between w-full">
+              <span class="flex justify-center items-center">学生查看审核截止时间</span>
+              <el-button @click="setStuDeadline" type="primary" round>确认设置</el-button>
+            </div>
+            <div class="flex w-full py-1">
+              <el-date-picker class="min-w-full" v-model="stuDeadline" type="date" placeholder="截止时间" size="large"
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
             </div>
           </div>
         </div>
-        <div class="my-3"><el-button @click="exportAllCommits" type="success" round>导出所有申请数据</el-button></div>
       </div>
 
       <div class="w-full flex my-3">
@@ -49,6 +58,12 @@
         </div>
       </div>
 
+      <div class="my-3 flex justify-end w-full">
+        <el-button @click="exportAllCommits" type="success" round>
+          <font-awesome-icon icon="fa-solid fa-file-export" class="px-1" />
+          导出所有申请数据
+        </el-button>
+      </div>
       <div class="flex items-center justify-between my-3">
         <div class="mr-2">
           <el-checkbox v-model="allSelected" @change="toggleAllSelection">全选本页提交</el-checkbox>
@@ -91,8 +106,9 @@ import {
   adminRejectMultiCommit,
   adminSetDeadline,
   adminSetStartTime,
+  adminSetStudentDeadline,
 } from "@/api/apis/admin";
-import { commonCommits } from "@/api/apis/common";
+import { commonCommits, commonGetTimeConfig } from "@/api/apis/common";
 import CommitItem from "@/components/CommitItem.vue";
 import Pagination from "@/components/Pagination.vue";
 import { useAccessTokenStore } from "@/store/accessToken";
@@ -108,6 +124,7 @@ import axios from "axios";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, watch } from "vue";
 
+
 const pagination = ref<Paginator>({
   limit: 10,
   offset: 0,
@@ -122,7 +139,6 @@ const commitsList = ref<CommitDetail[]>([]);
 const selectedCommits = ref<number[]>([]);
 const allSelected = ref(false);
 const batchReason = ref("");
-const deadline = ref("");
 
 const queryInfo = ref<CommitQuery>({
   name: "",
@@ -299,6 +315,9 @@ const submitCheck = (
 };
 
 const startTime = ref("");
+const deadline = ref("");
+const stuDeadline = ref("");
+
 const setStartTime = () => {
   if (!startTime.value) {
     ElMessage.error("开始时间不能为空");
@@ -309,7 +328,7 @@ const setStartTime = () => {
     if (res.code === -1) {
       ElMessage.error(res.message);
     } else {
-      ElMessage.success(`成功设置开始时间为${startTime.value}`);
+      ElMessage.success(`成功设置报名开始时间为${startTime.value}`);
     }
   });
 };
@@ -324,10 +343,50 @@ const setDeadline = () => {
     if (res.code === -1) {
       ElMessage.error(res.message);
     } else {
-      ElMessage.success(`成功设置截止时间为${deadline.value}`);
+      ElMessage.success(`成功设置报名截止时间为${deadline.value}`);
     }
   });
 };
+
+const setStuDeadline = () => {
+  if (!stuDeadline.value) {
+    ElMessage.error("截止时间不能为空");
+    return;
+  }
+
+  adminSetStudentDeadline(stuDeadline.value).then((response) => {
+    const res = response.data;
+    if (res.code === -1) {
+      ElMessage.error(res.message);
+    } else {
+      ElMessage.success(`成功设置学生查看审核截止时间为${stuDeadline.value}`);
+    }
+  });
+};
+
+const fetchTime = () => {
+  commonGetTimeConfig().then((response) => {
+    const res = response.data;
+    const formatDateTime = (dateTime: string) => {
+      const date = new Date(dateTime);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+    };
+
+    res.startTime = formatDateTime(res.startTime);
+    res.ddl = formatDateTime(res.ddl);
+    res.student_ddl = formatDateTime(res.student_ddl);
+    startTime.value = res.startTime;
+    deadline.value = res.ddl;
+    stuDeadline.value = res.student_ddl;
+  });
+}
+fetchTime();
 
 const exportAllCommits = () => {
   const apiurl = `${useSiteInfoStore().getBaseUrl()}/admin/exportCommits`;
