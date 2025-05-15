@@ -6,8 +6,8 @@
       <el-alert title="须知" type="warning" :closable="false">
         <div>
           <p>报名开始: {{ startTime }}</p>
-          <p>报名截止: {{ deadline }}</p>
-          <p>审核状态开放时间: {{ stuDeadline }}</p>
+          <p>报名截止: {{ stuDeadline }}</p>
+          <p>审核状态开放时间: {{ deadline }}</p>
         </div>
       </el-alert>
 
