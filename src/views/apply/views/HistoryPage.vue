@@ -7,7 +7,7 @@
         <div>
           <p>报名开始: {{ startTime }}</p>
           <p>报名截止: {{ deadline }}</p>
-          <p>查看审核时间: {{ stuDeadline }}</p>
+          <p>审核状态开放时间: {{ stuDeadline }}</p>
         </div>
       </el-alert>
 

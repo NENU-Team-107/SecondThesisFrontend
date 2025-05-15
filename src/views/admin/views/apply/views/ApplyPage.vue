@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold my-3 w-full text-center">初审待处理</h1>
       <div>
         <el-alert title="提示" type="info">
-          <div>请注意：截止时间是报名截止时间，设置后会影响报名系统的正常使用，请谨慎操作。</div>
+          <div>请注意：报名截止时间设置后会影响报名系统的正常使用，请谨慎操作。</div>
           <div>如果需要修改报名截止时间，请联系管理员。</div>
           <div>本页进行初审审核，若需要处理初审通过状态的申请（拟录取通过或不通过），请前往初审通过页进行审核。</div>
         </el-alert>
@@ -34,7 +34,7 @@
           </div>
           <div class="flex w-full px-5 flex-col items-start">
             <div class="flex items-center justify-between w-full">
-              <span class="flex justify-center items-center">学生查看审核截止时间</span>
+              <span class="flex justify-center items-center">审核状态开放查询时间</span>
               <el-button @click="setStuDeadline" type="primary" round>确认设置</el-button>
             </div>
             <div class="flex w-full py-1">
