@@ -65,7 +65,7 @@
                 <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               </span>
               <span v-else-if="commitInfo.passed === 3">
-                拟录取已通过
+                拟录取
                 <font-awesome-icon icon="fa-solid fa-circle-check" style="color: #63E6BE;" />
               </span>
               <span v-else-if="commitInfo.passed === 4">

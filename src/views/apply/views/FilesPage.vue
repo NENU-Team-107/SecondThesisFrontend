@@ -72,7 +72,7 @@ const classTypeList = ref([
   },
   {
     index: 3,
-    name: "二、本科毕业证书、学位证书扫描件",
+    name: "二、本科毕业证书、学位证书扫描件（验证有效期为2025年9月30日以后，2022-2024届毕业生必填）",
     url: `${baseurl}/student/uploadFile/3/${file_id}`,
     required: false,
     limit: 1,
