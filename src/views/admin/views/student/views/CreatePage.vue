@@ -76,7 +76,7 @@ const addIdCode = () => {
   }
   ElNotification({
     title: "添加成功",
-    message: `已添加身份证号${id_code.value}`,
+    message: `已添加身份证号${id_code.value}，默认密码为 ${id_code.value.slice(-6)}`,
     type: "success",
     offset: 100,
   });
@@ -115,7 +115,7 @@ const addIdCodeTotal = () => {
   }
   ElNotification({
     title: "添加成功",
-    message: `已添加${idListSuccess.length}个身份证号`,
+    message: `已添加${idListSuccess.length}个身份证号，默认密码为身份证号后 6 位`,
     type: "success",
     offset: 100,
   });

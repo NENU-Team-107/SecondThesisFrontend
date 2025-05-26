@@ -38,6 +38,6 @@ export const studentUpdatePhoto = (data: FormData) =>
 export const studentUpdateProfile = (data: ProfileDetail) =>
   service.post("/student/updateProfile", data);
 export const studentUploadFile = (data: FormData, url: CommonFileParams) =>
-  servicefile.post(`/student/uploadFile/${url.class}/${url.id}`, data);
+  servicefile.post(`/student/uploadFile/${url.class}/${url.id}/${url.suffix}`, data);
 export const studentDeleteFile = (url: CommonFileParams) =>
   servicefile.post(`/student/deleteFile/${url.class}/${url.id}`);

@@ -144,10 +144,10 @@ const rules = ref({
     { required: true, message: "请输入密码", trigger: "blur" },
     { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" },
     {
-      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/,
-      message: "密码必须包含数字和字母",
+      pattern: /^(?![A-Za-z0-9]+$)(?![a-z0-9\\W]+$)(?![A-Za-z\\W]+$)(?![A-Z0-9\\W]+$)[a-zA-Z0-9\\W]{8,}$/,
+      message: "密码必须包含大小写字母、数字、特殊符号中的至少三种字符，且长度不小于8位",
       trigger: "blur",
-    },
+    }
   ],
   checkPass: [
     { required: true, message: "请再次输入密码", trigger: "blur" },

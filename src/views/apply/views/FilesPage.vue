@@ -12,10 +12,13 @@
           {{ item.name }}
           <span v-if="item.required" class="text-red-500 font-semibold italic">必填项</span>
         </h1>
-        <el-upload drag :action="item.url" :headers="headers" :on-success="handleSuccess" method="post"
+        <el-upload drag :action="item.getUrl('')" :headers="headers" :on-success="handleSuccess" method="post"
           :limit="item.limit" :file-list="fileMap[item.index]" :auto-upload="true" :on-preview="handlePreview"
-          :before-remove="handleBeforeRemove" :on-exceed="handleExceed" :before-upload="handleBeforeUpload"
-          :show-file-list="true" class="w-full" accept="application/pdf,image/jpeg,image/png">
+          :before-remove="handleBeforeRemove" :on-exceed="handleExceed" :before-upload="(file: UploadRawFile) => {
+            const suffix = getFileSuffix(file);
+            item.getUrl = (s: string) => `${baseurl}/student/uploadFile/${item.index}/${file_id}/${suffix}`;
+            return handleBeforeUpload(file);
+          }" :show-file-list="true" class="w-full" accept="application/pdf,image/jpeg,image/png">
           <el-icon class="el-icon--upload">
             <upload-filled />
           </el-icon>
@@ -34,6 +37,15 @@
         </el-button>
       </div>
     </div>
+    <el-dialog v-model="previewDialogVisible" title="文件预览" width="80%" :close-on-click-modal="false"
+      :close-on-press-escape="true" class="preview-dialog">
+      <div class="w-full preview-container">
+        <!-- PDF预览 -->
+        <VuePdfEmbed v-if="previewType === 'pdf'" :source="previewUrl" class="pdf-preview" />
+        <!-- 图片预览 -->
+        <img v-else-if="previewType === 'image'" :src="previewUrl" class="image-preview" alt="预览图片" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -49,10 +61,12 @@ import {
   ElMessageBox,
   type UploadProps,
   type UploadUserFile,
+  type UploadRawFile,
 } from "element-plus";
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
+import VuePdfEmbed from 'vue-pdf-embed';
 const router = useRouter();
 const route = useRoute();
 const file_id = route.params.file_id;
@@ -62,53 +76,59 @@ const headers = {
   Authorization: useAccessTokenStore().getAccessToken(),
 };
 
+const getFileSuffix = (file: UploadRawFile) => {
+  const fileName = file.name;
+  const lastDotIndex = fileName.lastIndexOf('.');
+  return lastDotIndex !== -1 ? fileName.slice(lastDotIndex) : '';
+};
+
 const classTypeList = ref([
   {
     index: 2,
     name: "一、本人身份证扫描件（正反面）",
-    url: `${baseurl}/student/uploadFile/2/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/2/${file_id}/${suffix}`,
     required: true,
     limit: 1,
   },
   {
     index: 3,
     name: "二、本科毕业证书、学位证书扫描件（验证有效期为2025年9月30日以后，2022-2024届毕业生必填）",
-    url: `${baseurl}/student/uploadFile/3/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/3/${file_id}/${suffix}`,
     required: false,
     limit: 1,
   },
   {
     index: 4,
     name: "三、《中国高等教育学位在线验证报告》学信网扫描件（验证有效期为2025年9月30日以后，2022-2024届毕业生必填）",
-    url: `${baseurl}/student/uploadFile/4/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/4/${file_id}/${suffix}`,
     required: false,
     limit: 1,
   },
   {
     index: 5,
     name: "四、《教育部学历证书电子注册备案表》学信网扫描件（验证有效期为2025年9月30日以后，2022-2024届毕业生必填）",
-    url: `${baseurl}/student/uploadFile/5/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/5/${file_id}/${suffix}`,
     required: false,
     limit: 1,
   },
   {
     index: 6,
     name: "五、《教育部学籍在线验证报告》学信网扫描件（2025届毕业生必填）",
-    url: `${baseurl}/student/uploadFile/6/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/6/${file_id}/${suffix}`,
     required: false,
     limit: 1,
   },
   {
     index: 7,
     name: "六、本科学习成绩单扫描件（须加盖本科教务公章）",
-    url: `${baseurl}/student/uploadFile/7/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/7/${file_id}/${suffix}`,
     required: true,
     limit: 1,
   },
   {
     index: 8,
     name: "七、与所报第二学士学位专业相关的研究成果、竞赛获奖等佐证材料扫描件（近三年）",
-    url: `${baseurl}/student/uploadFile/8/${file_id}`,
+    getUrl: (suffix: string) => `${baseurl}/student/uploadFile/8/${file_id}/${suffix}`,
     required: false,
     limit: 1,
   },
@@ -127,7 +147,11 @@ const getIndex = (name: string) => {
   return -1;
 };
 
-const fileMap = ref<Record<number, UploadUserFile[]>>({
+interface CustomUploadUserFile extends UploadUserFile {
+  type?: string;
+}
+
+const fileMap = ref<Record<number, CustomUploadUserFile[]>>({
   2: [],
   3: [],
   4: [],
@@ -142,6 +166,7 @@ const fetchFileList = () => {
     const data = {
       class: key.toString(),
       id: file_id,
+      suffix: '.pdf' // 默认使用pdf后缀，因为大多数文件都是pdf格式
     } as CommonFileParams;
     commonFile(data)
       .then((response) => {
@@ -152,7 +177,8 @@ const fetchFileList = () => {
         const fileData = {
           name: getFileName(key),
           url: url,
-        } as UploadUserFile;
+          type: response.headers["content-type"], // 保存文件类型
+        } as CustomUploadUserFile;
         fileMap.value[Number(key)] = [fileData];
       })
       .catch((err) => {
@@ -206,9 +232,15 @@ const handleExceed: UploadProps["onExceed"] = (files, fileList) => {
   for (const file of files) {
     formData.append("file", file);
   }
+  // 获取文件后缀
+  const fileName = files[0].name;
+  const lastDotIndex = fileName.lastIndexOf('.');
+  const suffix = lastDotIndex !== -1 ? fileName.slice(lastDotIndex + 1) : 'pdf';
+
   const urldata = {
     class: key.toString(),
     id: file_id,
+    suffix: suffix
   } as CommonFileParams;
   studentUploadFile(formData, urldata)
     .then((response) => {
@@ -226,8 +258,39 @@ const handleExceed: UploadProps["onExceed"] = (files, fileList) => {
   return true;
 };
 
-const handlePreview: UploadProps["onPreview"] = (file) => {
-  window.open(file.url, "_blank");
+const previewDialogVisible = ref(false);
+const previewUrl = ref('');
+const previewType = ref('');
+
+const handlePreview: UploadProps["onPreview"] = (file: CustomUploadUserFile) => {
+  if (!file || !file.url) {
+    ElMessage.error('文件不存在或无法预览');
+    return;
+  }
+
+  // 检查文件URL的安全性
+  const url = file.url;
+  if (!url.startsWith('blob:') && !url.startsWith(baseurl)) {
+    ElMessage.error('无效的文件来源');
+    return;
+  }
+
+  // 判断文件类型
+  const fileType = file.type || file.raw?.type || '';
+  if (fileType === 'application/pdf') {
+    // PDF文件在对话框中预览
+    previewType.value = 'pdf';
+    previewUrl.value = url;
+    previewDialogVisible.value = true;
+  } else if (fileType.startsWith('image/')) {
+    // 图片文件在对话框中预览
+    previewType.value = 'image';
+    previewUrl.value = url;
+    previewDialogVisible.value = true;
+  } else {
+    ElMessage.error('不支持的文件类型');
+    return;
+  }
 };
 
 const handleBeforeRemove: UploadProps["beforeRemove"] = (file, fileList) => {
@@ -277,4 +340,41 @@ const nextStep = () => {
   ElMessage.success("已完成上传附件，请填写其他信息，确认无误后提交报名");
   router.push("/apply/submit");
 };
+
+// 在组件卸载时清理blob URL
+onBeforeUnmount(() => {
+  Object.values(fileMap.value).forEach(files => {
+    files.forEach(file => {
+      if (file.url?.startsWith('blob:')) {
+        URL.revokeObjectURL(file.url);
+      }
+    });
+  });
+});
 </script>
+
+<style scoped>
+.preview-dialog :deep(.el-dialog__body) {
+  padding: 10px;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.preview-container {
+  height: 100%;
+  overflow: auto;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.pdf-preview {
+  width: 100%;
+  min-height: 100%;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+</style>

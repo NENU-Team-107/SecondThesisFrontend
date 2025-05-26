@@ -22,6 +22,7 @@ interface CommonResp {
 interface CommonFileParams {
   class: string;
   id: string;
+  suffix: string;
 }
 
 interface CommitDetail {

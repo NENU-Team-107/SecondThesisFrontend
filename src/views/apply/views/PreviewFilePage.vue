@@ -17,6 +17,17 @@
         </h1>
       </div>
     </div>
+
+    <!-- 添加文件预览对话框 -->
+    <el-dialog v-model="previewDialogVisible" title="文件预览" width="80%" :close-on-click-modal="false"
+      :close-on-press-escape="true" class="preview-dialog">
+      <div class="w-full preview-container">
+        <!-- PDF预览 -->
+        <VuePdfEmbed v-if="previewType === 'pdf'" :source="previewUrl" class="pdf-preview" />
+        <!-- 图片预览 -->
+        <img v-else-if="previewType === 'image'" :src="previewUrl" class="image-preview" alt="预览图片" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -25,9 +36,14 @@ import { useAccessTokenStore } from "@/store/accessToken";
 import { useSiteInfoStore } from "@/store/siteInfo";
 import type { CommonFileParams } from "@/types/apis/common";
 import axios from "axios";
-import type { UploadUserFile } from "element-plus";
-import { ref } from "vue";
+import {
+  ElMessage,
+  type UploadProps,
+  type UploadUserFile,
+} from "element-plus";
+import { ref, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
+import VuePdfEmbed from 'vue-pdf-embed';
 
 const route = useRoute();
 const file_id = route.params.file_id;
@@ -82,7 +98,12 @@ const getFileName = (key: number) => {
   return classTypeList.value[key - 2].name;
 };
 
-const fileMap = ref<Record<number, UploadUserFile[]>>({
+// 添加自定义类型定义
+interface CustomUploadUserFile extends UploadUserFile {
+  type?: string;
+}
+
+const fileMap = ref<Record<number, CustomUploadUserFile[]>>({
   2: [],
   3: [],
   4: [],
@@ -114,7 +135,9 @@ const fetchFileList = () => {
         const fileData = {
           name: getFileName(key),
           url: url,
-        } as UploadUserFile;
+          type: response.headers["content-type"], // 保存文件类型
+        } as CustomUploadUserFile;
+        console.log(fileData.type)
         fileMap.value[Number(key)] = [fileData];
       })
       .catch((err) => {
@@ -124,8 +147,76 @@ const fetchFileList = () => {
 };
 fetchFileList();
 
+const previewDialogVisible = ref(false);
+const previewUrl = ref('');
+const previewType = ref('');
+
 const previewFile = (index: number) => {
-  const url = fileMap.value[index][0].url;
-  window.open(url);
+  const file = fileMap.value[index][0];
+  if (!file || !file.url) {
+    ElMessage.error('文件不存在或无法预览');
+    return;
+  }
+
+  // 检查文件URL的安全性
+  const url = file.url;
+  if (!url.startsWith('blob:') && !url.startsWith(baseurl)) {
+    ElMessage.error('无效的文件来源');
+    return;
+  }
+
+  // 判断文件类型
+  const fileType = file.type || '';
+  if (fileType === 'application/pdf') {
+    // PDF文件在对话框中预览
+    previewType.value = 'pdf';
+    previewUrl.value = url;
+    previewDialogVisible.value = true;
+  } else if (fileType.startsWith('image/')) {
+    // 图片文件在对话框中预览
+    previewType.value = 'image';
+    previewUrl.value = url;
+    previewDialogVisible.value = true;
+  } else {
+    ElMessage.error('不支持的文件类型');
+    return;
+  }
 };
+
+// 在组件卸载时清理blob URL
+onBeforeUnmount(() => {
+  Object.values(fileMap.value).forEach(files => {
+    files.forEach(file => {
+      if (file.url?.startsWith('blob:')) {
+        URL.revokeObjectURL(file.url);
+      }
+    });
+  });
+});
 </script>
+
+<style scoped>
+.preview-dialog :deep(.el-dialog__body) {
+  padding: 10px;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.preview-container {
+  height: 100%;
+  overflow: auto;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.pdf-preview {
+  width: 100%;
+  min-height: 100%;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+</style>
