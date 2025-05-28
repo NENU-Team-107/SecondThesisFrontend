@@ -17,7 +17,7 @@
           @click="submitForm" :disabled="ruleForm.name === '' || ruleForm.password === ''">登录</button>
         <button
           class="flex w-full items-center justify-center rounded-md border border-transparent bg-gray-600 px-8 py-2 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:focus:bg-gray-700 disabled:bg-gray-800/50 disabled:cursor-not-allowed"
-          @click="resetForm">重置</button>
+          @click="resetForm">清空表格</button>
       </div>
     </el-form>
   </div>
@@ -84,6 +84,6 @@ const submitForm = (event: Event) => {
 const resetForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.resetFields();
-  ElMessage.success("重置成功");
+  ElMessage.success("清空成功");
 };
 </script>

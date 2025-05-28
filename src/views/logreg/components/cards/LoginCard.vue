@@ -18,7 +18,7 @@
         @click="submitForm" :disabled="ruleForm.username === '' || ruleForm.password === ''">立即登录</button>
       <button
         class="flex w-full items-center justify-center rounded-md border border-transparent bg-gray-600 px-8 py-2 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:focus:bg-gray-700 disabled:bg-gray-800/50 disabled:cursor-not-allowed"
-        @click="resetForm">重置</button>
+        @click="resetForm">清空表格</button>
     </div>
   </el-form>
 </template>
@@ -32,6 +32,7 @@ import type { StudentLoginReq, StudentLoginResp } from "@/types/apis/student";
 import { fetchProfile } from "@/utils/profiles/profiles";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
+import { useFirstLoginStore } from "@/store/firstLogin";
 
 const studentLoginData = ref<StudentLoginReq>({
   email: "",
@@ -95,7 +96,6 @@ const submitForm = (event: Event) => {
       studentLogin(studentLoginData.value)
         .then((response) => {
           const res = response.data as StudentLoginResp;
-          console.log(res);
           if (res.code !== 0) {
             ElMessage.error(res.message);
             return;
@@ -103,6 +103,8 @@ const submitForm = (event: Event) => {
           ElMessage.success("登录成功");
           useStudentStore().setToken(res.token);
           useAccessTokenStore().setToken(res.token);
+          const firstLoginStore = useFirstLoginStore();
+          firstLoginStore.setFirstLogin(res.first_create);
           fetchProfile().finally(() => {
             router.push("apply/newapply");
           });
@@ -121,7 +123,7 @@ const submitForm = (event: Event) => {
 const resetForm = (event: Event) => {
   event.preventDefault();
   loginRef.value.resetFields();
-  ElMessage.success("重置成功");
+  ElMessage.success("清空成功");
 };
 
 const fipped = defineModel({

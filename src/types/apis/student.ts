@@ -2,12 +2,13 @@ interface StudentLoginReq {
   email: string;
   id_code: string;
   password: string;
-  phone_number: string;
+  phone_number?: string;
 }
 interface StudentLoginResp {
   code: number;
   message: string;
   token: string;
+  first_create: boolean;
 }
 
 interface StudentRegisterReq {
@@ -27,9 +28,9 @@ interface StudentVerifyMailCodeReq {
 }
 
 interface StudentResetPwdReq {
-  email: string;
-  code: string;
-  phone_number: string;
+  email?: string;
+  code?: string;
+  phone_number?: string;
   password: string;
 }
 interface StudentResetPwdResp {

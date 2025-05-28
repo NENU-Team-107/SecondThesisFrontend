@@ -24,6 +24,8 @@ export const studentSendResetPwdMailCode = (mail: string) =>
   service.get(`/student/sendResetPwdMailCode?mail=${mail}`);
 export const studentResetPwd = (data: StudentResetPwdReq) =>
   service.post("/student/resetPwd", data);
+export const studentChangePwd = (data: StudentResetPwdReq) =>
+  service.post("/student/changePwd", data);
 // 导出报名表
 export const studentExport = (commitID: string) =>
   service.get(`/student/export/${commitID}`);

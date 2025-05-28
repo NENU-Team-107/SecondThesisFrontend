@@ -34,6 +34,12 @@
         </el-result>
       </div>
     </div>
+
+    <!-- 强制重置密码对话框 -->
+    <el-dialog v-model="showResetDialog" title="首次登录" :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" width="30%">
+      <ResetPwdCard v-model="showResetDialog" :is-dialog="true" />
+    </el-dialog>
   </div>
 </template>
 
@@ -45,6 +51,9 @@ import type { ProfileDetail, studentNewCommitResp } from "@/types/apis/student";
 import { ElMessage } from "element-plus";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import ResetPwdCard from '@/views/logreg/components/cards/ResetPwdCard.vue';
+import { useFirstLoginStore } from "@/store/firstLogin";
+
 const router = useRouter();
 
 const msg = ref<string>("确认更新个人信息并保存本次提交信息吗？");
@@ -82,4 +91,18 @@ const getApply = () => {
   // 跳转到我的申请
   router.push(`/apply/files/${file_id.value}`);
 };
+
+const firstLoginStore = useFirstLoginStore();
+const showResetDialog = ref(false);
+
+// 监听首次登录状态
+watch(
+  () => firstLoginStore.isFirstLogin,
+  (newValue) => {
+    if (newValue) {
+      showResetDialog.value = true;
+    }
+  },
+  { immediate: true }
+);
 </script>
