@@ -1,0 +1,16 @@
+# frontend/Caddyfile
+# 这个 Caddyfile 配置了前端容器内部的 Caddy 服务器。
+# 它负责提供 Vite 构建的静态文件，并将 API 请求代理到 Gin 后端。
+
+:80 { # Caddy 在容器内部监听 80 端口
+    # 设置网站根目录，通常是 Vite 构建输出的静态文件
+    root * /usr/share/caddy
+    # 启用文件服务器，提供静态文件
+    file_server
+
+    # 代理 API 请求到 Gin 后端
+    handle /api/* {
+        # 注意：这里使用的变量 `BACKEND_SERVICE_NAME` 和 `BACKEND_PORT` 将通过 Dockerfile 中的 envsubst 注入
+        reverse_proxy http://${BACKEND_SERVICE_NAME}:${BACKEND_PORT}
+    }
+}

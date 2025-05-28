@@ -32,8 +32,9 @@ export default defineConfig({
     cors: true,
     proxy: {
       "/api": {
-        // target: "https://tslxbm.nenu.edu.cn/api/v1",
-        target: "http://120.55.79.57/api/v1",
+        target: "https://tslxbm.nenu.edu.cn/api/v1",
+        // target: "http://120.55.79.57/api/v1",
+        // target: "http://localhost:8081",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, "/api/v1"),
       },

@@ -37,7 +37,6 @@ const studentLoginData = ref<StudentLoginReq>({
   email: "",
   id_code: "",
   password: "",
-  phone_number: "",
 });
 
 interface LoginData {
@@ -54,7 +53,6 @@ const ruleForm = ref<LoginData>({
 
 // 根据表单验证状态判断是否可以提交
 
-const phone = /0?(13|14|15|18|17)[0-9]{9}/;
 const email = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 const idCard = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
 
@@ -67,8 +65,8 @@ const rules = ref({
         value: string,
         callback: (arg0: Error | undefined) => void,
       ) => {
-        if (!phone.test(value) && !email.test(value) && !idCard.test(value)) {
-          callback(new Error("请输入正确的身份证号码/邮箱/手机号"));
+        if (!email.test(value) && !idCard.test(value)) {
+          callback(new Error("请输入正确的身份证号码/邮箱"));
         } else {
           callback(undefined);
         }
@@ -85,9 +83,7 @@ const submitForm = (event: Event) => {
     if (valid) {
       console.log("submit!");
       console.log(ruleForm.value);
-      if (phone.test(ruleForm.value.username)) {
-        studentLoginData.value.phone_number = ruleForm.value.username;
-      } else if (email.test(ruleForm.value.username)) {
+      if (email.test(ruleForm.value.username)) {
         studentLoginData.value.email = ruleForm.value.username;
       } else if (idCard.test(ruleForm.value.username)) {
         studentLoginData.value.id_code = ruleForm.value.username;
