@@ -36,8 +36,9 @@
     </div>
 
     <!-- 强制重置密码对话框 -->
-    <el-dialog v-model="showResetDialog" title="首次登录" :close-on-click-modal="false" :close-on-press-escape="false"
-      :show-close="false" width="30%">
+    <el-dialog v-model="showResetDialog" title="" :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" width="30%" @closed="handleDialogClosed">
+      <div class="text-red-500 text-center">*首次登陆系统需要修改密码，重新登陆后即可正常操作</div>
       <ResetPwdCard v-model="showResetDialog" :is-dialog="true" />
     </el-dialog>
   </div>
@@ -105,4 +106,9 @@ watch(
   },
   { immediate: true }
 );
+
+// 处理对话框关闭事件
+const handleDialogClosed = () => {
+  firstLoginStore.setFirstLogin(false);
+};
 </script>

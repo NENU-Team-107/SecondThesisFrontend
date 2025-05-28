@@ -9,4 +9,5 @@ export const useFirstLoginStore = defineStore("firstLogin", {
       this.isFirstLogin = value;
     },
   },
+  persist: true,
 }); 
