@@ -4,7 +4,7 @@ import { defineConfig, loadEnv } from "vite";
 import strip from "@rollup/plugin-strip";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, path.resolve(__dirname, '..'), '');
+  // const env = loadEnv(mode, path.resolve(__dirname, '.'), '');
   
   return {
     plugins: [
@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
       cors: true,
       proxy: {
         "/api": {
-          target: env.VITE_APP_API_URL || "http://localhost:8081",
+          target: "https://tslxbm.nenu.edu.cn/api/v1",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, "/api/v1"),
         },

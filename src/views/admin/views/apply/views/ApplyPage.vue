@@ -19,7 +19,7 @@
             </div>
             <div class="flex w-full py-1">
               <el-date-picker class="min-w-full" v-model="startTime" type="date" placeholder="开始时间" size="large"
-                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
             </div>
           </div>
           <div class="flex w-full px-5 flex-col items-start">
@@ -29,7 +29,7 @@
             </div>
             <div class="flex w-full py-1">
               <el-date-picker class="min-w-full" v-model="deadline" type="date" placeholder="截止时间" size="large"
-                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
             </div>
           </div>
           <div class="flex w-full px-5 flex-col items-start">
@@ -38,8 +38,8 @@
               <el-button @click="setStuDeadline" type="primary" round>确认设置</el-button>
             </div>
             <div class="flex w-full py-1">
-              <el-date-picker class="min-w-full" v-model="stuDeadline" type="date" placeholder="截止时间" size="large"
-                format="YYYY/MM/DD" value-format="YYYY-MM-DD-hh-mm-ss" />
+              <el-date-picker class="min-w-full" v-model="stuDeadline" type="date" placeholder="开放查询时间" size="large"
+                format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
             </div>
           </div>
         </div>
@@ -175,7 +175,7 @@ const fetchCommits = () => {
       } else {
         commitsList.value = [];
       }
-      console.log("commitsList.value", commitsList.value);
+      // console.log("commitsList.value", commitsList.value);
       pagination.value.total = res.total;
       pagination.value.page = res.page;
       pagination.value.limit = res.limit;
